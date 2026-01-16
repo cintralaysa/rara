@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 70">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a08840"/>
+      <stop offset="50%" style="stop-color:#c9a962"/>
+      <stop offset="100%" style="stop-color:#e0c78a"/>
+    </linearGradient>
+    <linearGradient id="goldGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#c9a962"/>
+      <stop offset="100%" style="stop-color:#e0c78a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Musical Note Icon -->
+  <g transform="translate(5, 12)">
+    <!-- Note head -->
+    <ellipse cx="18" cy="38" rx="10" ry="7" fill="url(#goldGrad)" transform="rotate(-20, 18, 38)"/>
+    <!-- Note stem -->
+    <rect x="26" y="8" width="3" height="32" fill="url(#goldGrad)"/>
+    <!-- Note flag -->
+    <path d="M29 8 Q45 12, 40 22 Q35 18, 29 20 Z" fill="url(#goldGrad)"/>
+    <!-- Small decorative notes -->
+    <circle cx="45" cy="6" r="2.5" fill="url(#goldGrad)" opacity="0.6"/>
+    <circle cx="52" cy="12" r="2" fill="url(#goldGrad)" opacity="0.4"/>
+  </g>
+
+  <!-- Brand Name: Melodia -->
+  <text x="65" y="38" font-family="'Playfair Display', Georgia, serif" font-size="32" font-weight="500" font-style="italic" fill="url(#goldGrad)">
+    Melodia
+  </text>
+
+  <!-- Brand Name: Inédita -->
+  <text x="65" y="60" font-family="'Playfair Display', Georgia, serif" font-size="26" font-weight="400" letter-spacing="3" fill="url(#goldGrad2)">
+    INÉDITA
+  </text>
+
+  <!-- Decorative line -->
+  <line x1="65" y1="44" x2="180" y2="44" stroke="url(#goldGrad)" stroke-width="0.5" opacity="0.5"/>
+</svg>

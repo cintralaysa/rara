@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Melodia Inédita - Crie sua música personalizada em minutos. Preencha, pague e receba em 24h.">
+    <title>Melodia Inédita | Crie Sua Música Personalizada</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/checkout.css">
+</head>
+<body>
+    <!-- Header Simples -->
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="assets/images/logo.svg" alt="Melodia Inédita">
+            </a>
+            <div class="header-trust">
+                <span><i class="fas fa-shield-alt"></i> Pagamento Seguro</span>
+                <span><i class="fas fa-clock"></i> Entrega em 24h</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="checkout-page">
+        <div class="container">
+            <!-- Left Side - Form Steps -->
+            <div class="checkout-form-section">
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <span>Sua História</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <span>Detalhes</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <span>Pagamento</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: História -->
+                <div class="form-step active" id="step-1">
+                    <div class="step-header">
+                        <h2>Conte sua história</h2>
+                        <p>Essas informações serão usadas para criar a letra da sua música</p>
+                    </div>
+
+                    <form id="form-step-1">
+                        <div class="form-group">
+                            <label for="ocasiao">Para qual ocasião é a música? *</label>
+                            <select id="ocasiao" name="ocasiao" required>
+                                <option value="">Selecione uma ocasião</option>
+                                <option value="aniversario">Aniversário</option>
+                                <option value="casamento">Casamento / Noivado</option>
+                                <option value="dia-maes">Dia das Mães</option>
+                                <option value="dia-pais">Dia dos Pais</option>
+                                <option value="dia-namorados">Dia dos Namorados</option>
+                                <option value="cha-revelacao">Chá Revelação</option>
+                                <option value="formatura">Formatura</option>
+                                <option value="homenagem-postuma">Homenagem Póstuma</option>
+                                <option value="bodas">Bodas</option>
+                                <option value="nascimento">Nascimento / Mesversário</option>
+                                <option value="amizade">Amizade</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nome-homenageado">Nome de quem será homenageado *</label>
+                                <input type="text" id="nome-homenageado" name="nome-homenageado" placeholder="Ex: Maria, João, Mamãe..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="relacao">Qual sua relação com essa pessoa? *</label>
+                                <input type="text" id="relacao" name="relacao" placeholder="Ex: Minha mãe, Meu namorado..." required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="historia">Conte a história que deseja transformar em música *</label>
+                            <textarea id="historia" name="historia" rows="5" placeholder="Conte momentos especiais, características da pessoa, sentimentos que quer expressar, memórias importantes... Quanto mais detalhes, melhor ficará a música!" required></textarea>
+                            <span class="char-count"><span id="char-count">0</span>/1000 caracteres</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="palavras-incluir">Palavras ou frases que DEVEM aparecer na música (opcional)</label>
+                            <input type="text" id="palavras-incluir" name="palavras-incluir" placeholder="Ex: 'te amo', 'para sempre', nome de um lugar especial...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estilo">Qual estilo musical você prefere?</label>
+                            <select id="estilo" name="estilo">
+                                <option value="romantico">Romântico / Balada</option>
+                                <option value="alegre">Alegre / Pop</option>
+                                <option value="sertanejo">Sertanejo</option>
+                                <option value="mpb">MPB</option>
+                                <option value="gospel">Gospel</option>
+                                <option value="infantil">Infantil</option>
+                                <option value="surpresa">Me surpreenda!</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            Continuar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Step 2: Detalhes -->
+                <div class="form-step" id="step-2">
+                    <div class="step-header">
+                        <h2>Seus dados</h2>
+                        <p>Precisamos dessas informações para entrar em contato e enviar sua música</p>
+                    </div>
+
+                    <form id="form-step-2">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="seu-nome">Seu nome completo *</label>
+                                <input type="text" id="seu-nome" name="seu-nome" placeholder="Digite seu nome" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Seu e-mail *</label>
+                                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="whatsapp">WhatsApp para entrega *</label>
+                            <input type="tel" id="whatsapp" name="whatsapp" placeholder="(00) 00000-0000" required>
+                            <span class="input-hint">Enviaremos sua música por aqui</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="data-entrega">Precisa para uma data específica?</label>
+                            <input type="date" id="data-entrega" name="data-entrega">
+                            <span class="input-hint">Entrega padrão em até 24h após confirmação do pagamento</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="observacoes">Observações adicionais (opcional)</label>
+                            <textarea id="observacoes" name="observacoes" rows="3" placeholder="Algo mais que devemos saber?"></textarea>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="button" class="btn btn-outline" onclick="goToStep(1)">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Ir para pagamento <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3: Pagamento -->
+                <div class="form-step" id="step-3">
+                    <div class="step-header">
+                        <h2>Pagamento via PIX</h2>
+                        <p>Escaneie o QR Code ou copie o código para pagar</p>
+                    </div>
+
+                    <div class="payment-section">
+                        <!-- Order Summary -->
+                        <div class="order-summary-mini">
+                            <div class="summary-row">
+                                <span>2x Músicas Personalizadas</span>
+                                <span class="price-original">R$ 159,98</span>
+                            </div>
+                            <div class="summary-row discount">
+                                <span>Desconto Promocional</span>
+                                <span>- R$ 79,99</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total</span>
+                                <span>R$ 79,99</span>
+                            </div>
+                        </div>
+
+                        <!-- PIX Payment -->
+                        <div class="pix-payment">
+                            <div class="pix-qr">
+                                <div class="qr-placeholder" id="qr-code">
+                                    <i class="fas fa-qrcode"></i>
+                                    <p>QR Code PIX</p>
+                                </div>
+                                <p class="pix-name">Melodia Inédita LTDA</p>
+                            </div>
+
+                            <div class="pix-copy">
+                                <label>Ou copie o código PIX:</label>
+                                <div class="copy-field">
+                                    <input type="text" id="pix-code" value="00020126580014br.gov.bcb.pix0136seu-codigo-pix-aqui" readonly>
+                                    <button type="button" class="btn-copy" onclick="copyPixCode()">
+                                        <i class="fas fa-copy"></i> Copiar
+                                    </button>
+                                </div>
+                                <span class="copy-feedback" id="copy-feedback">Código copiado!</span>
+                            </div>
+
+                            <div class="pix-instructions">
+                                <h4><i class="fas fa-info-circle"></i> Como pagar:</h4>
+                                <ol>
+                                    <li>Abra o app do seu banco</li>
+                                    <li>Escolha pagar com PIX</li>
+                                    <li>Escaneie o QR Code ou cole o código</li>
+                                    <li>Confirme o pagamento de <strong>R$ 79,99</strong></li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- Confirmation -->
+                        <div class="payment-confirmation">
+                            <button type="button" class="btn btn-success btn-block" onclick="confirmPayment()">
+                                <i class="fas fa-check-circle"></i> Já fiz o pagamento
+                            </button>
+                            <p class="confirmation-note">
+                                Após confirmar, nossa equipe verificará o pagamento e iniciará a criação da sua música.
+                                Você receberá a prévia da letra no WhatsApp em até 2 horas!
+                            </p>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="button" class="btn btn-outline" onclick="goToStep(2)">
+                                <i class="fas fa-arrow-left"></i> Voltar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div class="form-step" id="step-success">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2>Pedido Recebido!</h2>
+                        <p>Obrigado por escolher a Melodia Inédita!</p>
+
+                        <div class="success-details">
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <strong>Próximo passo</strong>
+                                    <p>Assim que confirmarmos o pagamento, você receberá a prévia da letra no WhatsApp em até 2 horas.</p>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-music"></i>
+                                <div>
+                                    <strong>Sua música</strong>
+                                    <p>Após aprovar a letra, entregaremos suas 2 melodias em até 24 horas!</p>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fab fa-whatsapp"></i>
+                                <div>
+                                    <strong>Dúvidas?</strong>
+                                    <p>Fale conosco pelo WhatsApp: (85) 99999-9999</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="https://wa.me/5585999999999" target="_blank" class="btn btn-primary btn-block">
+                            <i class="fab fa-whatsapp"></i> Falar no WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Order Summary -->
+            <div class="checkout-summary-section">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <h3>Seu Pedido</h3>
+                        <span class="promo-tag"><i class="fas fa-gift"></i> PROMOÇÃO 2 POR 1</span>
+                    </div>
+
+                    <div class="summary-product">
+                        <div class="product-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div class="product-details">
+                            <h4>2 Músicas Personalizadas</h4>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Letra exclusiva</li>
+                                <li><i class="fas fa-check"></i> 2 melodias diferentes</li>
+                                <li><i class="fas fa-check"></i> Entrega em 24h</li>
+                                <li><i class="fas fa-check"></i> Aprovação da letra antes</li>
+                                <li><i class="fas fa-check"></i> Revisões inclusas</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="summary-pricing">
+                        <div class="price-row">
+                            <span>Preço original (2 músicas)</span>
+                            <span class="price-old">R$ 159,98</span>
+                        </div>
+                        <div class="price-row discount">
+                            <span>Desconto promocional</span>
+                            <span>- R$ 79,99</span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Total</span>
+                            <div class="total-price">
+                                <span class="price-final">R$ 79,99</span>
+                                <span class="price-installment">ou 12x de R$ 7,99</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-guarantee">
+                        <div class="guarantee-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Pagamento 100% seguro</span>
+                        </div>
+                        <div class="guarantee-item">
+                            <i class="fas fa-undo"></i>
+                            <span>Satisfação garantida</span>
+                        </div>
+                        <div class="guarantee-item">
+                            <i class="fas fa-lock"></i>
+                            <span>Dados protegidos</span>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial Mini -->
+                    <div class="summary-testimonial">
+                        <div class="testimonial-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"Minha mãe chorou de emoção! Melhor presente que já dei."</p>
+                        <span class="testimonial-author">— Ana Cláudia</span>
+                    </div>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="trust-badges">
+                    <div class="badge">
+                        <span class="badge-number">+2.000</span>
+                        <span class="badge-label">Clientes felizes</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-number">4.9</span>
+                        <span class="badge-label">Avaliação média</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Simples -->
+    <footer class="footer-simple">
+        <div class="container">
+            <p>&copy; 2024 Melodia Inédita. Todos os direitos reservados.</p>
+            <div class="footer-links">
+                <a href="#">Termos de Uso</a>
+                <a href="#">Política de Privacidade</a>
+                <a href="https://wa.me/5585999999999" target="_blank">Suporte</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/5585999999999" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span class="whatsapp-tooltip">Dúvidas? Fale conosco!</span>
+    </a>
+
+    <!-- JavaScript -->
+    <script src="js/checkout.js"></script>
+</body>
+</html>
