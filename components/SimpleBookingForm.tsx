@@ -25,7 +25,7 @@ import {
   Gift,
   Baby
 } from 'lucide-react';
-import { PRECO_MUSICA_DISPLAY } from '@/lib/data';
+import { PLANOS, getPlanoById, COMPANY_INFO } from '@/lib/data';
 
 // Opcoes de relacionamento - Cha de Bebe primeiro!
 const RELATIONSHIPS = [
@@ -78,6 +78,7 @@ interface FormData {
   honoreeName: string;
   occasion: string;
   musicStyle: string;
+  musicStyle2: string; // Segundo estilo para Plano Premium
   voicePreference: string;
   storyAndMessage: string;
   familyNames: string;
@@ -94,21 +95,28 @@ interface FormData {
 
 interface SimpleBookingFormProps {
   onClose?: () => void;
+  selectedPlanId?: string;
 }
 
-export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
+export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }: SimpleBookingFormProps) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [generatingLyrics, setGeneratingLyrics] = useState(false);
   const [lyricsError, setLyricsError] = useState('');
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [currentPlanId, setCurrentPlanId] = useState(selectedPlanId);
+  const [showPlanUpgradeNotice, setShowPlanUpgradeNotice] = useState(false);
+
+  // Obter plano atual (pode mudar dinamicamente)
+  const plano = getPlanoById(currentPlanId) || PLANOS[0];
 
   const [formData, setFormData] = useState<FormData>({
     relationship: '',
     honoreeName: '',
     occasion: '',
     musicStyle: '',
+    musicStyle2: '', // Segundo estilo para Plano Premium
     voicePreference: 'sem_preferencia',
     storyAndMessage: '',
     familyNames: '',
@@ -228,6 +236,10 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
         occasionLabel: OCCASIONS.find(o => o.value === formData.occasion)?.label,
         musicStyle: formData.musicStyle,
         musicStyleLabel: MUSIC_STYLES.find(m => m.value === formData.musicStyle)?.label,
+        musicStyle2: formData.musicStyle2 || formData.musicStyle, // Se nao escolheu segundo estilo, usa o primeiro
+        musicStyle2Label: formData.musicStyle2
+          ? MUSIC_STYLES.find(m => m.value === formData.musicStyle2)?.label
+          : MUSIC_STYLES.find(m => m.value === formData.musicStyle)?.label,
         voicePreference: formData.voicePreference,
         storyAndMessage: formData.storyAndMessage,
         familyNames: formData.familyNames,
@@ -236,6 +248,13 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
         babySex: formData.babySex,
         babyNameBoy: formData.babyNameBoy,
         babyNameGirl: formData.babyNameGirl,
+        // Informacoes do plano
+        planoId: plano.id,
+        planoNome: plano.name,
+        planoPreco: plano.price,
+        planoPrecoCents: plano.priceCents,
+        planoMelodias: plano.melodias,
+        planoEntrega: plano.entrega,
       };
 
       // Salvar dados no localStorage para a pagina de checkout
@@ -272,8 +291,11 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
           </div>
           <div className="text-right flex items-center gap-3">
             <div className="bg-white/10 rounded-lg px-3 py-2 border border-white/20">
-              <span className="text-xs text-blue-200/60 block">Apenas</span>
-              <span className="text-xl font-black text-amber-400">R$ {PRECO_MUSICA_DISPLAY.toFixed(2).replace('.', ',')}</span>
+              <span className="text-xs text-amber-400 font-semibold block flex items-center justify-end gap-1">
+                <Music size={10} /> Musica Exclusiva
+              </span>
+              <span className="text-sm font-bold text-white">Uma emocao</span>
+              <span className="text-xs text-blue-200/80 block">para a vida toda</span>
             </div>
             {onClose && (
               <button onClick={onClose} className="text-white/60 hover:text-white p-1 hover:bg-white/10 rounded-lg">
@@ -341,7 +363,15 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
                     <label className="block text-xs font-bold text-slate-700 mb-2">Voce ja sabe o sexo do bebe?</label>
                     <div className="grid grid-cols-2 gap-2">
                       <button type="button"
-                        onClick={() => { updateField('knowsBabySex', 'sim'); updateField('babySex', ''); }}
+                        onClick={() => {
+                          updateField('knowsBabySex', 'sim');
+                          updateField('babySex', '');
+                          // Se tinha sido forçado para Premium, volta para o plano original
+                          if (showPlanUpgradeNotice) {
+                            setCurrentPlanId(selectedPlanId);
+                            setShowPlanUpgradeNotice(false);
+                          }
+                        }}
                         className={`p-3 rounded-xl border-2 text-center transition-all ${
                           formData.knowsBabySex === 'sim' ? 'border-pink-500 bg-pink-100' : 'border-slate-200'
                         }`}>
@@ -349,7 +379,15 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
                         <span className="font-bold text-xs">Sim, ja sei!</span>
                       </button>
                       <button type="button"
-                        onClick={() => { updateField('knowsBabySex', 'nao'); updateField('babySex', ''); }}
+                        onClick={() => {
+                          updateField('knowsBabySex', 'nao');
+                          updateField('babySex', '');
+                          // Forca plano Premium pois precisa de 2 melodias (menino e menina)
+                          if (currentPlanId === 'basico') {
+                            setCurrentPlanId('premium');
+                            setShowPlanUpgradeNotice(true);
+                          }
+                        }}
                         className={`p-3 rounded-xl border-2 text-center transition-all ${
                           formData.knowsBabySex === 'nao' ? 'border-blue-500 bg-blue-100' : 'border-slate-200'
                         }`}>
@@ -397,6 +435,20 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
 
                   {formData.knowsBabySex === 'nao' && (
                     <div className="space-y-3">
+                      {/* Aviso de upgrade de plano */}
+                      {showPlanUpgradeNotice && (
+                        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-300 rounded-xl p-3 animate-pulse">
+                          <div className="flex items-start gap-2">
+                            <Sparkles className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-sm font-bold text-amber-800">Plano atualizado para Premium!</p>
+                              <p className="text-xs text-amber-700 mt-1">
+                                Como o sexo e surpresa, precisamos criar 2 melodias diferentes (uma para menino e outra para menina). Seu plano foi automaticamente atualizado.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <p className="text-xs text-blue-700 bg-blue-100 p-2 rounded-lg">
                         Criaremos uma musica com suspense e dois finais! Um para menino e outro para menina.
                       </p>
@@ -469,7 +521,7 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
                   <Music size={16} className="text-amber-500" />
-                  Qual estilo musical?
+                  {plano.melodias > 1 ? 'Estilo da 1ª melodia' : 'Qual estilo musical?'}
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {MUSIC_STYLES.map((style) => (
@@ -488,6 +540,28 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
                   ))}
                 </div>
               </div>
+
+              {/* Segundo estilo musical - apenas para Plano Premium */}
+              {plano.melodias > 1 && (
+                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-3 border border-amber-200">
+                  <label className="flex items-center gap-2 text-xs font-bold text-amber-700 mb-2">
+                    <Sparkles size={14} className="text-amber-500" />
+                    Bonus Premium: Escolha o estilo da 2ª melodia
+                  </label>
+                  <select
+                    value={formData.musicStyle2 || ''}
+                    onChange={(e) => updateField('musicStyle2', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border-2 border-amber-200 bg-white text-sm font-medium text-slate-700 focus:border-amber-400 focus:outline-none"
+                  >
+                    <option value="">Mesmo estilo da 1ª melodia</option>
+                    {MUSIC_STYLES.map((style) => (
+                      <option key={style.value} value={style.value}>
+                        {style.emoji} {style.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
@@ -774,28 +848,36 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
                 </div>
               </div>
 
-              {/* Resumo */}
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                <h4 className="font-bold text-slate-900 mb-3 flex items-center gap-2">
-                  <Music size={16} className="text-blue-600" />
-                  Resumo do pedido
+              {/* Valor emocional */}
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200">
+                <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <Heart size={18} className="text-amber-500 fill-amber-500" />
+                  Voce esta prestes a criar algo unico
                 </h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Musica para:</span>
-                    <span className="font-semibold text-slate-800">{formData.honoreeName}</span>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Music size={12} className="text-white" />
+                    </div>
+                    <p className="text-slate-700 text-sm">
+                      Uma musica <strong>100% exclusiva</strong> para <strong>{formData.honoreeName}</strong>, que ninguem mais no mundo tera igual
+                    </p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Ocasiao:</span>
-                    <span className="font-semibold text-slate-800">{OCCASIONS.find(o => o.value === formData.occasion)?.label}</span>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Heart size={12} className="text-white" />
+                    </div>
+                    <p className="text-slate-700 text-sm">
+                      Um presente que vai <strong>emocionar de verdade</strong> e ficar guardado para sempre no coracao
+                    </p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Estilo:</span>
-                    <span className="font-semibold text-slate-800">{MUSIC_STYLES.find(m => m.value === formData.musicStyle)?.label}</span>
-                  </div>
-                  <div className="border-t border-slate-200 pt-3 mt-3 flex justify-between items-center">
-                    <span className="font-bold text-slate-800">Total:</span>
-                    <span className="text-2xl font-black text-amber-600">R$ {PRECO_MUSICA_DISPLAY.toFixed(2).replace('.', ',')}</span>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Sparkles size={12} className="text-white" />
+                    </div>
+                    <p className="text-slate-700 text-sm">
+                      Cada verso conta a <strong>historia de voces</strong>, transformada em melodia profissional
+                    </p>
                   </div>
                 </div>
               </div>
@@ -818,7 +900,7 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
                     </div>
                     <div className="flex items-center gap-3 text-sm text-green-700 mt-1">
                       <Check size={16} className="text-green-500" />
-                      <span>Receba sua musica em ate 48h</span>
+                      <span>Receba sua musica em ate {plano.entrega}</span>
                     </div>
                   </div>
 
@@ -837,7 +919,7 @@ export default function SimpleBookingForm({ onClose }: SimpleBookingFormProps) {
                     ) : (
                       <>
                         <svg viewBox="0 0 512 512" className="w-6 h-6 fill-current"><path d="M112.57 391.19c20.056 0 38.928-7.808 53.12-22l76.693-76.692c5.385-5.404 14.765-5.384 20.15 0l76.989 76.989c14.191 14.172 33.045 21.98 53.12 21.98h15.098l-97.138 97.139c-30.326 30.344-79.505 30.344-109.85 0l-97.415-97.416h9.232zm280.068-271.294c-20.056 0-38.929 7.809-53.12 22l-76.97 76.99c-5.551 5.53-14.6 5.568-20.15-.02l-76.711-76.693c-14.192-14.191-33.046-21.999-53.12-21.999h-9.234l97.416-97.416c30.344-30.344 79.523-30.344 109.867 0l97.138 97.138h-15.116z"/></svg>
-                        Pagar com PIX - R$ {PRECO_MUSICA_DISPLAY.toFixed(2).replace('.', ',')}
+                        Pagar com PIX - R$ {plano.price.toFixed(2).replace('.', ',')}
                       </>
                     )}
                   </button>

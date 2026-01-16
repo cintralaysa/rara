@@ -15,69 +15,69 @@ export interface PortfolioItem {
 export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     id: "1",
-    title: "Amor que Transborda",
-    description: "Música criada para celebrar 10 anos de casamento",
-    category: "romantica",
-    categoryLabel: "Romântica",
-    audioUrl: "/audio/portfolio/musica-1.mp3",
-    coverImage: "/images/portfolio/fones-cidade.jpg",
-    duration: "3:24",
-    occasion: "Bodas de Estanho"
-  },
-  {
-    id: "2",
-    title: "Presente de Deus",
-    description: "Homenagem emocionante para chegada do bebê",
-    category: "especial",
-    categoryLabel: "Especial",
-    audioUrl: "/audio/portfolio/musica-2.mp3",
-    coverImage: "/images/portfolio/bebe-fogos.jpg",
-    duration: "3:45",
-    occasion: "Chá de Bebê"
-  },
-  {
-    id: "3",
-    title: "Para Sempre Juntos",
-    description: "Pedido de casamento surpresa",
-    category: "romantica",
-    categoryLabel: "Romântica",
-    audioUrl: "/audio/portfolio/musica-3.mp3",
-    coverImage: "/images/portfolio/casal-carro.jpg",
-    duration: "2:58",
-    occasion: "Pedido de Casamento"
-  },
-  {
-    id: "4",
     title: "Minha Princesa",
-    description: "Música para aniversário de 15 anos",
+    description: "Musica emocionante para festa de 15 anos",
     category: "especial",
     categoryLabel: "Especial",
-    audioUrl: "/audio/portfolio/musica-4.mp3",
-    coverImage: "/images/portfolio/aniversario-bolo.jpg",
-    duration: "3:12",
+    audioUrl: "/audio/portfolio/musica-1.mp3",
+    coverImage: "/images/portfolio/15-anos.png",
+    duration: "3:24",
     occasion: "15 Anos"
   },
   {
-    id: "5",
-    title: "Nossa História",
-    description: "Presente de aniversário de namoro",
+    id: "2",
+    title: "Amor Eterno",
+    description: "Musica romantica para casamento dos sonhos",
     category: "romantica",
-    categoryLabel: "Romântica",
+    categoryLabel: "Romantica",
+    audioUrl: "/audio/portfolio/musica-2.mp3",
+    coverImage: "/images/portfolio/casamento.png",
+    duration: "3:45",
+    occasion: "Casamento"
+  },
+  {
+    id: "3",
+    title: "Meu Pequeno Tesouro",
+    description: "Homenagem carinhosa para aniversario infantil",
+    category: "especial",
+    categoryLabel: "Especial",
+    audioUrl: "/audio/portfolio/musica-3.mp3",
+    coverImage: "/images/portfolio/infantil.png",
+    duration: "2:58",
+    occasion: "Aniversario Infantil"
+  },
+  {
+    id: "4",
+    title: "Bem-vinda Princesa",
+    description: "Musica especial para cha de revelacao",
+    category: "especial",
+    categoryLabel: "Especial",
+    audioUrl: "/audio/portfolio/musica-4.mp3",
+    coverImage: "/images/portfolio/cha-revelacao.png",
+    duration: "3:12",
+    occasion: "Cha Revelacao"
+  },
+  {
+    id: "5",
+    title: "Para Sempre Juntos",
+    description: "Pedido de casamento surpresa emocionante",
+    category: "romantica",
+    categoryLabel: "Romantica",
     audioUrl: "/audio/portfolio/musica-5.mp3",
-    coverImage: "/images/portfolio/cafe-cama.jpg",
+    coverImage: "/images/portfolio/casamento-pedido.png",
     duration: "3:30",
-    occasion: "Aniversário de Namoro"
+    occasion: "Pedido de Casamento"
   },
   {
     id: "6",
-    title: "Maria Cecília",
-    description: "Homenagem para uma filha especial",
+    title: "Presente de Deus",
+    description: "Homenagem para chegada do bebe",
     category: "homenagem",
     categoryLabel: "Homenagem",
     audioUrl: "/audio/portfolio/musica-6.mp3",
-    coverImage: "/images/portfolio/maos-alianca.jpg",
+    coverImage: "/images/portfolio/cha-bebe-masculino.png",
     duration: "3:00",
-    occasion: "Aniversário"
+    occasion: "Cha de Bebe"
   },
 ];
 

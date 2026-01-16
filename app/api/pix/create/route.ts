@@ -10,8 +10,11 @@ import {
 
 const OPENPIX_APP_ID = process.env.OPENPIX_APP_ID;
 
-// Preco da musica em centavos (R$ 49,90 = 4990)
-const PRECO_MUSICA = 4990;
+// Precos dos planos em centavos
+const PRECOS_PLANOS: { [key: string]: { cents: number; display: string; melodias: number; entrega: string } } = {
+  basico: { cents: 4990, display: 'R$ 49,90', melodias: 1, entrega: '48 horas' },
+  premium: { cents: 7990, display: 'R$ 79,90', melodias: 2, entrega: '24 horas' },
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,10 +57,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Obter plano selecionado (default: basico)
+    const planoId = body.planoId || 'basico';
+    const plano = PRECOS_PLANOS[planoId] || PRECOS_PLANOS.basico;
+
     // Sanitizar e preparar dados do pedido
     const orderData = {
       orderId,
-      amount: PRECO_MUSICA,
+      amount: plano.cents,
+      planoId,
+      planoNome: planoId === 'premium' ? 'Plano Premium' : 'Plano Basico',
+      planoMelodias: plano.melodias,
+      planoEntrega: plano.entrega,
       customerName: sanitizeString(body.userName, 100),
       customerEmail: sanitizeString(body.email, 100),
       customerWhatsapp: sanitizeString(body.whatsapp, 50),
@@ -68,6 +79,8 @@ export async function POST(request: NextRequest) {
       occasionLabel: sanitizeString(body.occasionLabel, 100),
       musicStyle: sanitizeString(body.musicStyle, 50),
       musicStyleLabel: sanitizeString(body.musicStyleLabel, 100),
+      musicStyle2: sanitizeString(body.musicStyle2 || body.musicStyle, 50),
+      musicStyle2Label: sanitizeString(body.musicStyle2Label || body.musicStyleLabel, 100),
       voicePreference: sanitizeString(body.voicePreference, 30),
       storyAndMessage: sanitizeString(body.storyAndMessage || body.memories || '', 1500),
       familyNames: sanitizeString(body.familyNames, 300),
@@ -94,17 +107,19 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         correlationID,
-        value: PRECO_MUSICA,
-        comment: `Musica personalizada para ${orderData.honoreeName || 'presente'}`,
+        value: plano.cents,
+        comment: `${orderData.planoNome} - Musica para ${orderData.honoreeName || 'presente'} (${plano.melodias} melodia${plano.melodias > 1 ? 's' : ''})`,
         customer: {
           name: orderData.customerName,
           email: orderData.customerEmail,
           phone: orderData.customerWhatsapp?.replace(/\D/g, ''),
         },
         additionalInfo: [
+          { key: 'Plano', value: orderData.planoNome },
+          { key: 'Melodias', value: String(plano.melodias) },
+          { key: 'Entrega', value: plano.entrega },
           { key: 'Homenageado', value: orderData.honoreeName || '' },
           { key: 'Ocasiao', value: orderData.occasionLabel || orderData.occasion || '' },
-          { key: 'Estilo', value: orderData.musicStyleLabel || orderData.musicStyle || '' },
         ],
         expiresIn: 3600, // 1 hora para pagar
       }),
@@ -134,13 +149,19 @@ export async function POST(request: NextRequest) {
       success: true,
       orderId,
       correlationID,
+      plano: {
+        id: planoId,
+        nome: orderData.planoNome,
+        melodias: plano.melodias,
+        entrega: plano.entrega,
+      },
       pixData: {
         qrCode: pixData.charge?.qrCodeImage || pixData.qrCodeImage,
         qrCodeBase64: pixData.charge?.qrCodeImage || pixData.qrCodeImage,
         pixCopiaECola: pixData.charge?.brCode || pixData.brCode,
         expiresAt: pixData.charge?.expiresAt || pixData.expiresAt,
-        value: PRECO_MUSICA,
-        valueFormatted: 'R$ 49,90',
+        value: plano.cents,
+        valueFormatted: plano.display,
       },
     });
   } catch (error) {

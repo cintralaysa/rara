@@ -14,7 +14,7 @@ import {
   QrCode
 } from 'lucide-react';
 import Link from 'next/link';
-import { PRECO_MUSICA_DISPLAY, COMPANY_INFO } from '@/lib/data';
+import { COMPANY_INFO } from '@/lib/data';
 
 interface CheckoutData {
   name: string;
@@ -39,6 +39,8 @@ interface PendingOrder {
   occasionLabel: string;
   musicStyle: string;
   musicStyleLabel: string;
+  musicStyle2?: string;
+  musicStyle2Label?: string;
   voicePreference: string;
   storyAndMessage: string;
   familyNames: string;
@@ -47,6 +49,21 @@ interface PendingOrder {
   babySex?: string;
   babyNameBoy?: string;
   babyNameGirl?: string;
+  // Informacoes do plano
+  planoId?: string;
+  planoNome?: string;
+  planoPreco?: number;
+  planoPrecoCents?: number;
+  planoMelodias?: number;
+  planoEntrega?: string;
+}
+
+interface PlanoInfo {
+  id: string;
+  nome: string;
+  melodias: number;
+  entrega: string;
+  preco: number;
 }
 
 export default function CheckoutPixPage() {
@@ -56,14 +73,26 @@ export default function CheckoutPixPage() {
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [planoInfo, setPlanoInfo] = useState<PlanoInfo>({
+    id: 'basico',
+    nome: 'Plano Basico',
+    melodias: 1,
+    entrega: '48 horas',
+    preco: 49.90
+  });
 
   // Carregar dados do localStorage e criar PIX
   useEffect(() => {
     const createPixPayment = async () => {
       // Verificar se ja tem dados de checkout
       const existingData = localStorage.getItem('checkoutData');
+      const existingPlanoData = localStorage.getItem('planoInfo');
+
       if (existingData) {
         setCheckoutData(JSON.parse(existingData));
+        if (existingPlanoData) {
+          setPlanoInfo(JSON.parse(existingPlanoData));
+        }
         setStatus('pending');
         return;
       }
@@ -77,6 +106,17 @@ export default function CheckoutPixPage() {
       }
 
       const pendingOrder: PendingOrder = JSON.parse(pendingOrderData);
+
+      // Carregar info do plano do pedido pendente
+      if (pendingOrder.planoId) {
+        setPlanoInfo({
+          id: pendingOrder.planoId,
+          nome: pendingOrder.planoNome || 'Plano Basico',
+          melodias: pendingOrder.planoMelodias || 1,
+          entrega: pendingOrder.planoEntrega || '48 horas',
+          preco: pendingOrder.planoPreco || 49.90
+        });
+      }
 
       try {
         // Criar cobranca PIX
@@ -93,6 +133,17 @@ export default function CheckoutPixPage() {
           setStatus('error');
           return;
         }
+
+        // Atualizar info do plano com dados da API
+        const planoFromApi: PlanoInfo = {
+          id: data.plano?.id || pendingOrder.planoId || 'basico',
+          nome: data.plano?.nome || pendingOrder.planoNome || 'Plano Basico',
+          melodias: data.plano?.melodias || pendingOrder.planoMelodias || 1,
+          entrega: data.plano?.entrega || pendingOrder.planoEntrega || '48 horas',
+          preco: (data.pixData?.value || pendingOrder.planoPrecoCents || 4990) / 100
+        };
+        setPlanoInfo(planoFromApi);
+        localStorage.setItem('planoInfo', JSON.stringify(planoFromApi));
 
         // Montar dados do checkout
         const checkout: CheckoutData = {
@@ -252,9 +303,17 @@ export default function CheckoutPixPage() {
           <h1 className="text-3xl font-bold text-slate-800 mb-4">
             Pagamento Confirmado!
           </h1>
-          <p className="text-slate-600 mb-8">
+          <p className="text-slate-600 mb-4">
             Seu pedido foi recebido com sucesso. Em breve voce recebera um e-mail com mais informacoes sobre a producao da sua musica.
           </p>
+
+          {/* Badge do plano */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-100 to-amber-50 rounded-full border border-amber-300 mb-8">
+            <Music className="w-4 h-4 text-amber-600" />
+            <span className="font-semibold text-amber-700">{planoInfo.nome}</span>
+            <span className="text-amber-600">•</span>
+            <span className="text-amber-600">{planoInfo.melodias} melodia{planoInfo.melodias > 1 ? 's' : ''}</span>
+          </div>
 
           <div className="bg-gradient-to-r from-blue-50 to-slate-50 rounded-2xl p-6 mb-8 border border-blue-200">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -272,7 +331,7 @@ export default function CheckoutPixPage() {
               </li>
               <li className="flex items-start gap-2">
                 <Music className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                Em ate 48 horas voce recebera sua musica pronta
+                Em ate {planoInfo.entrega} voce recebera sua musica pronta
               </li>
             </ul>
           </div>
@@ -408,14 +467,21 @@ export default function CheckoutPixPage() {
             </div>
           </div>
 
-          {/* Valor */}
+          {/* Valor e Plano */}
           <div className="bg-gradient-to-r from-blue-50 to-slate-50 rounded-2xl p-4 mb-6 border border-blue-200">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Music className="w-5 h-5 text-amber-500" />
+                <span className="font-semibold text-slate-700">{planoInfo.nome}</span>
+              </div>
+              <span className="text-sm text-slate-500">{planoInfo.melodias} melodia{planoInfo.melodias > 1 ? 's' : ''}</span>
+            </div>
+            <div className="flex items-center justify-between pt-3 border-t border-blue-200">
               <span className="text-slate-600">Valor a pagar:</span>
               <div className="flex items-baseline gap-1">
                 <span className="text-slate-500 text-lg">R$</span>
-                <span className="text-3xl font-black text-amber-500">49</span>
-                <span className="text-amber-500 text-xl font-bold">,90</span>
+                <span className="text-3xl font-black text-amber-500">{Math.floor(planoInfo.preco)}</span>
+                <span className="text-amber-500 text-xl font-bold">,{String(Math.round((planoInfo.preco % 1) * 100)).padStart(2, '0')}</span>
               </div>
             </div>
           </div>
@@ -452,6 +518,19 @@ export default function CheckoutPixPage() {
         <div className="mt-6 bg-white rounded-2xl p-6 shadow-lg border border-blue-100">
           <h3 className="font-semibold text-slate-800 mb-4">Resumo do pedido</h3>
           <div className="space-y-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-slate-500">Plano:</span>
+              <span className="text-slate-800 font-medium">{planoInfo.nome}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Melodias:</span>
+              <span className="text-slate-800 font-medium">{planoInfo.melodias}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Entrega:</span>
+              <span className="text-slate-800 font-medium">{planoInfo.entrega}</span>
+            </div>
+            <div className="h-px bg-slate-200 my-2" />
             <div className="flex justify-between">
               <span className="text-slate-500">Musica para:</span>
               <span className="text-slate-800 font-medium">{checkoutData.honoreeName}</span>

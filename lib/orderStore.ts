@@ -18,6 +18,8 @@ export interface OrderData {
   occasionLabel: string;
   musicStyle: string;
   musicStyleLabel: string;
+  musicStyle2?: string;
+  musicStyle2Label?: string;
   voicePreference: string;
   storyAndMessage?: string;
   qualities?: string;
@@ -31,6 +33,11 @@ export interface OrderData {
   babyNameBoy?: string;
   babyNameGirl?: string;
   createdAt: number;
+  // Informacoes do plano
+  planoId?: string;
+  planoNome?: string;
+  planoMelodias?: number;
+  planoEntrega?: string;
 }
 
 // Salvar pedido no Redis

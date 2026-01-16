@@ -141,7 +141,8 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
             <p class="info-row"><strong>Musica para:</strong> ${orderData.honoreeName || 'N/A'}</p>
             <p class="info-row"><strong>Relacionamento:</strong> ${orderData.relationshipLabel || orderData.relationship || 'N/A'}</p>
             <p class="info-row"><strong>Ocasiao:</strong> ${orderData.occasionLabel || orderData.occasion || 'N/A'}</p>
-            <p class="info-row"><strong>Estilo Musical:</strong> ${orderData.musicStyleLabel || orderData.musicStyle || 'N/A'}</p>
+            <p class="info-row"><strong>Estilo Musical${orderData.planoMelodias && orderData.planoMelodias > 1 ? ' 1ª melodia' : ''}:</strong> ${orderData.musicStyleLabel || orderData.musicStyle || 'N/A'}</p>
+            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p class="info-row"><strong>Estilo Musical 2ª melodia:</strong> ${orderData.musicStyle2Label || orderData.musicStyleLabel || 'N/A'}</p>` : ''}
             <p class="info-row"><strong>Preferencia de Voz:</strong> ${orderData.voicePreference === 'feminina' ? 'Feminina' : orderData.voicePreference === 'masculina' ? 'Masculina' : 'Sem preferencia'}</p>
           </div>
 
@@ -180,7 +181,9 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
 
           <div class="section" style="background: #fef3c7; border-left-color: #f59e0b;">
             <div class="section-title" style="color: #d97706;">⏰ Proximo Passo</div>
-            <p><strong>Prazo de entrega:</strong> 48 horas</p>
+            ${orderData.planoNome ? `<p><strong>Plano:</strong> ${orderData.planoNome}</p>` : ''}
+            <p><strong>Prazo de entrega:</strong> ${orderData.planoEntrega || '48 horas'}</p>
+            <p><strong>Melodias:</strong> ${orderData.planoMelodias || 1}</p>
             <p>Entre em contato com o cliente pelo WhatsApp para confirmar os detalhes e entregar a musica personalizada.</p>
           </div>
         </div>
@@ -194,10 +197,11 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
       console.log('⚠️ Resend não configurado - email não enviado');
       return;
     }
+    const planoTag = orderData.planoNome ? ` (${orderData.planoNome})` : '';
     await resend.emails.send({
       from: FROM_EMAIL,
       to: [process.env.ADMIN_EMAIL || 'melodiarara@gmail.com'],
-      subject: `🎵 ✅ PIX PAGO: ${orderData.customerName} → ${orderData.honoreeName} [${orderData.orderId}]`,
+      subject: `🎵 ✅ PIX PAGO: ${orderData.customerName} → ${orderData.honoreeName}${planoTag} [${orderData.orderId}]`,
       html: emailHtml,
     });
     console.log('✅ Email COMPLETO enviado para admin!');
@@ -345,9 +349,11 @@ async function sendCustomerPaymentConfirmedEmail(orderData: OrderData) {
           <h2>📋 Resumo do seu pedido</h2>
           <div class="order-details">
             <p><strong>Numero do pedido:</strong> ${orderData.orderId}</p>
+            ${orderData.planoNome ? `<p><strong>Plano:</strong> ${orderData.planoNome}</p>` : ''}
             <p><strong>Musica para:</strong> ${orderData.honoreeName}</p>
             <p><strong>Ocasiao:</strong> ${orderData.occasionLabel || orderData.occasion}</p>
-            <p><strong>Estilo musical:</strong> ${orderData.musicStyleLabel || orderData.musicStyle}</p>
+            <p><strong>Estilo musical${orderData.planoMelodias && orderData.planoMelodias > 1 ? ' 1ª melodia' : ''}:</strong> ${orderData.musicStyleLabel || orderData.musicStyle}</p>
+            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p><strong>Estilo musical 2ª melodia:</strong> ${orderData.musicStyle2Label || orderData.musicStyleLabel}</p>` : ''}
           </div>
 
           ${lyricsHtml ? `
@@ -356,7 +362,8 @@ async function sendCustomerPaymentConfirmedEmail(orderData: OrderData) {
           ` : ''}
 
           <div class="highlight-box">
-            <strong>⏰ Prazo de entrega:</strong> Sua musica personalizada sera entregue em ate <strong>48 horas</strong> pelo WhatsApp.
+            <strong>⏰ Prazo de entrega:</strong> Sua${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} musica${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} personalizada${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} ${orderData.planoMelodias && orderData.planoMelodias > 1 ? 'serao entregues' : 'sera entregue'} em ate <strong>${orderData.planoEntrega || '48 horas'}</strong> pelo WhatsApp.
+            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<br><br>✨ Voce recebera <strong>${orderData.planoMelodias} melodias</strong> diferentes para escolher!` : ''}
           </div>
 
           <p>Qualquer duvida, estamos a disposicao!</p>

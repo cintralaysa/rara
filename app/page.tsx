@@ -27,9 +27,11 @@ import {
   Send,
   Zap,
   Wand2,
-  Edit3
+  Edit3,
+  Crown,
+  Check
 } from 'lucide-react';
-import { TESTIMONIALS, FAQS, COMPANY_INFO, PRECO_MUSICA_DISPLAY } from '@/lib/data';
+import { TESTIMONIALS, FAQS, COMPANY_INFO, PLANOS } from '@/lib/data';
 import CheckoutModal from '@/components/CheckoutModal';
 import SimpleBookingForm from '@/components/SimpleBookingForm';
 import PortfolioSection from '@/components/PortfolioSection';
@@ -39,6 +41,12 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [selectedPlan, setSelectedPlan] = useState<string>('basico');
+
+  const openModalWithPlan = (planId: string) => {
+    setSelectedPlan(planId);
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -147,7 +155,7 @@ export default function Home() {
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-800 leading-[1.1] mb-8">
                 Sua história vira{' '}
                 <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-                  música em 48h
+                  música exclusiva
                 </span>
               </h1>
 
@@ -193,8 +201,10 @@ export default function Home() {
                 </div>
                 <div className="relative group">
                   <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-2xl px-7 py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
-                    <p className="text-4xl font-black text-slate-800">48h</p>
-                    <p className="text-slate-600 text-sm font-medium">Entrega garantida</p>
+                    <p className="text-4xl font-black text-slate-800 flex items-center gap-2">
+                      <Clock className="w-8 h-8 text-amber-500" />
+                    </p>
+                    <p className="text-slate-600 text-sm font-medium">Entrega rápida</p>
                   </div>
                 </div>
               </div>
@@ -247,7 +257,7 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="font-bold text-slate-800 text-base">Entrega Rápida</p>
-                    <p className="text-sm text-slate-600">Em até 48 horas</p>
+                    <p className="text-sm text-slate-600">Escolha seu plano</p>
                   </div>
                 </motion.div>
 
@@ -327,8 +337,8 @@ export default function Home() {
               {
                 step: '03',
                 icon: <Headphones className="w-8 h-8" />,
-                title: 'Receba em 48h',
-                description: 'Em até 48 horas você recebe sua música exclusiva com letra personalizada, produzida profissionalmente em alta qualidade.'
+                title: 'Receba sua música',
+                description: 'Você recebe sua música exclusiva com letra personalizada, produzida profissionalmente em alta qualidade. Prazo varia conforme o plano escolhido.'
               }
             ].map((item, index) => (
               <motion.div
@@ -385,150 +395,112 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Produto Único Section - Album Style */}
-      <section className="py-28 relative bg-gradient-to-br from-blue-50 to-slate-100">
+      {/* Planos Section */}
+      <section id="planos" className="py-28 relative bg-gradient-to-br from-blue-50 to-slate-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative"
+            className="text-center mb-16"
           >
-            <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-[3rem] p-8 md:p-14 overflow-hidden shadow-2xl">
-              {/* Decorative elements */}
-              <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-blue-200/50 to-transparent rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-amber-200/50 to-transparent rounded-full blur-3xl" />
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-6 shadow-lg">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              <span className="text-blue-800 text-sm font-bold">Escolha seu Plano</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-800 mb-6">
+              Sua Historia em{' '}
+              <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">Melodia</span>
+            </h2>
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto mb-6">
+              Uma musica exclusiva e emocionante, criada especialmente para eternizar seu momento mais especial.
+            </p>
 
-              <div className="relative grid md:grid-cols-2 gap-10 items-center">
-                {/* Album Cover Style - Visual */}
-                <div className="relative order-2 md:order-1">
-                  <div className="relative max-w-sm mx-auto">
-                    {/* Album shadow effect */}
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[85%] h-8 bg-black/20 rounded-full blur-xl" />
-
-                    {/* Album case/cover */}
-                    <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 hover:-rotate-1 transition-all duration-500 cursor-pointer group"
-                         onClick={() => setIsModalOpen(true)}>
-                      {/* Vinyl record peeking out */}
-                      <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-[90%] aspect-square rounded-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 opacity-90 group-hover:translate-x-6 transition-transform duration-500">
-                        <div className="absolute inset-4 rounded-full border border-slate-700/50" />
-                        <div className="absolute inset-8 rounded-full border border-slate-700/30" />
-                        <div className="absolute inset-[35%] rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                          <div className="w-3 h-3 rounded-full bg-slate-900" />
-                        </div>
-                        {/* Grooves effect */}
-                        <div className="absolute inset-12 rounded-full border border-slate-600/20" />
-                        <div className="absolute inset-16 rounded-full border border-slate-600/20" />
-                        <div className="absolute inset-20 rounded-full border border-slate-600/20" />
-                      </div>
-
-                      {/* Album cover */}
-                      <div className="relative z-10 w-full h-full bg-gradient-to-br from-blue-800 via-blue-900 to-slate-900 p-6 flex flex-col">
-                        {/* Top decoration */}
-                        <div className="flex justify-between items-start mb-auto">
-                          <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center">
-                            <Music className="w-6 h-6 text-amber-400" />
-                          </div>
-                          <div className="text-right">
-                            <span className="text-amber-400/60 text-xs font-medium tracking-widest">EXCLUSIVO</span>
-                          </div>
-                        </div>
-
-                        {/* Center content */}
-                        <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
-                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center mb-4 shadow-lg shadow-amber-500/30">
-                            <Heart className="w-10 h-10 text-blue-900 fill-blue-900" />
-                          </div>
-                          <h3 className="text-white text-2xl font-black mb-1">Melodia Rara</h3>
-                          <p className="text-blue-200/70 text-sm">Musica Personalizada</p>
-                        </div>
-
-                        {/* Bottom - Price tag */}
-                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-blue-200/60 text-xs mb-0.5">Por apenas</p>
-                              <div className="flex items-baseline gap-1">
-                                <span className="text-white/70 text-lg">R$</span>
-                                <span className="text-4xl font-black text-amber-400">49</span>
-                                <span className="text-amber-400 text-xl font-bold">,90</span>
-                              </div>
-                            </div>
-                            <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                              <Play className="w-6 h-6 text-blue-900 ml-0.5" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Shine effect */}
-                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                    </div>
-
-                    {/* Floating badges */}
-                    <motion.div
-                      className="absolute -top-4 -right-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg"
-                      animate={{ y: [0, -5, 0] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      Entrega em 48h
-                    </motion.div>
-
-                    <motion.div
-                      className="absolute -bottom-2 -left-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg"
-                      animate={{ y: [0, 5, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                    >
-                      100% Exclusiva
-                    </motion.div>
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="order-1 md:order-2">
-                  <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-6 shadow-lg">
-                    <Sparkles className="w-5 h-5 text-amber-500" />
-                    <span className="text-blue-800 text-sm font-bold">Presente Perfeito</span>
-                  </div>
-
-                  <h2 className="text-4xl md:text-5xl font-black text-slate-800 mb-6">
-                    Sua Historia em{' '}
-                    <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">Melodia</span>
-                  </h2>
-                  <p className="text-slate-600 mb-8 text-lg">
-                    Casamento, aniversario, cha de bebe, homenagem, pedido de namoro,
-                    dia das maes... Qualquer momento especial merece uma musica unica.
-                  </p>
-
-                  <ul className="space-y-3 mb-8">
-                    {[
-                      'Letra exclusiva personalizada',
-                      'Producao profissional',
-                      'Edite a letra no site',
-                      'Entrega em ate 48 horas',
-                      'Arquivo MP3 de alta qualidade'
-                    ].map((feature, i) => (
-                      <li key={i} className="flex items-center gap-3 text-slate-700">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center flex-shrink-0 shadow-md">
-                          <CheckCircle className="w-3.5 h-3.5 text-blue-900" />
-                        </div>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 text-amber-400 text-lg font-bold rounded-full hover:from-blue-700 hover:via-blue-800 hover:to-slate-800 transition-all duration-300 shadow-xl shadow-blue-900/30 hover:shadow-2xl hover:-translate-y-1 flex items-center justify-center gap-3"
-                  >
-                    <Wand2 className="w-6 h-6" />
-                    Criar Minha Musica
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+            {/* Badge Oferta Exclusiva */}
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-50 to-orange-50 rounded-full border border-red-200 shadow-md">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              </span>
+              <span className="text-red-700 font-bold text-sm">Precos exclusivos apenas pelo site</span>
             </div>
           </motion.div>
+
+          {/* Planos Grid */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {PLANOS.map((plano, index) => (
+              <motion.div
+                key={plano.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className={`relative bg-white rounded-3xl p-8 shadow-xl border-2 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
+                  plano.popular
+                    ? 'border-amber-400 ring-2 ring-amber-400/20'
+                    : 'border-blue-200'
+                }`}
+              >
+                {/* Badge Popular */}
+                {plano.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                    <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 text-sm font-bold px-5 py-2 rounded-full shadow-lg flex items-center gap-2">
+                      <Crown className="w-4 h-4" />
+                      {plano.highlight}
+                    </span>
+                  </div>
+                )}
+
+                {/* Plano Header */}
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-2">{plano.name}</h3>
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-slate-500 text-xl">R$</span>
+                    <span className="text-5xl font-black text-slate-800">
+                      {Math.floor(plano.price)}
+                    </span>
+                    <span className="text-2xl font-bold text-slate-600">,{String(plano.price).split('.')[1] || '00'}</span>
+                  </div>
+                  <p className="text-sm text-slate-500 mt-2">Entrega em {plano.entrega}</p>
+                </div>
+
+                {/* Features */}
+                <ul className="space-y-3 mb-8">
+                  {plano.features.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3 text-slate-700">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        plano.popular
+                          ? 'bg-gradient-to-br from-amber-500 to-yellow-500'
+                          : 'bg-gradient-to-br from-blue-500 to-blue-600'
+                      }`}>
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA Button */}
+                <button
+                  onClick={() => openModalWithPlan(plano.id)}
+                  className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                    plano.popular
+                      ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 hover:from-amber-600 hover:to-yellow-600 shadow-lg shadow-amber-500/30'
+                      : 'bg-gradient-to-r from-blue-800 to-blue-900 text-amber-400 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-900/30'
+                  }`}
+                >
+                  <Wand2 className="w-5 h-5" />
+                  Criar Minha Musica
+                </button>
+
+                {/* Garantia */}
+                <p className="text-center text-xs mt-4 text-slate-500">
+                  Satisfacao garantida ou seu dinheiro de volta
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -706,16 +678,19 @@ export default function Home() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-14">
               <div className="bg-white backdrop-blur-xl rounded-2xl px-10 py-8 text-center shadow-2xl">
-                <p className="text-5xl font-black bg-gradient-to-r from-amber-500 to-yellow-500 bg-clip-text text-transparent">R$ {PRECO_MUSICA_DISPLAY}</p>
-                <p className="text-slate-600 font-medium">Música completa</p>
+                <Heart className="w-10 h-10 text-amber-500 mx-auto mb-2 fill-amber-500" />
+                <p className="text-2xl font-black text-slate-800">Emocione</p>
+                <p className="text-slate-600 font-medium">quem voce ama</p>
               </div>
               <div className="bg-white backdrop-blur-xl rounded-2xl px-10 py-8 text-center shadow-2xl">
-                <p className="text-5xl font-black text-slate-800">48h</p>
-                <p className="text-slate-600 font-medium">Prazo de entrega</p>
+                <Music className="w-10 h-10 text-amber-500 mx-auto mb-2" />
+                <p className="text-2xl font-black text-slate-800">Musica Inedita</p>
+                <p className="text-slate-600 font-medium">feita so pra voce</p>
               </div>
               <div className="bg-white backdrop-blur-xl rounded-2xl px-10 py-8 text-center shadow-2xl">
-                <p className="text-5xl font-black bg-gradient-to-r from-amber-500 to-yellow-500 bg-clip-text text-transparent">100%</p>
-                <p className="text-slate-600 font-medium">Exclusiva para você</p>
+                <Sparkles className="w-10 h-10 text-amber-500 mx-auto mb-2" />
+                <p className="text-2xl font-black text-slate-800">Para Sempre</p>
+                <p className="text-slate-600 font-medium">uma lembranca eterna</p>
               </div>
             </div>
 
@@ -841,7 +816,7 @@ export default function Home() {
 
       {/* Checkout Modal */}
       <CheckoutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <SimpleBookingForm onClose={() => setIsModalOpen(false)} />
+        <SimpleBookingForm onClose={() => setIsModalOpen(false)} selectedPlanId={selectedPlan} />
       </CheckoutModal>
     </main>
   );

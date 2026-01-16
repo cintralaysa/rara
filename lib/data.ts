@@ -171,14 +171,72 @@ export const FAQS: FAQ[] = [
 
 export const COMPANY_INFO = {
   name: "Melodia Rara",
-  tagline: "Transformamos sua história em música",
-  description: "Criamos músicas personalizadas e únicas que eternizam seus momentos mais especiais. Cada composição é uma obra de arte exclusiva, feita especialmente para você.",
+  tagline: "Transformamos sua historia em musica",
+  description: "Criamos musicas personalizadas e unicas que eternizam seus momentos mais especiais. Cada composicao e uma obra de arte exclusiva, feita especialmente para voce.",
   email: "contato@melodiarara.com.br",
   whatsapp: "5588992422920",
+  whatsappLink: "https://wa.me/5588992422920",
   instagram: "@melodiarara",
   youtube: "@melodiarara",
-  address: "São Paulo, SP - Brasil"
+  address: "Sao Paulo, SP - Brasil"
 };
 
+// Planos de preço
+export interface PricePlan {
+  id: string;
+  name: string;
+  price: number; // em reais
+  priceCents: number; // em centavos para API
+  melodias: number;
+  entrega: string;
+  features: string[];
+  highlight?: string;
+  popular?: boolean;
+}
+
+export const PLANOS: PricePlan[] = [
+  {
+    id: "basico",
+    name: "Plano Basico",
+    price: 49.90,
+    priceCents: 4990,
+    melodias: 1,
+    entrega: "48 horas",
+    features: [
+      "1 letra exclusiva personalizada",
+      "1 melodia da sua musica",
+      "Edite a letra no site",
+      "Entrega em ate 48 horas",
+      "Arquivo MP3 alta qualidade"
+    ],
+    highlight: undefined,
+    popular: false
+  },
+  {
+    id: "premium",
+    name: "Plano Premium",
+    price: 79.90,
+    priceCents: 7990,
+    melodias: 2,
+    entrega: "24 horas",
+    features: [
+      "1 letra exclusiva personalizada",
+      "2 melodias diferentes",
+      "Edite a letra no site",
+      "Entrega expressa em 24 horas",
+      "Arquivo MP3 alta qualidade",
+      "Prioridade na producao"
+    ],
+    highlight: "Mais buscado",
+    popular: true
+  }
+];
+
+// Funcao para obter plano por ID
+export const getPlanoById = (id: string): PricePlan | undefined => {
+  return PLANOS.find(p => p.id === id);
+};
+
+// Precos padrão (plano basico) - para compatibilidade
 export const PRECO_MUSICA = 4990; // em centavos para a API do OpenPix
-export const PRECO_MUSICA_DISPLAY = 49.90; // em reais para exibição
+export const PRECO_MUSICA_DISPLAY = 49.90; // em reais para exibicao

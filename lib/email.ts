@@ -51,6 +51,9 @@ export async function sendOrderNotification(order: Order): Promise<boolean> {
             </p>
             <p><strong>ID do Pedido:</strong> ${order.id}</p>
             <p><strong>Data:</strong> ${new Date(order.createdAt).toLocaleString('pt-BR')}</p>
+            ${order.planoNome ? `<p><strong>Plano:</strong> ${order.planoNome}</p>` : ''}
+            ${order.planoMelodias ? `<p><strong>Melodias:</strong> ${order.planoMelodias}</p>` : ''}
+            ${order.planoEntrega ? `<p><strong>Prazo de Entrega:</strong> ${order.planoEntrega}</p>` : ''}
           </div>
 
           <div class="section">
@@ -64,7 +67,8 @@ export async function sendOrderNotification(order: Order): Promise<boolean> {
             <div class="section-title">🎁 Detalhes do Pedido</div>
             <p><strong>Para quem:</strong> ${order.honoreeName} (${order.relationshipLabel})</p>
             <p><strong>Ocasiao:</strong> ${order.occasionLabel}</p>
-            <p><strong>Estilo Musical:</strong> ${order.musicStyleLabel}</p>
+            <p><strong>Estilo Musical ${order.planoMelodias && order.planoMelodias > 1 ? '1ª melodia' : ''}:</strong> ${order.musicStyleLabel}</p>
+            ${order.planoMelodias && order.planoMelodias > 1 ? `<p><strong>Estilo Musical 2ª melodia:</strong> ${order.musicStyle2Label || order.musicStyleLabel}</p>` : ''}
             <p><strong>Preferencia de Voz:</strong> ${order.voicePreference === 'feminina' ? 'Feminina' : order.voicePreference === 'masculina' ? 'Masculina' : 'Sem preferencia'}</p>
           </div>
 
@@ -217,6 +221,12 @@ export async function sendCustomerConfirmation(order: Order): Promise<boolean> {
                 <span class="order-label">Pedido</span>
                 <span class="order-value">#${order.id}</span>
               </div>
+              ${order.planoNome ? `
+              <div class="order-row">
+                <span class="order-label">Plano</span>
+                <span class="order-value">${order.planoNome}</span>
+              </div>
+              ` : ''}
               <div class="order-row">
                 <span class="order-label">Para quem</span>
                 <span class="order-value">${order.honoreeName}</span>
@@ -226,9 +236,15 @@ export async function sendCustomerConfirmation(order: Order): Promise<boolean> {
                 <span class="order-value">${order.occasionLabel}</span>
               </div>
               <div class="order-row">
-                <span class="order-label">Estilo Musical</span>
+                <span class="order-label">Estilo Musical${order.planoMelodias && order.planoMelodias > 1 ? ' 1ª' : ''}</span>
                 <span class="order-value">${order.musicStyleLabel}</span>
               </div>
+              ${order.planoMelodias && order.planoMelodias > 1 ? `
+              <div class="order-row">
+                <span class="order-label">Estilo Musical 2ª</span>
+                <span class="order-value">${order.musicStyle2Label || order.musicStyleLabel}</span>
+              </div>
+              ` : ''}
               <div class="order-row">
                 <span class="order-label">Valor</span>
                 <span class="order-value" style="color: #059669;">R$ ${order.amount.toFixed(2).replace('.', ',')}</span>
@@ -237,7 +253,7 @@ export async function sendCustomerConfirmation(order: Order): Promise<boolean> {
 
             <div class="highlight-box">
               <h3>⏰ Prazo de Entrega</h3>
-              <p><strong>Ate 48 horas</strong> voce recebera suas musicas!</p>
+              <p><strong>Ate ${order.planoEntrega || '48 horas'}</strong> voce recebera sua${order.planoMelodias && order.planoMelodias > 1 ? 's' : ''} musica${order.planoMelodias && order.planoMelodias > 1 ? 's' : ''}!</p>
             </div>
 
             <div class="steps">
@@ -254,8 +270,8 @@ export async function sendCustomerConfirmation(order: Order): Promise<boolean> {
               <div class="step">
                 <div class="step-number">2</div>
                 <div class="step-content">
-                  <h4>Voce Recebe 2 Versoes</h4>
-                  <p>Enviaremos 2 melodias diferentes para voce escolher a que mais combina!</p>
+                  <h4>Voce Recebe ${order.planoMelodias || 1} ${order.planoMelodias && order.planoMelodias > 1 ? 'Versoes' : 'Versao'}</h4>
+                  <p>${order.planoMelodias && order.planoMelodias > 1 ? `Enviaremos ${order.planoMelodias} melodias diferentes para voce escolher a que mais combina!` : 'Enviaremos sua melodia exclusiva pronta para emocionar!'}</p>
                 </div>
               </div>
 
@@ -263,7 +279,7 @@ export async function sendCustomerConfirmation(order: Order): Promise<boolean> {
                 <div class="step-number">3</div>
                 <div class="step-content">
                   <h4>Entrega por WhatsApp</h4>
-                  <p>Voce recebera as musicas diretamente no seu WhatsApp em ate 48 horas.</p>
+                  <p>Voce recebera a${order.planoMelodias && order.planoMelodias > 1 ? 's' : ''} musica${order.planoMelodias && order.planoMelodias > 1 ? 's' : ''} diretamente no seu WhatsApp em ate ${order.planoEntrega || '48 horas'}.</p>
                 </div>
               </div>
             </div>

@@ -20,6 +20,8 @@ export interface Order {
   occasionLabel: string;
   musicStyle: string;
   musicStyleLabel: string;
+  musicStyle2?: string;
+  musicStyle2Label?: string;
   voicePreference: string;
   qualities: string;
   memories: string;
@@ -39,6 +41,12 @@ export interface Order {
   amount: number;
   stripeSessionId?: string;
   stripePaymentIntentId?: string;
+
+  // Informacoes do plano
+  planoId?: string;
+  planoNome?: string;
+  planoMelodias?: number;
+  planoEntrega?: string;
 }
 
 // Usar variavel global para persistir entre chamadas na mesma instancia
