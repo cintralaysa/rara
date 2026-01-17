@@ -291,12 +291,10 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
             <p className="text-blue-200/70 text-[10px] sm:text-xs truncate">{stepInfo[step - 1].desc}</p>
           </div>
           <div className="text-right flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <div className="hidden sm:block bg-white/10 rounded-lg px-3 py-2 border border-white/20">
-              <span className="text-xs text-amber-400 font-semibold block flex items-center justify-end gap-1">
-                <Music size={10} /> Musica Exclusiva
-              </span>
-              <span className="text-sm font-bold text-white">Uma emocao</span>
-              <span className="text-xs text-blue-200/80 block">para a vida toda</span>
+            {/* Preço visível */}
+            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 border border-green-500/30">
+              <span className="text-[10px] sm:text-xs text-green-300 font-medium block">Plano {plano.name}</span>
+              <span className="text-base sm:text-lg font-black text-white">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
             </div>
             {onClose && (
               <button onClick={onClose} className="text-white/60 hover:text-white p-1 hover:bg-white/10 rounded-lg">
@@ -322,6 +320,26 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
               exit={{ opacity: 0, x: -20 }}
               className="space-y-5"
             >
+              {/* Explicação do processo */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-200">
+                <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-blue-800">
+                  <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-full border border-blue-200">
+                    <Edit3 size={12} className="text-blue-500" />
+                    Crie a letra
+                  </span>
+                  <ArrowRight size={12} className="text-blue-400" />
+                  <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-full border border-blue-200">
+                    <RefreshCw size={12} className="text-amber-500" />
+                    Edite a vontade
+                  </span>
+                  <ArrowRight size={12} className="text-blue-400" />
+                  <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-full border border-blue-200">
+                    <Phone size={12} className="text-green-500" />
+                    Receba no WhatsApp
+                  </span>
+                </div>
+              </div>
+
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
                   <Heart size={16} className="text-amber-500" />
@@ -728,6 +746,14 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
                     </div>
                   </div>
 
+                  {/* Aviso de edição ilimitada */}
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+                    <Sparkles size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-700">
+                      <strong>Edite quantas vezes quiser!</strong> Gere novas versoes ou edite manualmente ate ficar perfeita.
+                    </p>
+                  </div>
+
                   <div className="flex gap-2">
                     <button type="button" onClick={generateLyrics} disabled={generatingLyrics}
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-blue-300 text-blue-600 rounded-xl font-bold text-sm hover:bg-blue-50">
@@ -794,14 +820,19 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
               exit={{ opacity: 0, x: -20 }}
               className="space-y-5"
             >
-              <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                <h4 className="font-bold text-slate-900 mb-1 flex items-center gap-2">
-                  <Shield size={16} className="text-green-500" />
-                  Seus dados estao seguros
-                </h4>
-                <p className="text-xs text-slate-600">
-                  Precisamos dos seus dados apenas para enviar a musica pronta. Nao compartilhamos com terceiros.
-                </p>
+              {/* Destaque: Entrega no WhatsApp */}
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-300">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center flex-shrink-0">
+                    <Phone size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-green-800 text-sm">Receba sua musica no WhatsApp!</h4>
+                    <p className="text-xs text-green-700">
+                      Entrega em ate <strong>{plano.entrega}</strong> direto no seu celular
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-4">
