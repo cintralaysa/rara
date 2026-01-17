@@ -126,6 +126,27 @@ Coloque o nome da secao em colchetes: [Verso 1], [Refrao], etc.`
     if (!response.ok) {
       const error = await response.json();
       console.error('OpenAI API error:', error);
+
+      // Verificar tipo de erro
+      if (response.status === 401) {
+        return NextResponse.json(
+          { error: 'Erro de autenticacao com a API. Entre em contato pelo WhatsApp.' },
+          { status: 500 }
+        );
+      }
+      if (response.status === 429) {
+        return NextResponse.json(
+          { error: 'Muitas solicitacoes. Aguarde alguns minutos e tente novamente.' },
+          { status: 429 }
+        );
+      }
+      if (response.status === 503) {
+        return NextResponse.json(
+          { error: 'Servico temporariamente indisponivel. Tente novamente em alguns minutos.' },
+          { status: 503 }
+        );
+      }
+
       return NextResponse.json(
         { error: 'Erro ao gerar letra. Tente novamente.' },
         { status: 500 }

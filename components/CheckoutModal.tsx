@@ -34,7 +34,7 @@ export default function CheckoutModal({ isOpen, onClose, children }: CheckoutMod
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 backdrop-blur-sm p-4 md:p-8"
+          className="fixed inset-0 z-50 flex items-end sm:items-start justify-center overflow-y-auto bg-black/80 backdrop-blur-sm p-0 sm:p-4 md:p-8"
           onClick={(e) => e.target === e.currentTarget && onClose()}
         >
           <motion.div
@@ -42,27 +42,18 @@ export default function CheckoutModal({ isOpen, onClose, children }: CheckoutMod
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="relative w-full max-w-2xl my-8"
+            className="relative w-full max-w-2xl sm:my-8"
           >
-            {/* Efeito de glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-50" />
+            {/* Efeito de glow - escondido em mobile */}
+            <div className="hidden sm:block absolute -inset-1 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-50" />
 
             {/* Container principal */}
-            <div className="relative bg-[#1a1a1a] rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+            <div className="relative bg-white sm:bg-[#1a1a1a] rounded-t-2xl sm:rounded-2xl shadow-2xl border-0 sm:border sm:border-white/10 overflow-hidden min-h-[100vh] sm:min-h-0">
               {/* Header com gradiente */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500" />
 
-              {/* Botão fechar */}
-              <button
-                onClick={onClose}
-                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all duration-200 group"
-                aria-label="Fechar"
-              >
-                <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
-              </button>
-
-              {/* Conteúdo */}
-              <div className="p-6 md:p-8">
+              {/* Conteúdo - sem padding extra pois o SimpleBookingForm já tem */}
+              <div className="p-0">
                 {children}
               </div>
             </div>

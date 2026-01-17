@@ -128,10 +128,11 @@ export default function Home() {
             {/* CTA */}
             <button
               onClick={() => setIsModalOpen(true)}
-              className="group px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 font-bold rounded-full hover:from-amber-400 hover:to-yellow-400 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-500/50 hover:-translate-y-0.5"
+              className="group px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 font-bold rounded-full hover:from-amber-400 hover:to-yellow-400 transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-500/50 hover:-translate-y-0.5 text-sm sm:text-base"
             >
               <Zap className="w-4 h-4" />
-              Criar Música
+              <span className="hidden sm:inline">Criar Música</span>
+              <span className="sm:hidden">Criar</span>
             </button>
           </div>
         </div>
@@ -152,59 +153,59 @@ export default function Home() {
                 <span className="text-blue-800 text-sm font-semibold tracking-wide">100% Exclusiva e Personalizada</span>
               </div>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-slate-800 leading-[1.1] mb-8">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-800 leading-[1.1] mb-6 sm:mb-8">
                 Sua história vira{' '}
                 <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
                   música exclusiva
                 </span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-slate-600 mb-10 leading-relaxed font-light">
+              <p className="text-base sm:text-xl md:text-2xl text-slate-600 mb-6 sm:mb-10 leading-relaxed font-light">
                 Conte sua história e nossa equipe transforma em uma canção única.
                 <span className="text-amber-600 font-semibold"> Receba sua melodia exclusiva</span> produzida profissionalmente.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="group px-10 py-5 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 text-amber-400 text-lg font-bold rounded-full hover:from-blue-700 hover:via-blue-800 hover:to-slate-800 transition-all duration-300 shadow-xl shadow-blue-900/30 hover:shadow-2xl hover:shadow-blue-900/40 hover:-translate-y-1 flex items-center justify-center gap-3"
+                  className="group px-6 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 text-amber-400 text-base sm:text-lg font-bold rounded-full hover:from-blue-700 hover:via-blue-800 hover:to-slate-800 transition-all duration-300 shadow-xl shadow-blue-900/30 hover:shadow-2xl hover:shadow-blue-900/40 hover:-translate-y-1 flex items-center justify-center gap-2 sm:gap-3"
                 >
-                  <Wand2 className="w-6 h-6" />
+                  <Wand2 className="w-5 h-5 sm:w-6 sm:h-6" />
                   Criar Minha Música
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button
                   onClick={() => scrollToSection('portfolio')}
-                  className="px-10 py-5 bg-white text-slate-700 text-lg font-semibold rounded-full border-2 border-blue-300 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg"
+                  className="px-6 sm:px-10 py-4 sm:py-5 bg-white text-slate-700 text-base sm:text-lg font-semibold rounded-full border-2 border-blue-300 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 shadow-lg"
                 >
-                  <Play className="w-6 h-6 text-amber-500" />
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
                   Ouvir Exemplos
                 </button>
               </div>
 
               {/* Stats */}
-              <div className="flex flex-wrap gap-6">
+              <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-6">
                 <div className="relative group">
-                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-2xl px-7 py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
-                    <p className="text-4xl font-black text-slate-800">+5.000</p>
-                    <p className="text-slate-600 text-sm font-medium">Pessoas satisfeitas</p>
+                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-xl sm:rounded-2xl px-3 sm:px-7 py-3 sm:py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
+                    <p className="text-xl sm:text-4xl font-black text-slate-800">+5.000</p>
+                    <p className="text-slate-600 text-[10px] sm:text-sm font-medium">Pessoas satisfeitas</p>
                   </div>
                 </div>
                 <div className="relative group">
-                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-2xl px-7 py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
-                    <p className="text-4xl font-black bg-gradient-to-r from-amber-500 to-yellow-500 bg-clip-text text-transparent">100%</p>
-                    <p className="text-slate-600 text-sm font-medium flex items-center gap-1">
-                      <Music className="w-4 h-4 text-amber-500" />
-                      Música exclusiva
+                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-xl sm:rounded-2xl px-3 sm:px-7 py-3 sm:py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
+                    <p className="text-xl sm:text-4xl font-black bg-gradient-to-r from-amber-500 to-yellow-500 bg-clip-text text-transparent">100%</p>
+                    <p className="text-slate-600 text-[10px] sm:text-sm font-medium flex items-center gap-1">
+                      <Music className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
+                      Exclusiva
                     </p>
                   </div>
                 </div>
                 <div className="relative group">
-                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-2xl px-7 py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
-                    <p className="text-4xl font-black text-slate-800 flex items-center gap-2">
-                      <Clock className="w-8 h-8 text-amber-500" />
+                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-xl sm:rounded-2xl px-3 sm:px-7 py-3 sm:py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
+                    <p className="text-xl sm:text-4xl font-black text-slate-800 flex items-center gap-1 sm:gap-2">
+                      <Clock className="w-5 h-5 sm:w-8 sm:h-8 text-amber-500" />
                     </p>
-                    <p className="text-slate-600 text-sm font-medium">Entrega rápida</p>
+                    <p className="text-slate-600 text-[10px] sm:text-sm font-medium">Entrega rápida</p>
                   </div>
                 </div>
               </div>
@@ -676,31 +677,32 @@ export default function Home() {
               com uma música única e exclusiva.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-14">
-              <div className="bg-white backdrop-blur-xl rounded-2xl px-10 py-8 text-center shadow-2xl">
-                <Heart className="w-10 h-10 text-amber-500 mx-auto mb-2 fill-amber-500" />
-                <p className="text-2xl font-black text-slate-800">Emocione</p>
-                <p className="text-slate-600 font-medium">quem voce ama</p>
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-row sm:items-center sm:justify-center sm:gap-6 mb-8 sm:mb-14">
+              <div className="bg-white backdrop-blur-xl rounded-xl sm:rounded-2xl px-3 sm:px-10 py-4 sm:py-8 text-center shadow-2xl">
+                <Heart className="w-6 h-6 sm:w-10 sm:h-10 text-amber-500 mx-auto mb-1 sm:mb-2 fill-amber-500" />
+                <p className="text-sm sm:text-2xl font-black text-slate-800">Emocione</p>
+                <p className="text-slate-600 font-medium text-[10px] sm:text-base">quem voce ama</p>
               </div>
-              <div className="bg-white backdrop-blur-xl rounded-2xl px-10 py-8 text-center shadow-2xl">
-                <Music className="w-10 h-10 text-amber-500 mx-auto mb-2" />
-                <p className="text-2xl font-black text-slate-800">Musica Inedita</p>
-                <p className="text-slate-600 font-medium">feita so pra voce</p>
+              <div className="bg-white backdrop-blur-xl rounded-xl sm:rounded-2xl px-3 sm:px-10 py-4 sm:py-8 text-center shadow-2xl">
+                <Music className="w-6 h-6 sm:w-10 sm:h-10 text-amber-500 mx-auto mb-1 sm:mb-2" />
+                <p className="text-sm sm:text-2xl font-black text-slate-800">Inedita</p>
+                <p className="text-slate-600 font-medium text-[10px] sm:text-base">so pra voce</p>
               </div>
-              <div className="bg-white backdrop-blur-xl rounded-2xl px-10 py-8 text-center shadow-2xl">
-                <Sparkles className="w-10 h-10 text-amber-500 mx-auto mb-2" />
-                <p className="text-2xl font-black text-slate-800">Para Sempre</p>
-                <p className="text-slate-600 font-medium">uma lembranca eterna</p>
+              <div className="bg-white backdrop-blur-xl rounded-xl sm:rounded-2xl px-3 sm:px-10 py-4 sm:py-8 text-center shadow-2xl">
+                <Sparkles className="w-6 h-6 sm:w-10 sm:h-10 text-amber-500 mx-auto mb-1 sm:mb-2" />
+                <p className="text-sm sm:text-2xl font-black text-slate-800">Eterna</p>
+                <p className="text-slate-600 font-medium text-[10px] sm:text-base">lembranca</p>
               </div>
             </div>
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="group px-14 py-6 bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 text-xl font-black rounded-full hover:from-amber-400 hover:to-yellow-400 transition-all duration-300 shadow-2xl hover:-translate-y-2 inline-flex items-center gap-4"
+              className="group px-8 sm:px-14 py-4 sm:py-6 bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 text-base sm:text-xl font-black rounded-full hover:from-amber-400 hover:to-yellow-400 transition-all duration-300 shadow-2xl hover:-translate-y-2 inline-flex items-center gap-2 sm:gap-4"
             >
-              <Wand2 className="w-7 h-7" />
-              Criar Minha Música Agora
-              <ArrowRight className="w-7 h-7 group-hover:translate-x-2 transition-transform" />
+              <Wand2 className="w-5 h-5 sm:w-7 sm:h-7" />
+              <span className="hidden sm:inline">Criar Minha Música Agora</span>
+              <span className="sm:hidden">Criar Música</span>
+              <ArrowRight className="w-5 h-5 sm:w-7 sm:h-7 group-hover:translate-x-2 transition-transform" />
             </button>
           </motion.div>
         </div>

@@ -197,8 +197,9 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
         updateField('generatedLyrics', data.lyrics);
         updateField('lyricsApproved', false);
       }
-    } catch (error) {
-      setLyricsError('Erro ao gerar letra. Por favor, tente novamente.');
+    } catch (error: any) {
+      console.error('Erro ao gerar letra:', error);
+      setLyricsError('Erro de conexao. Verifique sua internet e tente novamente.');
     } finally {
       setGeneratingLyrics(false);
     }
@@ -276,21 +277,21 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
   ];
 
   return (
-    <div className="bg-white rounded-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+    <div className="bg-white rounded-none sm:rounded-2xl max-h-[100vh] sm:max-h-[90vh] overflow-hidden flex flex-col shadow-2xl w-full">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 px-4 py-4 sticky top-0 z-10">
+      <div className="bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 px-3 sm:px-4 py-3 sm:py-4 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-3">
-          <div className="text-white">
+          <div className="text-white flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="bg-amber-500/20 text-amber-400 text-xs font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
+              <span className="bg-amber-500/20 text-amber-400 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
                 Passo {step} de {totalSteps}
               </span>
             </div>
-            <h3 className="text-lg font-bold">{stepInfo[step - 1].title}</h3>
-            <p className="text-blue-200/70 text-xs">{stepInfo[step - 1].desc}</p>
+            <h3 className="text-sm sm:text-lg font-bold truncate">{stepInfo[step - 1].title}</h3>
+            <p className="text-blue-200/70 text-[10px] sm:text-xs truncate">{stepInfo[step - 1].desc}</p>
           </div>
-          <div className="text-right flex items-center gap-3">
-            <div className="bg-white/10 rounded-lg px-3 py-2 border border-white/20">
+          <div className="text-right flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <div className="hidden sm:block bg-white/10 rounded-lg px-3 py-2 border border-white/20">
               <span className="text-xs text-amber-400 font-semibold block flex items-center justify-end gap-1">
                 <Music size={10} /> Musica Exclusiva
               </span>
@@ -299,7 +300,7 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
             </div>
             {onClose && (
               <button onClick={onClose} className="text-white/60 hover:text-white p-1 hover:bg-white/10 rounded-lg">
-                <X size={24} />
+                <X size={20} className="sm:w-6 sm:h-6" />
               </button>
             )}
           </div>
@@ -326,7 +327,7 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
                   <Heart size={16} className="text-amber-500" />
                   Para quem e essa musica?
                 </label>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
                   {RELATIONSHIPS.map((rel) => (
                     <button key={rel.value} type="button"
                       onClick={() => {
@@ -343,7 +344,7 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
                           : 'border-slate-200 hover:border-blue-300'
                       }`}>
                       <span className="text-lg block">{rel.emoji}</span>
-                      <span className={`font-medium text-[8px] block mt-1 ${
+                      <span className={`font-medium text-[10px] sm:text-[8px] block mt-1 leading-tight ${
                         formData.relationship === rel.value ? 'text-blue-600' : 'text-slate-600'
                       }`}>{rel.label}</span>
                     </button>
@@ -499,7 +500,7 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
                     <Gift size={16} className="text-amber-500" />
                     Qual a ocasiao especial?
                   </label>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                     {OCCASIONS.filter(o => o.value !== 'cha-revelacao' && o.value !== 'cha-bebe').map((occ) => (
                       <button key={occ.value} type="button"
                         onClick={() => updateField('occasion', occ.value)}
@@ -509,7 +510,7 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
                             : 'border-slate-200 hover:border-blue-300'
                         }`}>
                         <span className="text-lg block">{occ.emoji}</span>
-                        <span className={`font-medium text-[8px] block mt-1 ${
+                        <span className={`font-medium text-[10px] sm:text-[8px] block mt-1 leading-tight ${
                           formData.occasion === occ.value ? 'text-blue-600' : 'text-slate-600'
                         }`}>{occ.label}</span>
                       </button>
@@ -523,7 +524,7 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
                   <Music size={16} className="text-amber-500" />
                   {plano.melodias > 1 ? 'Estilo da 1ª melodia' : 'Qual estilo musical?'}
                 </label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {MUSIC_STYLES.map((style) => (
                     <button key={style.value} type="button"
                       onClick={() => updateField('musicStyle', style.value)}
@@ -533,7 +534,7 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
                           : 'border-slate-200 hover:border-blue-300'
                       }`}>
                       <span className="text-lg block">{style.emoji}</span>
-                      <span className={`font-medium text-[8px] block mt-1 ${
+                      <span className={`font-medium text-[10px] sm:text-[8px] block mt-1 leading-tight ${
                         formData.musicStyle === style.value ? 'text-blue-600' : 'text-slate-600'
                       }`}>{style.label}</span>
                     </button>
