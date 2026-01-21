@@ -352,7 +352,7 @@ export default function SimpleBookingForm({
                   <Heart size={16} className="text-amber-500" />
                   Para quem e essa musica?
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                   {RELATIONSHIPS.map((rel) => (
                     <button key={rel.value} type="button"
                       onClick={() => {
@@ -369,7 +369,7 @@ export default function SimpleBookingForm({
                           : 'border-slate-200 hover:border-blue-300'
                       }`}>
                       <span className="text-lg block">{rel.emoji}</span>
-                      <span className={`font-medium text-[10px] sm:text-[8px] block mt-1 leading-tight ${
+                      <span className={`font-medium text-[9px] sm:text-[10px] md:text-xs block mt-1 leading-tight ${
                         formData.relationship === rel.value ? 'text-blue-600' : 'text-slate-600'
                       }`}>{rel.label}</span>
                     </button>
@@ -525,7 +525,7 @@ export default function SimpleBookingForm({
                     <Gift size={16} className="text-amber-500" />
                     Qual a ocasiao especial?
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                     {OCCASIONS.filter(o => o.value !== 'cha-revelacao' && o.value !== 'cha-bebe').map((occ) => (
                       <button key={occ.value} type="button"
                         onClick={() => updateField('occasion', occ.value)}
@@ -535,7 +535,7 @@ export default function SimpleBookingForm({
                             : 'border-slate-200 hover:border-blue-300'
                         }`}>
                         <span className="text-lg block">{occ.emoji}</span>
-                        <span className={`font-medium text-[10px] sm:text-[8px] block mt-1 leading-tight ${
+                        <span className={`font-medium text-[9px] sm:text-[10px] md:text-xs block mt-1 leading-tight ${
                           formData.occasion === occ.value ? 'text-blue-600' : 'text-slate-600'
                         }`}>{occ.label}</span>
                       </button>
@@ -549,7 +549,7 @@ export default function SimpleBookingForm({
                   <Music size={16} className="text-amber-500" />
                   {plano.melodias > 1 ? 'Estilo da 1ª melodia' : 'Qual estilo musical?'}
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                   {MUSIC_STYLES.map((style) => (
                     <button key={style.value} type="button"
                       onClick={() => updateField('musicStyle', style.value)}
@@ -559,7 +559,7 @@ export default function SimpleBookingForm({
                           : 'border-slate-200 hover:border-blue-300'
                       }`}>
                       <span className="text-lg block">{style.emoji}</span>
-                      <span className={`font-medium text-[10px] sm:text-[8px] block mt-1 leading-tight ${
+                      <span className={`font-medium text-[9px] sm:text-[10px] md:text-xs block mt-1 leading-tight ${
                         formData.musicStyle === style.value ? 'text-blue-600' : 'text-slate-600'
                       }`}>{style.label}</span>
                     </button>
@@ -577,7 +577,7 @@ export default function SimpleBookingForm({
                   <select
                     value={formData.musicStyle2 || ''}
                     onChange={(e) => updateField('musicStyle2', e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border-2 border-amber-200 bg-white text-sm font-medium text-slate-700 focus:border-amber-400 focus:outline-none"
+                    className="w-full px-3 py-3 rounded-lg border-2 border-amber-200 bg-white text-sm sm:text-base font-medium text-slate-700 focus:border-amber-400 focus:outline-none"
                   >
                     <option value="">Mesmo estilo da 1ª melodia</option>
                     {MUSIC_STYLES.map((style) => (
@@ -666,9 +666,9 @@ export default function SimpleBookingForm({
                 <textarea
                   value={formData.storyAndMessage}
                   onChange={(e) => updateField('storyAndMessage', e.target.value)}
-                  rows={6}
+                  rows={4}
                   maxLength={1000}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 resize-none text-sm"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 resize-none text-sm sm:text-base"
                   placeholder="Conte qualidades, memorias especiais, momentos marcantes, apelidos carinhosos, lugares que frequentam juntos..."
                 />
                 <div className="flex justify-between items-start">

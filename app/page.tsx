@@ -530,23 +530,23 @@ export default function Home() {
       </div>
 
       {/* Depoimentos Section */}
-      <section id="depoimentos" className="py-28 relative bg-gradient-to-br from-blue-50 to-slate-100">
+      <section id="depoimentos" className="py-16 sm:py-20 md:py-28 relative bg-gradient-to-br from-blue-50 to-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-20"
+            className="text-center mb-10 sm:mb-14 md:mb-20"
           >
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-6 shadow-lg">
-              <Heart className="w-5 h-5 text-amber-500 fill-amber-500" />
-              <span className="text-blue-800 text-sm font-semibold">Depoimentos Reais</span>
+            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-4 sm:mb-6 shadow-lg">
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-500" />
+              <span className="text-blue-800 text-xs sm:text-sm font-semibold">Depoimentos Reais</span>
             </div>
-            <h2 className="text-5xl md:text-6xl font-black text-slate-800 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 mb-4 sm:mb-6">
               Histórias de quem já{' '}
               <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">se emocionou</span>
             </h2>
-            <p className="text-slate-600 text-xl max-w-2xl mx-auto">
+            <p className="text-slate-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4">
               Veja o que nossos clientes dizem sobre suas músicas personalizadas
             </p>
           </motion.div>
@@ -560,25 +560,25 @@ export default function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white backdrop-blur-xl border-2 border-blue-200 rounded-3xl p-10 md:p-14 text-center shadow-2xl"
+                className="bg-white backdrop-blur-xl border-2 border-blue-200 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 text-center shadow-2xl"
               >
-                <Quote className="w-14 h-14 text-amber-500/60 mx-auto mb-8" />
+                <Quote className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-amber-500/60 mx-auto mb-4 sm:mb-6 md:mb-8" />
 
-                <p className="text-2xl md:text-3xl text-slate-700 mb-10 leading-relaxed italic font-light">
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-slate-700 mb-6 sm:mb-8 md:mb-10 leading-relaxed italic font-light">
                   &quot;{TESTIMONIALS[currentTestimonial].content}&quot;
                 </p>
 
-                <div className="flex items-center justify-center gap-1.5 mb-6">
+                <div className="flex items-center justify-center gap-1 sm:gap-1.5 mb-4 sm:mb-6">
                   {[...Array(TESTIMONIALS[currentTestimonial].rating)].map((_, i) => (
-                    <Star key={i} className="w-6 h-6 text-amber-500 fill-amber-500" />
+                    <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500 fill-amber-500" />
                   ))}
                 </div>
 
                 <div>
-                  <p className="font-bold text-slate-800 text-xl">
+                  <p className="font-bold text-slate-800 text-lg sm:text-xl">
                     {TESTIMONIALS[currentTestimonial].name}
                   </p>
-                  <p className="text-slate-500 text-base">
+                  <p className="text-slate-500 text-sm sm:text-base">
                     {TESTIMONIALS[currentTestimonial].role} - {TESTIMONIALS[currentTestimonial].serviceType}
                   </p>
                 </div>
@@ -586,15 +586,15 @@ export default function Home() {
             </AnimatePresence>
 
             {/* Indicators */}
-            <div className="flex justify-center gap-3 mt-10">
+            <div className="flex justify-center gap-2 sm:gap-3 mt-6 sm:mt-8 md:mt-10">
               {TESTIMONIALS.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentTestimonial(index)}
-                  className={`h-3 rounded-full transition-all duration-300 ${
+                  className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${
                     index === currentTestimonial
-                      ? 'bg-gradient-to-r from-blue-700 to-blue-900 w-10 shadow-lg'
-                      : 'bg-blue-200 hover:bg-blue-400 w-3'
+                      ? 'bg-gradient-to-r from-blue-700 to-blue-900 w-8 sm:w-10 shadow-lg'
+                      : 'bg-blue-200 hover:bg-blue-400 w-2.5 sm:w-3'
                   }`}
                 />
               ))}
@@ -604,25 +604,25 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-24 relative bg-white">
+      <section id="faq" className="py-16 sm:py-20 md:py-24 relative bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-12 md:mb-16"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-4 sm:mb-6">
               <MessageCircle className="w-4 h-4 text-amber-500" />
-              <span className="text-blue-800 text-sm font-medium">Dúvidas Frequentes</span>
+              <span className="text-blue-800 text-xs sm:text-sm font-medium">Dúvidas Frequentes</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-4 sm:mb-6">
               Perguntas{' '}
               <span className="bg-gradient-to-r from-amber-500 to-yellow-500 bg-clip-text text-transparent">frequentes</span>
             </h2>
           </motion.div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {FAQS.map((faq, index) => (
               <motion.div
                 key={index}
@@ -630,15 +630,15 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
-                className={`bg-gradient-to-br from-blue-50 to-slate-50 backdrop-blur-sm border-2 rounded-2xl overflow-hidden transition-all duration-300 ${
+                className={`bg-gradient-to-br from-blue-50 to-slate-50 backdrop-blur-sm border-2 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 ${
                   openFaq === index ? 'border-blue-400 shadow-lg' : 'border-blue-200'
                 }`}
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full flex items-center justify-between p-6 text-left"
+                  className="w-full flex items-center justify-between p-4 sm:p-6 text-left"
                 >
-                  <span className="font-semibold text-slate-800 pr-4">
+                  <span className="font-semibold text-slate-800 pr-4 text-sm sm:text-base">
                     {faq.question}
                   </span>
                   <ChevronDown
@@ -656,7 +656,7 @@ export default function Home() {
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <p className="px-6 pb-6 text-slate-600 leading-relaxed">
+                      <p className="px-4 sm:px-6 pb-4 sm:pb-6 text-slate-600 leading-relaxed text-sm sm:text-base">
                         {faq.answer}
                       </p>
                     </motion.div>
@@ -669,10 +669,10 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section id="criar-musica" className="py-32 relative overflow-hidden bg-gradient-to-br from-blue-800 via-blue-900 to-slate-900">
+      <section id="criar-musica" className="py-16 sm:py-24 md:py-32 relative overflow-hidden bg-gradient-to-br from-blue-800 via-blue-900 to-slate-900">
         {/* Background effects */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-amber-500/10 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] md:w-[1000px] h-[600px] sm:h-[800px] md:h-[1000px] bg-amber-500/10 rounded-full blur-[120px]" />
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -681,17 +681,17 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500/20 rounded-full border border-amber-500/30 mb-8">
-              <Sparkles className="w-5 h-5 text-amber-400" />
-              <span className="text-amber-400 text-sm font-bold">Comece Agora</span>
+            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-amber-500/20 rounded-full border border-amber-500/30 mb-6 sm:mb-8">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
+              <span className="text-amber-400 text-xs sm:text-sm font-bold">Comece Agora</span>
             </div>
 
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-8">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 sm:mb-8">
               Pronto para criar uma música{' '}
               <span className="text-amber-400">inesquecível?</span>
             </h2>
 
-            <p className="text-blue-100/90 text-xl mb-12 max-w-2xl mx-auto">
+            <p className="text-blue-100/90 text-base sm:text-lg md:text-xl mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto px-4">
               Em apenas alguns minutos você dá o primeiro passo para eternizar seu momento especial
               com uma música única e exclusiva.
             </p>
@@ -728,48 +728,48 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-20 bg-slate-900 border-t border-slate-800">
+      <footer className="py-12 sm:py-16 md:py-20 bg-slate-900 border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-8 sm:mb-12">
             {/* Brand */}
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center shadow-lg">
-                  <Music className="w-7 h-7 text-amber-400" />
+            <div className="sm:col-span-2">
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center shadow-lg">
+                  <Music className="w-5 h-5 sm:w-7 sm:h-7 text-amber-400" />
                 </div>
-                <span className="text-2xl font-bold text-white">Melodia Rara</span>
+                <span className="text-xl sm:text-2xl font-bold text-white">Melodia Rara</span>
               </div>
-              <p className="text-slate-400 mb-8 max-w-sm text-lg">
+              <p className="text-slate-400 mb-6 sm:mb-8 max-w-sm text-sm sm:text-base md:text-lg">
                 {COMPANY_INFO.description}
               </p>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <a
                   href={`https://instagram.com/${COMPANY_INFO.instagram.replace('@', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-gradient-to-r hover:from-amber-500 hover:to-yellow-500 hover:text-blue-900 hover:border-transparent transition-all duration-300"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-gradient-to-r hover:from-amber-500 hover:to-yellow-500 hover:text-blue-900 hover:border-transparent transition-all duration-300"
                 >
-                  <Instagram className="w-6 h-6" />
+                  <Instagram className="w-5 h-5 sm:w-6 sm:h-6" />
                 </a>
                 <a
                   href={`https://youtube.com/${COMPANY_INFO.youtube}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-gradient-to-r hover:from-amber-500 hover:to-yellow-500 hover:text-blue-900 hover:border-transparent transition-all duration-300"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-gradient-to-r hover:from-amber-500 hover:to-yellow-500 hover:text-blue-900 hover:border-transparent transition-all duration-300"
                 >
-                  <Youtube className="w-6 h-6" />
+                  <Youtube className="w-5 h-5 sm:w-6 sm:h-6" />
                 </a>
               </div>
             </div>
 
             {/* Links */}
             <div>
-              <h4 className="font-bold text-white mb-6 text-lg">Navegação</h4>
-              <ul className="space-y-4">
+              <h4 className="font-bold text-white mb-4 sm:mb-6 text-base sm:text-lg">Navegação</h4>
+              <ul className="space-y-3 sm:space-y-4">
                 <li>
                   <button
                     onClick={() => scrollToSection('como-funciona')}
-                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium"
+                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium text-sm sm:text-base"
                   >
                     Como Funciona
                   </button>
@@ -777,7 +777,7 @@ export default function Home() {
                 <li>
                   <button
                     onClick={() => scrollToSection('portfolio')}
-                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium"
+                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium text-sm sm:text-base"
                   >
                     Portfolio
                   </button>
@@ -785,7 +785,7 @@ export default function Home() {
                 <li>
                   <button
                     onClick={() => scrollToSection('depoimentos')}
-                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium"
+                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium text-sm sm:text-base"
                   >
                     Depoimentos
                   </button>
@@ -793,7 +793,7 @@ export default function Home() {
                 <li>
                   <button
                     onClick={() => scrollToSection('faq')}
-                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium"
+                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium text-sm sm:text-base"
                   >
                     FAQ
                   </button>
@@ -803,22 +803,22 @@ export default function Home() {
 
             {/* Contact */}
             <div>
-              <h4 className="font-bold text-white mb-6 text-lg">Contato</h4>
-              <ul className="space-y-4">
-                <li className="flex items-center gap-3 text-slate-400">
-                  <Mail className="w-5 h-5 text-amber-400" />
+              <h4 className="font-bold text-white mb-4 sm:mb-6 text-base sm:text-lg">Contato</h4>
+              <ul className="space-y-3 sm:space-y-4">
+                <li className="flex items-center gap-2 sm:gap-3 text-slate-400 text-sm sm:text-base">
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
                   {COMPANY_INFO.email}
                 </li>
-                <li className="flex items-center gap-3 text-slate-400">
-                  <Phone className="w-5 h-5 text-amber-400" />
+                <li className="flex items-center gap-2 sm:gap-3 text-slate-400 text-sm sm:text-base">
+                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
                   WhatsApp
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-slate-800 pt-10 text-center">
-            <p className="text-slate-500 text-base">
+          <div className="border-t border-slate-800 pt-6 sm:pt-8 md:pt-10 text-center">
+            <p className="text-slate-500 text-sm sm:text-base">
               &copy; {new Date().getFullYear()} {COMPANY_INFO.name}. Todos os direitos reservados.
             </p>
           </div>
@@ -830,7 +830,7 @@ export default function Home() {
         href={`https://wa.me/${COMPANY_INFO.whatsapp}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.5)] hover:shadow-[0_0_50px_rgba(34,197,94,0.7)] hover:scale-110 transition-all duration-300 z-50"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.5)] hover:shadow-[0_0_50px_rgba(34,197,94,0.7)] hover:scale-110 transition-all duration-300 z-50"
       >
         <MessageCircle className="w-8 h-8 text-white" />
       </a>
