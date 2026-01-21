@@ -198,8 +198,8 @@ export const PLANOS: PricePlan[] = [
   {
     id: "basico",
     name: "Plano Basico",
-    price: 49.90,
-    priceCents: 4990,
+    price: 59.90,
+    priceCents: 5990,
     melodias: 1,
     entrega: "48 horas",
     features: [
@@ -238,5 +238,5 @@ export const getPlanoById = (id: string): PricePlan | undefined => {
 };
 
 // Precos padrão (plano basico) - para compatibilidade
-export const PRECO_MUSICA = 4990; // em centavos para a API do OpenPix
-export const PRECO_MUSICA_DISPLAY = 49.90; // em reais para exibicao
+export const PRECO_MUSICA = 5990; // em centavos para a API do OpenPix
+export const PRECO_MUSICA_DISPLAY = 59.90; // em reais para exibicao

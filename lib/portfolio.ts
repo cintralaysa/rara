@@ -57,28 +57,6 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
     duration: "3:12",
     occasion: "Cha Revelacao"
   },
-  {
-    id: "5",
-    title: "Para Sempre Juntos",
-    description: "Pedido de casamento surpresa emocionante",
-    category: "romantica",
-    categoryLabel: "Romantica",
-    audioUrl: "/audio/portfolio/musica-5.mp3",
-    coverImage: "/images/portfolio/casamento-pedido.png",
-    duration: "3:30",
-    occasion: "Pedido de Casamento"
-  },
-  {
-    id: "6",
-    title: "Presente de Deus",
-    description: "Homenagem para chegada do bebe",
-    category: "homenagem",
-    categoryLabel: "Homenagem",
-    audioUrl: "/audio/portfolio/musica-6.mp3",
-    coverImage: "/images/portfolio/cha-bebe-masculino.png",
-    duration: "3:00",
-    occasion: "Cha de Bebe"
-  },
 ];
 
 export const PORTFOLIO_CATEGORIES = [

@@ -96,9 +96,16 @@ interface FormData {
 interface SimpleBookingFormProps {
   onClose?: () => void;
   selectedPlanId?: string;
+  preSelectedOccasion?: string;
+  preSelectedRelationship?: string;
 }
 
-export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }: SimpleBookingFormProps) {
+export default function SimpleBookingForm({
+  onClose,
+  selectedPlanId = 'basico',
+  preSelectedOccasion = '',
+  preSelectedRelationship = ''
+}: SimpleBookingFormProps) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -112,9 +119,9 @@ export default function SimpleBookingForm({ onClose, selectedPlanId = 'basico' }
   const plano = getPlanoById(currentPlanId) || PLANOS[0];
 
   const [formData, setFormData] = useState<FormData>({
-    relationship: '',
+    relationship: preSelectedRelationship,
     honoreeName: '',
-    occasion: '',
+    occasion: preSelectedOccasion,
     musicStyle: '',
     musicStyle2: '', // Segundo estilo para Plano Premium
     voicePreference: 'sem_preferencia',
