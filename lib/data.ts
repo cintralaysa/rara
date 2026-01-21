@@ -201,12 +201,12 @@ export const PLANOS: PricePlan[] = [
     price: 59.90,
     priceCents: 5990,
     melodias: 1,
-    entrega: "48 horas",
+    entrega: "24 horas",
     features: [
       "1 letra exclusiva personalizada",
-      "1 melodia da sua musica",
+      "1 ritmo a sua escolha",
       "Edite a letra no site",
-      "Entrega em ate 48 horas",
+      "Entrega em ate 24 horas",
       "Arquivo MP3 alta qualidade"
     ],
     highlight: undefined,
@@ -218,12 +218,12 @@ export const PLANOS: PricePlan[] = [
     price: 79.90,
     priceCents: 7990,
     melodias: 2,
-    entrega: "24 horas",
+    entrega: "no mesmo dia",
     features: [
       "1 letra exclusiva personalizada",
-      "2 melodias diferentes",
+      "2 ritmos diferentes",
       "Edite a letra no site",
-      "Entrega expressa em 24 horas",
+      "Entrega no mesmo dia",
       "Arquivo MP3 alta qualidade",
       "Prioridade na producao"
     ],
