@@ -19,7 +19,7 @@ export const SERVICES: Service[] = [
     slug: "musica-romantica",
     title: "Música Romântica",
     description: "Uma canção única que eterniza o amor de vocês. Perfeita para casamentos, aniversários de namoro, pedidos de casamento ou simplesmente para dizer 'eu te amo' de uma forma inesquecível.",
-    price: 49.90,
+    price: 59.90,
     image: "/images/romantica.jpg",
     features: [
       "Letra exclusiva personalizada",
@@ -38,7 +38,7 @@ export const SERVICES: Service[] = [
     slug: "musica-homenagem",
     title: "Música de Homenagem",
     description: "Celebre a vida de alguém especial com uma música que conta sua história. Ideal para homenagear pais, avós, filhos ou amigos em momentos marcantes.",
-    price: 49.90,
+    price: 59.90,
     image: "/images/homenagem.jpg",
     features: [
       "Letra exclusiva personalizada",
@@ -56,7 +56,7 @@ export const SERVICES: Service[] = [
     slug: "musica-especial",
     title: "Música para Ocasião Especial",
     description: "Chá revelação, aniversário, dia das mães, dia dos pais, formatura... Qualquer momento especial merece uma música única e emocionante.",
-    price: 49.90,
+    price: 59.90,
     image: "/images/especial.jpg",
     features: [
       "Letra exclusiva personalizada",

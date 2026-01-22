@@ -77,8 +77,8 @@ export default function CheckoutPixPage() {
     id: 'basico',
     nome: 'Plano Basico',
     melodias: 1,
-    entrega: '48 horas',
-    preco: 49.90
+    entrega: '24 horas',
+    preco: 59.90
   });
 
   // Carregar dados do localStorage e criar PIX
@@ -114,7 +114,7 @@ export default function CheckoutPixPage() {
           nome: pendingOrder.planoNome || 'Plano Basico',
           melodias: pendingOrder.planoMelodias || 1,
           entrega: pendingOrder.planoEntrega || '48 horas',
-          preco: pendingOrder.planoPreco || 49.90
+          preco: pendingOrder.planoPreco || 59.90
         });
       }
 
