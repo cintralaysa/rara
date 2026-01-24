@@ -469,7 +469,7 @@ export default function SimpleBookingForm({
                             <div>
                               <p className="text-sm font-bold text-amber-800">Plano atualizado para Premium!</p>
                               <p className="text-xs text-amber-700 mt-1">
-                                Como o sexo e surpresa, precisamos criar 2 melodias diferentes (uma para menino e outra para menina). Seu plano foi automaticamente atualizado.
+                                Como o sexo e surpresa, voce recebera 2 musicas completas (uma para menino e outra para menina). Seu plano foi automaticamente atualizado para Premium!
                               </p>
                             </div>
                           </div>
@@ -547,7 +547,7 @@ export default function SimpleBookingForm({
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
                   <Music size={16} className="text-amber-500" />
-                  {plano.melodias > 1 ? 'Estilo da 1ª melodia' : 'Qual estilo musical?'}
+                  {plano.melodias > 1 ? 'Ritmo da 1ª musica' : 'Qual ritmo voce prefere?'}
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                   {MUSIC_STYLES.map((style) => (
@@ -572,14 +572,14 @@ export default function SimpleBookingForm({
                 <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-3 border border-amber-200">
                   <label className="flex items-center gap-2 text-xs font-bold text-amber-700 mb-2">
                     <Sparkles size={14} className="text-amber-500" />
-                    Bonus Premium: Escolha o estilo da 2ª melodia
+                    Bonus Premium: Escolha o ritmo da 2ª musica
                   </label>
                   <select
                     value={formData.musicStyle2 || ''}
                     onChange={(e) => updateField('musicStyle2', e.target.value)}
                     className="w-full px-3 py-3 rounded-lg border-2 border-amber-200 bg-white text-sm sm:text-base font-medium text-slate-700 focus:border-amber-400 focus:outline-none"
                   >
-                    <option value="">Mesmo estilo da 1ª melodia</option>
+                    <option value="">Mesmo ritmo da 1ª musica</option>
                     {MUSIC_STYLES.map((style) => (
                       <option key={style.value} value={style.value}>
                         {style.emoji} {style.label}

@@ -204,8 +204,8 @@ export const PLANOS: PricePlan[] = [
     entrega: "24 horas",
     features: [
       "1 letra exclusiva personalizada",
-      "1 ritmo a sua escolha",
-      "Edite a letra no site",
+      "1 musica completa no ritmo escolhido",
+      "Edite a letra quantas vezes quiser",
       "Entrega em ate 24 horas",
       "Arquivo MP3 alta qualidade"
     ],
@@ -221,8 +221,8 @@ export const PLANOS: PricePlan[] = [
     entrega: "no mesmo dia",
     features: [
       "1 letra exclusiva personalizada",
-      "2 ritmos diferentes",
-      "Edite a letra no site",
+      "2 musicas completas em ritmos diferentes",
+      "Edite a letra quantas vezes quiser",
       "Entrega no mesmo dia",
       "Arquivo MP3 alta qualidade",
       "Prioridade na producao"

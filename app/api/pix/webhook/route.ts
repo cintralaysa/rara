@@ -141,8 +141,8 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
             <p class="info-row"><strong>Musica para:</strong> ${orderData.honoreeName || 'N/A'}</p>
             <p class="info-row"><strong>Relacionamento:</strong> ${orderData.relationshipLabel || orderData.relationship || 'N/A'}</p>
             <p class="info-row"><strong>Ocasiao:</strong> ${orderData.occasionLabel || orderData.occasion || 'N/A'}</p>
-            <p class="info-row"><strong>Estilo Musical${orderData.planoMelodias && orderData.planoMelodias > 1 ? ' 1ª melodia' : ''}:</strong> ${orderData.musicStyleLabel || orderData.musicStyle || 'N/A'}</p>
-            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p class="info-row"><strong>Estilo Musical 2ª melodia:</strong> ${orderData.musicStyle2Label || orderData.musicStyle2 || 'Mesmo estilo da 1ª melodia'}</p>` : ''}
+            <p class="info-row"><strong>Ritmo${orderData.planoMelodias && orderData.planoMelodias > 1 ? ' da 1ª musica' : ''}:</strong> ${orderData.musicStyleLabel || orderData.musicStyle || 'N/A'}</p>
+            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p class="info-row"><strong>Ritmo da 2ª musica:</strong> ${orderData.musicStyle2Label || orderData.musicStyle2 || 'Mesmo ritmo da 1ª musica'}</p>` : ''}
             <p class="info-row"><strong>Preferencia de Voz:</strong> ${orderData.voicePreference === 'feminina' ? 'Feminina' : orderData.voicePreference === 'masculina' ? 'Masculina' : 'Sem preferencia'}</p>
           </div>
 
@@ -183,7 +183,7 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
             <div class="section-title" style="color: #d97706;">⏰ Proximo Passo</div>
             ${orderData.planoNome ? `<p><strong>Plano:</strong> ${orderData.planoNome}</p>` : ''}
             <p><strong>Prazo de entrega:</strong> ${orderData.planoEntrega || '48 horas'}</p>
-            <p><strong>Melodias:</strong> ${orderData.planoMelodias || 1}</p>
+            <p><strong>Musicas completas:</strong> ${orderData.planoMelodias || 1}</p>
             <p>Entre em contato com o cliente pelo WhatsApp para confirmar os detalhes e entregar a musica personalizada.</p>
           </div>
         </div>
@@ -352,8 +352,8 @@ async function sendCustomerPaymentConfirmedEmail(orderData: OrderData) {
             ${orderData.planoNome ? `<p><strong>Plano:</strong> ${orderData.planoNome}</p>` : ''}
             <p><strong>Musica para:</strong> ${orderData.honoreeName}</p>
             <p><strong>Ocasiao:</strong> ${orderData.occasionLabel || orderData.occasion}</p>
-            <p><strong>Estilo musical${orderData.planoMelodias && orderData.planoMelodias > 1 ? ' 1ª melodia' : ''}:</strong> ${orderData.musicStyleLabel || orderData.musicStyle}</p>
-            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p><strong>Estilo musical 2ª melodia:</strong> ${orderData.musicStyle2Label || orderData.musicStyle2 || 'Mesmo estilo da 1ª melodia'}</p>` : ''}
+            <p><strong>Ritmo${orderData.planoMelodias && orderData.planoMelodias > 1 ? ' da 1ª musica' : ''}:</strong> ${orderData.musicStyleLabel || orderData.musicStyle}</p>
+            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p><strong>Ritmo da 2ª musica:</strong> ${orderData.musicStyle2Label || orderData.musicStyle2 || 'Mesmo ritmo da 1ª musica'}</p>` : ''}
           </div>
 
           ${lyricsHtml ? `
@@ -362,8 +362,8 @@ async function sendCustomerPaymentConfirmedEmail(orderData: OrderData) {
           ` : ''}
 
           <div class="highlight-box">
-            <strong>⏰ Prazo de entrega:</strong> Sua${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} musica${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} personalizada${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} ${orderData.planoMelodias && orderData.planoMelodias > 1 ? 'serao entregues' : 'sera entregue'} em ate <strong>${orderData.planoEntrega || '48 horas'}</strong> pelo WhatsApp.
-            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<br><br>✨ Voce recebera <strong>${orderData.planoMelodias} melodias</strong> diferentes para escolher!` : ''}
+            <strong>⏰ Prazo de entrega:</strong> Sua${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} musica${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} personalizada${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} ${orderData.planoMelodias && orderData.planoMelodias > 1 ? 'serao entregues' : 'sera entregue'} em ate <strong>${orderData.planoEntrega || '24 horas'}</strong> pelo WhatsApp.
+            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<br><br>✨ Voce recebera <strong>${orderData.planoMelodias} musicas completas</strong> em ritmos diferentes!` : ''}
           </div>
 
           <p>Qualquer duvida, estamos a disposicao!</p>
