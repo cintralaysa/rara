@@ -142,7 +142,7 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
             <p class="info-row"><strong>Relacionamento:</strong> ${orderData.relationshipLabel || orderData.relationship || 'N/A'}</p>
             <p class="info-row"><strong>Ocasiao:</strong> ${orderData.occasionLabel || orderData.occasion || 'N/A'}</p>
             <p class="info-row"><strong>Estilo Musical${orderData.planoMelodias && orderData.planoMelodias > 1 ? ' 1ª melodia' : ''}:</strong> ${orderData.musicStyleLabel || orderData.musicStyle || 'N/A'}</p>
-            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p class="info-row"><strong>Estilo Musical 2ª melodia:</strong> ${orderData.musicStyle2Label || orderData.musicStyleLabel || 'N/A'}</p>` : ''}
+            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p class="info-row"><strong>Estilo Musical 2ª melodia:</strong> ${orderData.musicStyle2Label || orderData.musicStyle2 || 'Mesmo estilo da 1ª melodia'}</p>` : ''}
             <p class="info-row"><strong>Preferencia de Voz:</strong> ${orderData.voicePreference === 'feminina' ? 'Feminina' : orderData.voicePreference === 'masculina' ? 'Masculina' : 'Sem preferencia'}</p>
           </div>
 
@@ -353,7 +353,7 @@ async function sendCustomerPaymentConfirmedEmail(orderData: OrderData) {
             <p><strong>Musica para:</strong> ${orderData.honoreeName}</p>
             <p><strong>Ocasiao:</strong> ${orderData.occasionLabel || orderData.occasion}</p>
             <p><strong>Estilo musical${orderData.planoMelodias && orderData.planoMelodias > 1 ? ' 1ª melodia' : ''}:</strong> ${orderData.musicStyleLabel || orderData.musicStyle}</p>
-            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p><strong>Estilo musical 2ª melodia:</strong> ${orderData.musicStyle2Label || orderData.musicStyleLabel}</p>` : ''}
+            ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<p><strong>Estilo musical 2ª melodia:</strong> ${orderData.musicStyle2Label || orderData.musicStyle2 || 'Mesmo estilo da 1ª melodia'}</p>` : ''}
           </div>
 
           ${lyricsHtml ? `
