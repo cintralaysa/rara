@@ -44,7 +44,7 @@ export default function PortfolioSection() {
   };
 
   return (
-    <section id="portfolio" className="py-16 sm:py-20 md:py-28 relative overflow-hidden bg-[#0f0f0f]">
+    <section id="portfolio" className="py-16 sm:py-20 md:py-28 relative overflow-hidden bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <motion.div
@@ -53,15 +53,15 @@ export default function PortfolioSection() {
           viewport={{ once: true }}
           className="text-center mb-10 sm:mb-14 md:mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-purple-900/50 to-purple-800/30 rounded-full border border-purple-500/30 mb-4 sm:mb-6 shadow-lg">
-            <Music className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
-            <span className="text-purple-200 text-xs sm:text-sm font-semibold">Nosso Portfólio</span>
+          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-amber-100 to-amber-50 rounded-full border border-amber-300/50 mb-4 sm:mb-6">
+            <Music className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" />
+            <span className="text-amber-700 text-xs sm:text-sm font-semibold">Nosso Portfólio</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 sm:mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 mb-4 sm:mb-6">
             Músicas que já
-            <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent"> emocionaram</span>
+            <span className="bg-gradient-to-r from-amber-500 via-amber-600 to-rose-500 bg-clip-text text-transparent"> emocionaram</span>
           </h2>
-          <p className="text-gray-300 text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4">
+          <p className="text-slate-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4">
             Ouça algumas das músicas que criamos para nossos clientes. Cada uma conta uma história única e especial.
           </p>
         </motion.div>
@@ -74,8 +74,8 @@ export default function PortfolioSection() {
               onClick={() => setActiveCategory(cat.id)}
               className={`px-4 sm:px-5 md:px-7 py-2.5 sm:py-3 md:py-3.5 rounded-full font-bold text-sm sm:text-base transition-all duration-300 ${
                 activeCategory === cat.id
-                  ? 'bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 text-amber-400 shadow-xl shadow-purple-900/30'
-                  : 'bg-[#1a1a1a] text-gray-300 hover:bg-purple-900/30 border-2 border-purple-500/30 hover:border-purple-500/50'
+                  ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-xl shadow-amber-500/20'
+                  : 'bg-white text-slate-600 hover:bg-amber-50 border border-slate-200 hover:border-amber-300'
               }`}
             >
               {cat.label}
@@ -99,9 +99,9 @@ export default function PortfolioSection() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="group"
               >
-                <div className="bg-[#1a1a1a] backdrop-blur-xl border-2 border-purple-500/30 rounded-2xl overflow-hidden hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-900/20 transition-all duration-300">
+                <div className="bg-white backdrop-blur-xl border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-300 hover:shadow-xl hover:shadow-amber-100 transition-all duration-300">
                   {/* Cover */}
-                  <div className="relative aspect-square bg-gradient-to-br from-purple-900/30 to-[#0f0f0f] overflow-hidden">
+                  <div className="relative aspect-square bg-gradient-to-br from-amber-100 to-rose-100 overflow-hidden">
                     {/* Cover Image */}
                     {item.coverImage && (
                       <Image
@@ -123,7 +123,7 @@ export default function PortfolioSection() {
                           {[...Array(14)].map((_, i) => (
                             <motion.div
                               key={i}
-                              className="w-2 rounded-full bg-gradient-to-t from-amber-500 via-yellow-500 to-amber-600"
+                              className="w-2 rounded-full bg-gradient-to-t from-amber-500 via-amber-400 to-rose-400"
                               animate={{
                                 height: [20, 50 + Math.random() * 30, 20],
                               }}
@@ -145,13 +145,13 @@ export default function PortfolioSection() {
                     >
                       <div className={`w-18 h-18 rounded-full flex items-center justify-center transition-all duration-300 ${
                         playingId === item.id
-                          ? 'bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 scale-110 shadow-2xl'
-                          : 'bg-white/90 backdrop-blur-sm border-2 border-white/50 group-hover:bg-purple-700 group-hover:border-purple-700 group-hover:scale-110'
+                          ? 'bg-gradient-to-br from-amber-500 to-rose-500 scale-110 shadow-2xl'
+                          : 'bg-white/90 backdrop-blur-sm border-2 border-white/50 group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110'
                       } shadow-xl p-5`}>
                         {playingId === item.id ? (
-                          <Pause className="w-7 h-7 text-amber-400" />
+                          <Pause className="w-7 h-7 text-white" />
                         ) : (
-                          <Play className="w-7 h-7 text-purple-600 group-hover:text-amber-400 ml-1" />
+                          <Play className="w-7 h-7 text-amber-600 group-hover:text-white ml-1" />
                         )}
                       </div>
                     </button>
@@ -159,14 +159,14 @@ export default function PortfolioSection() {
                     {/* Progress bar */}
                     <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/30">
                       <motion.div
-                        className="h-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600"
+                        className="h-full bg-gradient-to-r from-amber-500 to-rose-500"
                         style={{ width: `${progress[item.id] || 0}%` }}
                       />
                     </div>
 
                     {/* Category badge */}
                     <div className="absolute top-4 left-4">
-                      <span className="px-4 py-1.5 bg-purple-900/80 backdrop-blur-xl rounded-full text-xs font-bold text-purple-200 border border-purple-500/30 shadow-lg">
+                      <span className="px-4 py-1.5 bg-white/90 backdrop-blur-xl rounded-full text-xs font-bold text-amber-700 border border-amber-200 shadow-lg">
                         {item.categoryLabel}
                       </span>
                     </div>
@@ -183,20 +183,20 @@ export default function PortfolioSection() {
 
                   {/* Info */}
                   <div className="p-4 sm:p-6">
-                    <h3 className="font-bold text-white text-base sm:text-lg mb-2 line-clamp-1">
+                    <h3 className="font-bold text-slate-800 text-base sm:text-lg mb-2 line-clamp-1">
                       {item.title}
                     </h3>
-                    <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-1">
+                    <p className="text-slate-500 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-1">
                       {item.description}
                     </p>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-400 text-xs sm:text-sm">
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-slate-500 text-xs sm:text-sm">
                         <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
                         <span>{item.duration}</span>
                       </div>
                       {item.occasion && (
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-amber-600 text-xs sm:text-sm font-medium">
-                          <Heart className="w-3 h-3 sm:w-4 sm:h-4 fill-amber-500 text-amber-500" />
+                        <div className="flex items-center gap-1.5 sm:gap-2 text-rose-600 text-xs sm:text-sm font-medium">
+                          <Heart className="w-3 h-3 sm:w-4 sm:h-4 fill-rose-500 text-rose-500" />
                           <span>{item.occasion}</span>
                         </div>
                       )}
@@ -215,12 +215,12 @@ export default function PortfolioSection() {
           viewport={{ once: true }}
           className="text-center mt-10 sm:mt-14 md:mt-20"
         >
-          <p className="text-gray-300 mb-6 sm:mb-8 text-base sm:text-lg">
+          <p className="text-slate-600 mb-6 sm:mb-8 text-base sm:text-lg">
             Quer ter uma música assim para você também?
           </p>
           <a
             href="#criar-musica"
-            className="inline-flex items-center gap-2 sm:gap-3 px-8 sm:px-10 md:px-12 py-4 sm:py-5 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800 text-amber-400 text-base sm:text-lg font-bold rounded-full hover:from-purple-500 hover:via-purple-600 hover:to-purple-700 transition-all duration-300 shadow-xl shadow-purple-900/30 hover:shadow-2xl hover:-translate-y-1"
+            className="inline-flex items-center gap-2 sm:gap-3 px-8 sm:px-10 md:px-12 py-4 sm:py-5 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-base sm:text-lg font-bold rounded-full hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:-translate-y-1"
           >
             <Music className="w-5 h-5 sm:w-6 sm:h-6" />
             Criar minha música
