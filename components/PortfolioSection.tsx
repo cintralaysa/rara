@@ -23,7 +23,6 @@ export default function PortfolioSection() {
       audio?.pause();
       setPlayingId(null);
     } else {
-      // Pausar qualquer outro áudio tocando
       Object.values(audioRefs.current).forEach(a => a?.pause());
       audio?.play();
       setPlayingId(item.id);
@@ -44,38 +43,34 @@ export default function PortfolioSection() {
   };
 
   return (
-    <section id="portfolio" className="py-16 sm:py-20 md:py-28 relative overflow-hidden bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section id="portfolio" className="py-20 sm:py-28 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-10 sm:mb-14 md:mb-20"
+          className="text-center mb-12 sm:mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-amber-100 to-amber-50 rounded-full border border-amber-300/50 mb-4 sm:mb-6">
-            <Music className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" />
-            <span className="text-amber-700 text-xs sm:text-sm font-semibold">Nosso Portfólio</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 mb-4 sm:mb-6">
-            Músicas que já
-            <span className="bg-gradient-to-r from-amber-500 via-amber-600 to-rose-500 bg-clip-text text-transparent"> emocionaram</span>
+          <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Portfólio</p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Ouça nossas músicas
           </h2>
-          <p className="text-slate-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4">
-            Ouça algumas das músicas que criamos para nossos clientes. Cada uma conta uma história única e especial.
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Cada música conta uma história única. Ouça alguns exemplos do nosso trabalho.
           </p>
         </motion.div>
 
         {/* Category filters */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-10 md:mb-14 px-2">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10 sm:mb-14">
           {PORTFOLIO_CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 sm:px-5 md:px-7 py-2.5 sm:py-3 md:py-3.5 rounded-full font-bold text-sm sm:text-base transition-all duration-300 ${
+              className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm font-medium transition-all ${
                 activeCategory === cat.id
-                  ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-xl shadow-amber-500/20'
-                  : 'bg-white text-slate-600 hover:bg-amber-50 border border-slate-200 hover:border-amber-300'
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
               }`}
             >
               {cat.label}
@@ -83,95 +78,92 @@ export default function PortfolioSection() {
           ))}
         </div>
 
-        {/* Portfolio grid - 2x2 layout */}
+        {/* Portfolio grid */}
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto"
         >
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item, index) => (
               <motion.div
                 key={item.id}
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2, delay: index * 0.05 }}
                 className="group"
               >
-                <div className="bg-white backdrop-blur-xl border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-300 hover:shadow-xl hover:shadow-amber-100 transition-all duration-300">
+                <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                   {/* Cover */}
-                  <div className="relative aspect-square bg-gradient-to-br from-amber-100 to-rose-100 overflow-hidden">
-                    {/* Cover Image */}
+                  <div className="relative aspect-square bg-gray-100 overflow-hidden">
                     {item.coverImage && (
                       <Image
                         src={item.coverImage}
                         alt={item.title}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     )}
 
-                    {/* Overlay gradient for better text visibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-
-                    {/* Animated waveform overlay when playing */}
-                    {playingId === item.id && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                        <div className="flex items-end gap-1.5 h-20">
-                          {[...Array(14)].map((_, i) => (
-                            <motion.div
-                              key={i}
-                              className="w-2 rounded-full bg-gradient-to-t from-amber-500 via-amber-400 to-rose-400"
-                              animate={{
-                                height: [20, 50 + Math.random() * 30, 20],
-                              }}
-                              transition={{
-                                duration: 0.5,
-                                repeat: Infinity,
-                                delay: i * 0.04,
-                              }}
-                            />
-                          ))}
+                    {/* Overlay on hover/playing */}
+                    <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${
+                      playingId === item.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                    }`}>
+                      {/* Waveform when playing */}
+                      {playingId === item.id && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="flex items-end gap-1 h-16">
+                            {[...Array(12)].map((_, i) => (
+                              <motion.div
+                                key={i}
+                                className="w-1.5 bg-white rounded-full"
+                                animate={{
+                                  height: [12, 32 + Math.random() * 24, 12],
+                                }}
+                                transition={{
+                                  duration: 0.5,
+                                  repeat: Infinity,
+                                  delay: i * 0.04,
+                                }}
+                              />
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Play button */}
-                    <button
-                      onClick={() => togglePlay(item)}
-                      className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-all duration-300"
-                    >
-                      <div className={`w-18 h-18 rounded-full flex items-center justify-center transition-all duration-300 ${
-                        playingId === item.id
-                          ? 'bg-gradient-to-br from-amber-500 to-rose-500 scale-110 shadow-2xl'
-                          : 'bg-white/90 backdrop-blur-sm border-2 border-white/50 group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110'
-                      } shadow-xl p-5`}>
+                      {/* Play/Pause button */}
+                      <button
+                        onClick={() => togglePlay(item)}
+                        className={`w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-105 ${
+                          playingId === item.id ? 'scale-0' : ''
+                        }`}
+                      >
                         {playingId === item.id ? (
-                          <Pause className="w-7 h-7 text-white" />
+                          <Pause className="w-6 h-6 text-gray-900" />
                         ) : (
-                          <Play className="w-7 h-7 text-amber-600 group-hover:text-white ml-1" />
+                          <Play className="w-6 h-6 text-gray-900 ml-1" />
                         )}
-                      </div>
-                    </button>
+                      </button>
+                    </div>
 
                     {/* Progress bar */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/30">
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
                       <motion.div
-                        className="h-full bg-gradient-to-r from-amber-500 to-rose-500"
+                        className="h-full bg-white"
                         style={{ width: `${progress[item.id] || 0}%` }}
                       />
                     </div>
 
                     {/* Category badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className="px-4 py-1.5 bg-white/90 backdrop-blur-xl rounded-full text-xs font-bold text-amber-700 border border-amber-200 shadow-lg">
+                    <div className="absolute top-3 left-3">
+                      <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700">
                         {item.categoryLabel}
                       </span>
                     </div>
 
-                    {/* Audio element (hidden) */}
+                    {/* Audio element */}
                     <audio
                       ref={el => { if (el) audioRefs.current[item.id] = el; }}
                       src={item.audioUrl}
@@ -182,21 +174,21 @@ export default function PortfolioSection() {
                   </div>
 
                   {/* Info */}
-                  <div className="p-4 sm:p-6">
-                    <h3 className="font-bold text-slate-800 text-base sm:text-lg mb-2 line-clamp-1">
+                  <div className="p-5">
+                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">
                       {item.title}
                     </h3>
-                    <p className="text-slate-500 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-1">
+                    <p className="text-gray-500 text-sm mb-3 line-clamp-1">
                       {item.description}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-slate-500 text-xs sm:text-sm">
-                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-1.5 text-gray-400">
+                        <Clock className="w-4 h-4" />
                         <span>{item.duration}</span>
                       </div>
                       {item.occasion && (
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-rose-600 text-xs sm:text-sm font-medium">
-                          <Heart className="w-3 h-3 sm:w-4 sm:h-4 fill-rose-500 text-rose-500" />
+                        <div className="flex items-center gap-1.5 text-gray-500">
+                          <Heart className="w-4 h-4" />
                           <span>{item.occasion}</span>
                         </div>
                       )}
@@ -206,25 +198,6 @@ export default function PortfolioSection() {
               </motion.div>
             ))}
           </AnimatePresence>
-        </motion.div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-10 sm:mt-14 md:mt-20"
-        >
-          <p className="text-slate-600 mb-6 sm:mb-8 text-base sm:text-lg">
-            Quer ter uma música assim para você também?
-          </p>
-          <a
-            href="#criar-musica"
-            className="inline-flex items-center gap-2 sm:gap-3 px-8 sm:px-10 md:px-12 py-4 sm:py-5 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-base sm:text-lg font-bold rounded-full hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-xl shadow-amber-500/30 hover:shadow-2xl hover:-translate-y-1"
-          >
-            <Music className="w-5 h-5 sm:w-6 sm:h-6" />
-            Criar minha música
-          </a>
         </motion.div>
       </div>
     </section>
