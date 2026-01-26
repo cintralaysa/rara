@@ -75,10 +75,10 @@ export default function CheckoutPixPage() {
   const [error, setError] = useState<string | null>(null);
   const [planoInfo, setPlanoInfo] = useState<PlanoInfo>({
     id: 'basico',
-    nome: 'Plano Basico',
+    nome: 'Plano Essencial',
     melodias: 1,
-    entrega: '24 horas',
-    preco: 59.90
+    entrega: '48 horas',
+    preco: 49.90
   });
 
   // Carregar dados do localStorage e criar PIX
@@ -111,10 +111,10 @@ export default function CheckoutPixPage() {
       if (pendingOrder.planoId) {
         setPlanoInfo({
           id: pendingOrder.planoId,
-          nome: pendingOrder.planoNome || 'Plano Basico',
+          nome: pendingOrder.planoNome || 'Plano Essencial',
           melodias: pendingOrder.planoMelodias || 1,
           entrega: pendingOrder.planoEntrega || '48 horas',
-          preco: pendingOrder.planoPreco || 59.90
+          preco: pendingOrder.planoPreco || 49.90
         });
       }
 
@@ -137,7 +137,7 @@ export default function CheckoutPixPage() {
         // Atualizar info do plano com dados da API
         const planoFromApi: PlanoInfo = {
           id: data.plano?.id || pendingOrder.planoId || 'basico',
-          nome: data.plano?.nome || pendingOrder.planoNome || 'Plano Basico',
+          nome: data.plano?.nome || pendingOrder.planoNome || 'Plano Essencial',
           melodias: data.plano?.melodias || pendingOrder.planoMelodias || 1,
           entrega: data.plano?.entrega || pendingOrder.planoEntrega || '48 horas',
           preco: (data.pixData?.value || pendingOrder.planoPrecoCents || 4990) / 100

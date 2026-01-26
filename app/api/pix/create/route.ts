@@ -12,7 +12,7 @@ const OPENPIX_APP_ID = process.env.OPENPIX_APP_ID;
 
 // Precos dos planos em centavos
 const PRECOS_PLANOS: { [key: string]: { cents: number; display: string; melodias: number; entrega: string } } = {
-  basico: { cents: 5990, display: 'R$ 59,90', melodias: 1, entrega: '24 horas' },
+  basico: { cents: 4990, display: 'R$ 49,90', melodias: 1, entrega: '48 horas' },
   premium: { cents: 7990, display: 'R$ 79,90', melodias: 2, entrega: 'no mesmo dia' },
 };
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       orderId,
       amount: plano.cents,
       planoId,
-      planoNome: planoId === 'premium' ? 'Plano Premium' : 'Plano Basico',
+      planoNome: planoId === 'premium' ? 'Plano Premium' : 'Plano Essencial',
       planoMelodias: plano.melodias,
       planoEntrega: plano.entrega,
       customerName: sanitizeString(body.userName, 100),

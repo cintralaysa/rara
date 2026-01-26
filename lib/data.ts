@@ -197,19 +197,20 @@ export interface PricePlan {
 export const PLANOS: PricePlan[] = [
   {
     id: "basico",
-    name: "Plano Basico",
-    price: 59.90,
-    priceCents: 5990,
+    name: "Plano Essencial",
+    price: 49.90,
+    priceCents: 4990,
     melodias: 1,
-    entrega: "24 horas",
+    entrega: "48 horas",
     features: [
       "1 letra exclusiva personalizada",
       "1 musica completa no ritmo escolhido",
       "Edite a letra quantas vezes quiser",
-      "Entrega em ate 24 horas",
-      "Arquivo MP3 alta qualidade"
+      "Entrega em ate 48 horas",
+      "Arquivo MP3 alta qualidade",
+      "Preco exclusivo do site"
     ],
-    highlight: undefined,
+    highlight: "Exclusivo Online",
     popular: false
   },
   {
@@ -221,13 +222,13 @@ export const PLANOS: PricePlan[] = [
     entrega: "no mesmo dia",
     features: [
       "1 letra exclusiva personalizada",
-      "2 musicas completas em ritmos diferentes",
+      "2 MUSICAS COMPLETAS em ritmos diferentes",
       "Edite a letra quantas vezes quiser",
-      "Entrega no mesmo dia",
+      "Entrega NO MESMO DIA",
       "Arquivo MP3 alta qualidade",
-      "Prioridade na producao"
+      "Prioridade maxima na producao"
     ],
-    highlight: "Mais buscado",
+    highlight: "Mais vendido",
     popular: true
   }
 ];
@@ -238,5 +239,5 @@ export const getPlanoById = (id: string): PricePlan | undefined => {
 };
 
 // Precos padrão (plano basico) - para compatibilidade
-export const PRECO_MUSICA = 5990; // em centavos para a API do OpenPix
-export const PRECO_MUSICA_DISPLAY = 59.90; // em reais para exibicao
+export const PRECO_MUSICA = 4990; // em centavos para a API do OpenPix
+export const PRECO_MUSICA_DISPLAY = 49.90; // em reais para exibicao
