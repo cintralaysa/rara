@@ -39,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
+        <meta name="facebook-domain-verification" content="3ldzfwvey6d7j8ebmtj0u5z5d37t2d" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Meta Pixel Code */}
@@ -53,7 +54,7 @@ export default function RootLayout({
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '870496475892362');
+              fbq('init', '1582887399617727');
               fbq('track', 'PageView');
             `,
           }}
@@ -63,7 +64,7 @@ export default function RootLayout({
             height="1"
             width="1"
             style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=870496475892362&ev=PageView&noscript=1"
+            src="https://www.facebook.com/tr?id=1582887399617727&ev=PageView&noscript=1"
             alt=""
           />
         </noscript>
