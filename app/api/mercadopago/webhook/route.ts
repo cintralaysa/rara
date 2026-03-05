@@ -253,7 +253,7 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
             <div class="section-title" style="color: #d97706;">Proximo Passo</div>
             ${orderData.planoNome ? `<p><strong>Plano:</strong> ${orderData.planoNome}</p>` : ''}
             <p><strong>Prazo de entrega:</strong> ${orderData.planoEntrega || '5 minutos'}</p>
-            <p><strong>Musicas completas:</strong> ${orderData.planoMelodias || 1}</p>
+            <p><strong>Melodias completas:</strong> ${orderData.planoMelodias || 2}</p>
             <p>A musica sera gerada automaticamente e entregue por email.</p>
           </div>
         </div>

@@ -186,15 +186,15 @@ export default function Home() {
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-dark-900 leading-[1.05] mb-6 sm:mb-8 tracking-tight">
                 Fazemos sua emoção virar{' '}
+                <span className="text-wine-500">melodia</span>
+                {' '}em apenas{' '}
+                <br className="hidden sm:block" />
                 <span className="relative inline-block">
-                  <span className="text-wine-500">melodia</span>
-                  <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
+                  <span className="text-wine-500">5 minutos</span>
+                  <svg className="absolute -bottom-3 left-0 w-full" viewBox="0 0 200 12" fill="none">
                     <path d="M2 8c50-8 100-8 196 0" stroke="#837AB6" strokeWidth="4" strokeLinecap="round" opacity="0.6"/>
                   </svg>
                 </span>
-                {' '}em apenas{' '}
-                <br className="hidden sm:block" />
-                <span className="text-wine-500">5 minutos</span>
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl text-dark-700 mb-8 sm:mb-10 leading-relaxed max-w-xl font-medium">
@@ -413,14 +413,11 @@ export default function Home() {
                     <div className="text-center pt-4 mb-6">
                       <h3 className="text-xl font-black text-dark-900 mb-2 uppercase tracking-wide">{plano.name}</h3>
 
-                      {/* Badge de melodias para Premium */}
-                      {isPremium && (
-                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-dark-900 rounded-full mb-3">
-                          <Music className="w-3 h-3 text-wine-300" />
-                          <span className="text-[10px] sm:text-xs font-black text-white uppercase tracking-wider">{plano.melodias} Músicas Completas</span>
-                        </div>
-                      )}
-                      {isBasico && <div className="mb-3" />}
+                      {/* Badge de melodias */}
+                      <div className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-dark-900 rounded-full mb-3">
+                        <Music className="w-3 h-3 text-wine-300" />
+                        <span className="text-[10px] sm:text-xs font-black text-white uppercase tracking-wider">{isPremium ? '2 Letras + 4 Melodias' : '1 Letra + 2 Melodias'}</span>
+                      </div>
 
                       <div className="flex items-baseline justify-center gap-1">
                         <span className="text-sm text-dark-600 font-bold">R$</span>
@@ -450,7 +447,7 @@ export default function Home() {
 
                     <ul className="space-y-3.5 mb-6">
                       {plano.features.map((feature, i) => {
-                        const isBold = feature.includes('2 músicas') || feature.includes('Entrega em 5 minutos') || feature.includes('Prioridade');
+                        const isBold = feature.includes('melodias') || feature.includes('Entrega em 5 minutos') || feature.includes('Prioridade');
                         return (
                           <li key={i} className="flex items-start gap-3">
                             <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 border-2 ${
@@ -475,7 +472,7 @@ export default function Home() {
                       }`}
                     >
                       <Music className="w-4 h-4" />
-                      {isPremium ? `Criar Minhas ${plano.melodias} Músicas` : 'Criar Minha Música'}
+                      {isPremium ? 'Criar Minhas 4 Melodias' : 'Criar Minhas 2 Melodias'}
                     </button>
 
                     <div className="flex items-center justify-center gap-1.5 mt-4">

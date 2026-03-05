@@ -12,8 +12,8 @@ const MP_ACCESS_TOKEN = (process.env.MERCADOPAGO_ACCESS_TOKEN || '').trim();
 const NOTIFICATION_URL = 'https://www.melodiarara.com/api/mercadopago/webhook';
 
 const PRECOS_PLANOS: Record<string, { cents: number; melodias: number; entrega: string; nome: string }> = {
-  basico: { cents: 4990, melodias: 1, entrega: 'em 5 minutos', nome: 'Plano Basico' },
-  premium: { cents: 7990, melodias: 2, entrega: 'em 5 minutos', nome: 'Plano Premium' },
+  basico: { cents: 4990, melodias: 2, entrega: 'em 5 minutos', nome: 'Plano Basico' },
+  premium: { cents: 7990, melodias: 4, entrega: 'em 5 minutos', nome: 'Plano Premium' },
 };
 
 export async function POST(request: NextRequest) {

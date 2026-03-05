@@ -100,7 +100,7 @@ export default function CheckoutPage() {
   const [planoInfo, setPlanoInfo] = useState<PlanoInfo>({
     id: 'basico',
     nome: 'Plano Basico',
-    melodias: 1,
+    melodias: 2,
     entrega: 'em 5 minutos',
     preco: 49.90,
   });
@@ -121,7 +121,7 @@ export default function CheckoutPage() {
       setPlanoInfo({
         id: order.planoId,
         nome: order.planoNome || 'Plano Basico',
-        melodias: order.planoMelodias || 1,
+        melodias: order.planoMelodias || 2,
         entrega: order.planoEntrega || 'em 5 minutos',
         preco: order.planoPreco || 49.90,
       });
@@ -153,7 +153,7 @@ export default function CheckoutPage() {
         const planoFromApi: PlanoInfo = {
           id: data.plano?.id || pendingOrder.planoId || 'basico',
           nome: data.plano?.nome || pendingOrder.planoNome || 'Plano Basico',
-          melodias: data.plano?.melodias || pendingOrder.planoMelodias || 1,
+          melodias: data.plano?.melodias || pendingOrder.planoMelodias || 2,
           entrega: data.plano?.entrega || pendingOrder.planoEntrega || 'em 5 minutos',
           preco: (data.pixData?.value || pendingOrder.planoPrecoCents || 4990) / 100,
         };

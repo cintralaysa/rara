@@ -13,8 +13,8 @@ const NOTIFICATION_URL = 'https://www.melodiarara.com/api/mercadopago/webhook';
 
 // Precos dos planos em centavos
 const PRECOS_PLANOS: Record<string, { cents: number; display: string; melodias: number; entrega: string; nome: string }> = {
-  basico: { cents: 4990, display: 'R$ 49,90', melodias: 1, entrega: 'em 5 minutos', nome: 'Plano Básico' },
-  premium: { cents: 7990, display: 'R$ 79,90', melodias: 2, entrega: 'em 5 minutos', nome: 'Plano Premium' },
+  basico: { cents: 4990, display: 'R$ 49,90', melodias: 2, entrega: 'em 5 minutos', nome: 'Plano Básico' },
+  premium: { cents: 7990, display: 'R$ 79,90', melodias: 4, entrega: 'em 5 minutos', nome: 'Plano Premium' },
 };
 
 export async function POST(request: NextRequest) {

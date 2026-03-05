@@ -47,7 +47,7 @@ function buildSongTitle(order: OrderData, songIndex: number): string {
     ? `Para ${order.honoreeName}`
     : 'Melodia Rara';
 
-  if ((order.planoMelodias || 1) > 1) {
+  if ((order.planoMelodias || 2) > 1) {
     return `${base} (Versão ${songIndex + 1})`;
   }
   return base;
@@ -101,7 +101,7 @@ export async function startMusicGeneration(orderId: string): Promise<boolean> {
     return false;
   }
 
-  const totalSongs = order.planoMelodias || 1;
+  const totalSongs = order.planoMelodias || 2;
   const lyrics = order.generatedLyrics || order.approvedLyrics || '';
 
   if (!lyrics) {
@@ -198,7 +198,7 @@ export async function handleSongComplete(
 
   const songs = order.songs || [];
   const musicUrls = order.musicUrls || [];
-  const totalNeeded = order.planoMelodias || 1;
+  const totalNeeded = order.planoMelodias || 2;
 
   // Atualizar songs que pertencem a este taskId
   for (const audio of audioUrls) {

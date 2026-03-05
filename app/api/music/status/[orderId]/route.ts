@@ -28,7 +28,7 @@ export async function GET(
         completedAt: s.completedAt,
       }));
 
-    const totalSongs = order.planoMelodias || 1;
+    const totalSongs = order.planoMelodias || 2;
     const readyCount = readySongs.length;
 
     return NextResponse.json({
