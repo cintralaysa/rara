@@ -34,7 +34,7 @@ export default function CheckoutModal({ isOpen, onClose, children }: CheckoutMod
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex items-end sm:items-start justify-center overflow-y-auto bg-black/80 backdrop-blur-sm p-0 sm:p-4 md:p-8"
+          className="fixed inset-0 z-50 flex items-end sm:items-start justify-center overflow-y-auto bg-black/60 backdrop-blur-sm p-0 sm:p-4 md:p-8"
           onClick={(e) => e.target === e.currentTarget && onClose()}
         >
           <motion.div
@@ -45,12 +45,12 @@ export default function CheckoutModal({ isOpen, onClose, children }: CheckoutMod
             className="relative w-full max-w-2xl sm:my-8"
           >
             {/* Efeito de glow - escondido em mobile */}
-            <div className="hidden sm:block absolute -inset-1 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-50" />
+            <div className="hidden sm:block absolute -inset-1 bg-gradient-to-r from-gold-500/20 via-gold-600/20 to-gold-500/20 rounded-3xl blur-xl opacity-50" />
 
             {/* Container principal */}
             <div className="relative bg-white sm:bg-[#1a1a1a] rounded-t-2xl sm:rounded-2xl shadow-2xl border-0 sm:border sm:border-white/10 overflow-hidden min-h-[100vh] sm:min-h-0">
               {/* Header com gradiente */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold-500 via-gold-600 to-gold-500" />
 
               {/* Conteúdo - sem padding extra pois o SimpleBookingForm já tem */}
               <div className="p-0">

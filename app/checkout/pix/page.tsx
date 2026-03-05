@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Copy,
@@ -14,15 +15,14 @@ import {
   QrCode
 } from 'lucide-react';
 import Link from 'next/link';
-import { COMPANY_INFO } from '@/lib/data';
 
 interface CheckoutData {
   name: string;
   email: string;
   phone: string;
   honoreeName: string;
-  correlationID: string;
-  qrCode: string;
+  paymentId: string;
+  orderId: string;
   qrCodeBase64: string;
   pixCopyPaste: string;
   expiresAt: string;
@@ -49,13 +49,13 @@ interface PendingOrder {
   babySex?: string;
   babyNameBoy?: string;
   babyNameGirl?: string;
-  // Informacoes do plano
   planoId?: string;
   planoNome?: string;
   planoPreco?: number;
   planoPrecoCents?: number;
   planoMelodias?: number;
   planoEntrega?: string;
+  cupom?: string;
 }
 
 interface PlanoInfo {
@@ -67,34 +67,57 @@ interface PlanoInfo {
 }
 
 export default function CheckoutPixPage() {
+  const router = useRouter();
   const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
   const [status, setStatus] = useState<'pending' | 'paid' | 'expired' | 'error' | 'loading'>('loading');
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cupomAplicado, setCupomAplicado] = useState(false);
+  const [precoOriginal, setPrecoOriginal] = useState(0);
   const [planoInfo, setPlanoInfo] = useState<PlanoInfo>({
     id: 'basico',
-    nome: 'Plano Essencial',
+    nome: 'Plano Basico',
     melodias: 1,
-    entrega: '48 horas',
-    preco: 49.90
+    entrega: 'em ate 48 horas',
+    preco: 39.90
   });
 
   // Carregar dados do localStorage e criar PIX
   useEffect(() => {
     const createPixPayment = async () => {
-      // Verificar se ja tem dados de checkout
+      // Se tem pedido novo pendente, limpar dados antigos de checkout
+      const hasPendingOrder = localStorage.getItem('pendingOrder');
+      if (hasPendingOrder) {
+        localStorage.removeItem('checkoutData');
+        localStorage.removeItem('planoInfo');
+        localStorage.removeItem('cupomAplicado');
+      }
+
+      // Verificar se ja tem dados de checkout (de um PIX ja gerado)
       const existingData = localStorage.getItem('checkoutData');
       const existingPlanoData = localStorage.getItem('planoInfo');
 
       if (existingData) {
-        setCheckoutData(JSON.parse(existingData));
-        if (existingPlanoData) {
-          setPlanoInfo(JSON.parse(existingPlanoData));
+        const parsed = JSON.parse(existingData);
+        if (parsed.qrCodeBase64 && parsed.paymentId) {
+          setCheckoutData(parsed);
+          if (existingPlanoData) {
+            setPlanoInfo(JSON.parse(existingPlanoData));
+          }
+          const cupomData = localStorage.getItem('cupomAplicado');
+          if (cupomData) {
+            const cupomInfo = JSON.parse(cupomData);
+            setCupomAplicado(cupomInfo.aplicado);
+            setPrecoOriginal(cupomInfo.precoOriginal);
+          }
+          setStatus('pending');
+          return;
         }
-        setStatus('pending');
-        return;
+        localStorage.removeItem('checkoutData');
+        localStorage.removeItem('planoInfo');
+        localStorage.removeItem('cupomAplicado');
       }
 
       // Buscar dados do pedido pendente
@@ -111,16 +134,16 @@ export default function CheckoutPixPage() {
       if (pendingOrder.planoId) {
         setPlanoInfo({
           id: pendingOrder.planoId,
-          nome: pendingOrder.planoNome || 'Plano Essencial',
+          nome: pendingOrder.planoNome || 'Plano Basico',
           melodias: pendingOrder.planoMelodias || 1,
-          entrega: pendingOrder.planoEntrega || '48 horas',
-          preco: pendingOrder.planoPreco || 49.90
+          entrega: pendingOrder.planoEntrega || 'em ate 48 horas',
+          preco: pendingOrder.planoPreco || 39.90
         });
       }
 
       try {
-        // Criar cobranca PIX
-        const response = await fetch('/api/pix/create', {
+        // Criar cobranca PIX via Mercado Pago
+        const response = await fetch('/api/mercadopago/pix', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(pendingOrder),
@@ -134,13 +157,19 @@ export default function CheckoutPixPage() {
           return;
         }
 
+        // Detectar se cupom foi aplicado
+        if (data.cupomAplicado) {
+          setCupomAplicado(true);
+          setPrecoOriginal(pendingOrder.planoPreco || (pendingOrder.planoPrecoCents || 3990) / 100);
+        }
+
         // Atualizar info do plano com dados da API
         const planoFromApi: PlanoInfo = {
           id: data.plano?.id || pendingOrder.planoId || 'basico',
-          nome: data.plano?.nome || pendingOrder.planoNome || 'Plano Essencial',
+          nome: data.plano?.nome || pendingOrder.planoNome || 'Plano Basico',
           melodias: data.plano?.melodias || pendingOrder.planoMelodias || 1,
-          entrega: data.plano?.entrega || pendingOrder.planoEntrega || '48 horas',
-          preco: (data.pixData?.value || pendingOrder.planoPrecoCents || 4990) / 100
+          entrega: data.plano?.entrega || pendingOrder.planoEntrega || 'em ate 48 horas',
+          preco: (data.pixData?.value || pendingOrder.planoPrecoCents || 3990) / 100
         };
         setPlanoInfo(planoFromApi);
         localStorage.setItem('planoInfo', JSON.stringify(planoFromApi));
@@ -151,12 +180,20 @@ export default function CheckoutPixPage() {
           email: pendingOrder.email,
           phone: pendingOrder.whatsapp,
           honoreeName: pendingOrder.honoreeName,
-          correlationID: data.correlationID,
-          qrCode: data.pixData?.qrCode || '',
-          qrCodeBase64: data.pixData?.qrCodeBase64 || data.pixData?.qrCode || '',
+          paymentId: data.paymentId,
+          orderId: data.orderId,
+          qrCodeBase64: data.pixData?.qrCodeBase64 || '',
           pixCopyPaste: data.pixData?.pixCopiaECola || '',
           expiresAt: data.pixData?.expiresAt || new Date(Date.now() + 3600000).toISOString(),
         };
+
+        // Salvar info do cupom
+        if (data.cupomAplicado) {
+          localStorage.setItem('cupomAplicado', JSON.stringify({
+            aplicado: true,
+            precoOriginal: pendingOrder.planoPreco || (pendingOrder.planoPrecoCents || 3990) / 100
+          }));
+        }
 
         // Salvar e atualizar estado
         localStorage.setItem('checkoutData', JSON.stringify(checkout));
@@ -173,27 +210,29 @@ export default function CheckoutPixPage() {
     createPixPayment();
   }, []);
 
-  // Verificar status do pagamento
+  // Verificar status do pagamento via Mercado Pago
   const checkPaymentStatus = useCallback(async () => {
-    if (!checkoutData?.correlationID) return;
+    if (!checkoutData?.paymentId) return;
 
     setIsChecking(true);
     try {
-      const response = await fetch(`/api/pix/status?correlationID=${checkoutData.correlationID}`);
+      const response = await fetch(`/api/mercadopago/pix/status?paymentId=${checkoutData.paymentId}`);
       const data = await response.json();
 
       if (data.isPaid) {
         setStatus('paid');
-        localStorage.removeItem('checkoutData');
+        // Redirecionar para pagina de sucesso
+        router.push(`/pagamento/sucesso?orderId=${checkoutData.orderId}`);
       } else if (data.isExpired) {
         setStatus('expired');
+        localStorage.removeItem('checkoutData');
       }
     } catch (error) {
       console.error('Erro ao verificar status:', error);
     } finally {
       setIsChecking(false);
     }
-  }, [checkoutData?.correlationID]);
+  }, [checkoutData?.paymentId, checkoutData?.orderId, router]);
 
   // Polling para verificar pagamento
   useEffect(() => {
@@ -228,7 +267,7 @@ export default function CheckoutPixPage() {
     return () => clearInterval(interval);
   }, [checkoutData?.expiresAt, status]);
 
-  // Copiar código PIX
+  // Copiar codigo PIX
   const copyPixCode = async () => {
     if (!checkoutData?.pixCopyPaste) return;
 
@@ -244,13 +283,13 @@ export default function CheckoutPixPage() {
   // Loading state
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-soft-100 p-4">
         <div className="text-center">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center mx-auto mb-6">
-            <Loader2 className="w-10 h-10 text-amber-400 animate-spin" />
+          <div className="w-20 h-20 rounded-full bg-dark-900 flex items-center justify-center mx-auto mb-6 border-2 border-dark-900">
+            <Loader2 className="w-10 h-10 text-white animate-spin" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">Gerando PIX...</h1>
-          <p className="text-slate-600">
+          <h1 className="text-2xl font-black text-dark-900 mb-2">Gerando PIX...</h1>
+          <p className="text-dark-600 font-medium">
             Aguarde enquanto preparamos seu pagamento
           </p>
         </div>
@@ -261,18 +300,18 @@ export default function CheckoutPixPage() {
   // Error state
   if (status === 'error' || !checkoutData) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-soft-100 p-4">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">
+          <h1 className="text-2xl font-black text-dark-900 mb-2">
             {error || 'Sessao expirada'}
           </h1>
-          <p className="text-slate-600 mb-6">
+          <p className="text-dark-600 mb-6 font-medium">
             Nao foi possivel processar seu pedido.
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-800 to-blue-900 text-amber-400 font-semibold rounded-full hover:from-blue-700 hover:to-blue-800 transition-all duration-300"
+            className="btn-bold px-6 py-3 bg-dark-900 text-white"
           >
             <ArrowLeft className="w-5 h-5" />
             Voltar ao inicio
@@ -282,67 +321,17 @@ export default function CheckoutPixPage() {
     );
   }
 
-  // Se pagamento confirmado
+  // Pagamento confirmado - redirect acontece automaticamente
   if (status === 'paid') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-3xl p-8 md:p-12 max-w-lg w-full text-center shadow-2xl"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring' }}
-            className="w-24 h-24 rounded-full bg-gradient-to-r from-green-400 to-green-500 flex items-center justify-center mx-auto mb-6"
-          >
-            <CheckCircle className="w-12 h-12 text-white" />
-          </motion.div>
-
-          <h1 className="text-3xl font-bold text-slate-800 mb-4">
-            Pagamento Confirmado!
-          </h1>
-          <p className="text-slate-600 mb-4">
-            Seu pedido foi recebido com sucesso. Em breve voce recebera um e-mail com mais informacoes sobre a producao da sua musica.
-          </p>
-
-          {/* Badge do plano */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-100 to-amber-50 rounded-full border border-amber-300 mb-8">
-            <Music className="w-4 h-4 text-amber-600" />
-            <span className="font-semibold text-amber-700">{planoInfo.nome}</span>
-            <span className="text-amber-600">•</span>
-            <span className="text-amber-600">{planoInfo.melodias} melodia{planoInfo.melodias > 1 ? 's' : ''}</span>
+      <div className="min-h-screen flex items-center justify-center bg-soft-100 p-4">
+        <div className="text-center">
+          <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center mx-auto mb-6 border-2 border-dark-900">
+            <CheckCircle className="w-10 h-10 text-white" />
           </div>
-
-          <div className="bg-gradient-to-r from-blue-50 to-slate-50 rounded-2xl p-6 mb-8 border border-blue-200">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Music className="w-6 h-6 text-amber-500" />
-              <span className="font-semibold text-slate-800">Proximos passos</span>
-            </div>
-            <ul className="text-left text-slate-600 space-y-2">
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                Voce recebera um e-mail de confirmacao
-              </li>
-              <li className="flex items-start gap-2">
-                <Clock className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                Nossa equipe comecara a criar sua musica
-              </li>
-              <li className="flex items-start gap-2">
-                <Music className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                Em ate {planoInfo.entrega} voce recebera sua musica pronta
-              </li>
-            </ul>
-          </div>
-
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-800 to-blue-900 text-amber-400 font-semibold rounded-full hover:from-blue-700 hover:to-blue-800 transition-all duration-300"
-          >
-            Voltar ao inicio
-          </Link>
-        </motion.div>
+          <h1 className="text-2xl font-black text-dark-900 mb-2">Pagamento Confirmado!</h1>
+          <p className="text-dark-600 font-medium">Redirecionando...</p>
+        </div>
       </div>
     );
   }
@@ -350,22 +339,22 @@ export default function CheckoutPixPage() {
   // Se expirado
   if (status === 'expired') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
-        <div className="bg-white rounded-3xl p-8 md:p-12 max-w-lg w-full text-center shadow-2xl">
-          <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
+      <div className="min-h-screen flex items-center justify-center bg-soft-100 p-4">
+        <div className="bg-white rounded-3xl p-8 md:p-12 max-w-lg w-full text-center border-2 border-dark-900 shadow-offset">
+          <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6 border-2 border-dark-900">
             <AlertCircle className="w-10 h-10 text-red-500" />
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-800 mb-4">
+          <h1 className="text-2xl font-black text-dark-900 mb-4 uppercase">
             Tempo Esgotado
           </h1>
-          <p className="text-slate-600 mb-8">
+          <p className="text-dark-600 mb-8 font-medium">
             O tempo para pagamento expirou. Nao se preocupe, voce pode gerar um novo codigo PIX.
           </p>
 
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-800 to-blue-900 text-amber-400 font-semibold rounded-full hover:from-blue-700 hover:to-blue-800 transition-all duration-300"
+            className="btn-bold px-8 py-4 bg-dark-900 text-white text-lg"
           >
             <RefreshCw className="w-5 h-5" />
             Tentar novamente
@@ -377,17 +366,17 @@ export default function CheckoutPixPage() {
 
   // Tela de pagamento pendente
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 py-8 px-4">
+    <div className="min-h-screen bg-soft-100 py-8 px-4">
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center">
-              <Music className="w-6 h-6 text-amber-400" />
+            <div className="w-10 h-10 rounded-xl bg-dark-900 flex items-center justify-center border-2 border-dark-900">
+              <Music className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-slate-800">Melodia Rara</span>
+            <span className="text-xl font-black text-dark-900">Melodia Rara</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">
+          <h1 className="text-2xl font-black text-dark-900 uppercase tracking-wide">
             Finalize seu pagamento
           </h1>
         </div>
@@ -396,18 +385,18 @@ export default function CheckoutPixPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl p-6 md:p-8 shadow-2xl border border-blue-100"
+          className="bg-white rounded-3xl p-6 md:p-8 border-2 border-dark-900 shadow-offset"
         >
           {/* Timer */}
-          <div className="flex items-center justify-center gap-2 mb-6 p-3 bg-amber-50 rounded-xl border border-amber-200">
-            <Clock className="w-5 h-5 text-amber-500" />
-            <span className="text-slate-600">Expira em:</span>
-            <span className="font-bold text-amber-600 text-lg">{timeLeft}</span>
+          <div className="flex items-center justify-center gap-2 mb-6 p-3 bg-soft-100 rounded-xl border-2 border-dark-900">
+            <Clock className="w-5 h-5 text-wine-500" />
+            <span className="text-dark-600 font-bold">Expira em:</span>
+            <span className="font-black text-wine-500 text-lg">{timeLeft}</span>
           </div>
 
           {/* QR Code */}
           <div className="text-center mb-6">
-            <div className="bg-white border-2 border-blue-200 rounded-2xl p-4 inline-block mb-4 shadow-lg">
+            <div className="bg-white border-2 border-dark-900 rounded-2xl p-4 inline-block mb-4 shadow-offset-sm">
               {checkoutData.qrCodeBase64 ? (
                 <img
                   src={checkoutData.qrCodeBase64}
@@ -415,26 +404,26 @@ export default function CheckoutPixPage() {
                   className="w-48 h-48 md:w-56 md:h-56"
                 />
               ) : (
-                <div className="w-48 h-48 md:w-56 md:h-56 flex items-center justify-center bg-blue-50 rounded-xl">
-                  <QrCode className="w-20 h-20 text-blue-300" />
+                <div className="w-48 h-48 md:w-56 md:h-56 flex items-center justify-center bg-soft-100 rounded-xl">
+                  <QrCode className="w-20 h-20 text-dark-300" />
                 </div>
               )}
             </div>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-dark-600 font-medium">
               Escaneie o QR Code com o app do seu banco
             </p>
           </div>
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-sm text-slate-400">ou</span>
-            <div className="flex-1 h-px bg-slate-200" />
+            <div className="flex-1 h-px bg-dark-200" />
+            <span className="text-sm text-dark-500 font-bold">ou</span>
+            <div className="flex-1 h-px bg-dark-200" />
           </div>
 
-          {/* Código PIX copia e cola */}
+          {/* Codigo PIX copia e cola */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-slate-600 mb-2">
+            <label className="block text-sm font-black text-dark-900 mb-2">
               PIX Copia e Cola
             </label>
             <div className="relative">
@@ -442,14 +431,14 @@ export default function CheckoutPixPage() {
                 type="text"
                 value={checkoutData.pixCopyPaste}
                 readOnly
-                className="w-full px-4 py-3 pr-24 bg-blue-50 border border-blue-200 rounded-xl text-slate-700 text-sm truncate"
+                className="w-full px-4 py-3 pr-24 bg-soft-100 border-2 border-dark-900 rounded-xl text-dark-700 text-sm truncate"
               />
               <button
                 onClick={copyPixCode}
-                className={`absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 ${
+                className={`absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-lg font-black text-sm transition-all duration-200 flex items-center gap-2 ${
                   copied
                     ? 'bg-green-500 text-white'
-                    : 'bg-gradient-to-r from-blue-800 to-blue-900 text-amber-400 hover:from-blue-700 hover:to-blue-800'
+                    : 'bg-dark-900 text-white hover:bg-dark-700'
                 }`}
               >
                 {copied ? (
@@ -468,20 +457,26 @@ export default function CheckoutPixPage() {
           </div>
 
           {/* Valor e Plano */}
-          <div className="bg-gradient-to-r from-blue-50 to-slate-50 rounded-2xl p-4 mb-6 border border-blue-200">
+          <div className="bg-soft-100 rounded-2xl p-4 mb-6 border-2 border-dark-900">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Music className="w-5 h-5 text-amber-500" />
-                <span className="font-semibold text-slate-700">{planoInfo.nome}</span>
+                <Music className="w-5 h-5 text-wine-500" />
+                <span className="font-black text-dark-900">{planoInfo.nome}</span>
               </div>
-              <span className="text-sm text-slate-500">{planoInfo.melodias} melodia{planoInfo.melodias > 1 ? 's' : ''}</span>
+              <span className="text-sm text-dark-600 font-bold">{planoInfo.melodias} melodia{planoInfo.melodias > 1 ? 's' : ''}</span>
             </div>
-            <div className="flex items-center justify-between pt-3 border-t border-blue-200">
-              <span className="text-slate-600">Valor a pagar:</span>
+            {cupomAplicado && (
+              <div className="flex items-center justify-between mb-2 px-1">
+                <span className="text-xs font-black text-green-600 bg-green-100 px-2.5 py-1 rounded-full border border-green-300 uppercase tracking-wider">RARA10 -10%</span>
+                <span className="text-sm text-dark-400 line-through">R$ {precoOriginal.toFixed(2).replace('.', ',')}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between pt-3 border-t-2 border-dark-900">
+              <span className="text-dark-600 font-bold">Valor a pagar:</span>
               <div className="flex items-baseline gap-1">
-                <span className="text-slate-500 text-lg">R$</span>
-                <span className="text-3xl font-black text-amber-500">{Math.floor(planoInfo.preco)}</span>
-                <span className="text-amber-500 text-xl font-bold">,{String(Math.round((planoInfo.preco % 1) * 100)).padStart(2, '0')}</span>
+                <span className={`text-lg font-bold ${cupomAplicado ? 'text-green-600' : 'text-dark-600'}`}>R$</span>
+                <span className={`text-3xl font-black ${cupomAplicado ? 'text-green-600' : 'text-wine-500'}`}>{Math.floor(planoInfo.preco)}</span>
+                <span className={`text-xl font-black ${cupomAplicado ? 'text-green-600' : 'text-wine-500'}`}>,{String(Math.round((planoInfo.preco % 1) * 100)).padStart(2, '0')}</span>
               </div>
             </div>
           </div>
@@ -490,7 +485,7 @@ export default function CheckoutPixPage() {
           <button
             onClick={checkPaymentStatus}
             disabled={isChecking}
-            className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-green-500/30"
+            className="btn-bold w-full py-4 bg-green-500 text-white text-lg border-dark-900 hover:bg-green-600 disabled:opacity-50"
           >
             {isChecking ? (
               <>
@@ -506,8 +501,8 @@ export default function CheckoutPixPage() {
           </button>
 
           {/* Info */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-            <p className="text-sm text-blue-700">
+          <div className="mt-6 p-4 bg-soft-100 rounded-xl border-2 border-dark-900">
+            <p className="text-sm text-dark-600 font-medium">
               <strong>Dica:</strong> Apos o pagamento, aguarde alguns segundos para a confirmacao automatica.
               Se preferir, clique no botao acima para verificar manualmente.
             </p>
@@ -515,33 +510,33 @@ export default function CheckoutPixPage() {
         </motion.div>
 
         {/* Resumo do pedido */}
-        <div className="mt-6 bg-white rounded-2xl p-6 shadow-lg border border-blue-100">
-          <h3 className="font-semibold text-slate-800 mb-4">Resumo do pedido</h3>
+        <div className="mt-6 bg-white rounded-2xl p-6 border-2 border-dark-900 shadow-offset-sm">
+          <h3 className="font-black text-dark-900 mb-4 uppercase tracking-wide">Resumo do pedido</h3>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-slate-500">Plano:</span>
-              <span className="text-slate-800 font-medium">{planoInfo.nome}</span>
+              <span className="text-dark-600 font-medium">Plano:</span>
+              <span className="text-dark-900 font-bold">{planoInfo.nome}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Melodias:</span>
-              <span className="text-slate-800 font-medium">{planoInfo.melodias}</span>
+              <span className="text-dark-600 font-medium">Melodias:</span>
+              <span className="text-dark-900 font-bold">{planoInfo.melodias}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">Entrega:</span>
-              <span className="text-slate-800 font-medium">{planoInfo.entrega}</span>
+              <span className="text-dark-600 font-medium">Entrega:</span>
+              <span className="text-dark-900 font-bold">{planoInfo.entrega}</span>
             </div>
-            <div className="h-px bg-slate-200 my-2" />
+            <div className="h-px bg-dark-200 my-2" />
             <div className="flex justify-between">
-              <span className="text-slate-500">Musica para:</span>
-              <span className="text-slate-800 font-medium">{checkoutData.honoreeName}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Comprador:</span>
-              <span className="text-slate-800 font-medium">{checkoutData.name}</span>
+              <span className="text-dark-600 font-medium">Musica para:</span>
+              <span className="text-dark-900 font-bold">{checkoutData.honoreeName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-slate-500">E-mail:</span>
-              <span className="text-slate-800 font-medium">{checkoutData.email}</span>
+              <span className="text-dark-600 font-medium">Comprador:</span>
+              <span className="text-dark-900 font-bold">{checkoutData.name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-dark-600 font-medium">E-mail:</span>
+              <span className="text-dark-900 font-bold">{checkoutData.email}</span>
             </div>
           </div>
         </div>
@@ -550,7 +545,7 @@ export default function CheckoutPixPage() {
         <div className="mt-6 text-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors"
+            className="inline-flex items-center gap-2 text-dark-600 hover:text-dark-900 transition-colors font-bold"
           >
             <ArrowLeft className="w-4 h-4" />
             Voltar ao inicio

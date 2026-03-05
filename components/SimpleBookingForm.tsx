@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -114,9 +114,19 @@ export default function SimpleBookingForm({
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [currentPlanId, setCurrentPlanId] = useState(selectedPlanId);
   const [showPlanUpgradeNotice, setShowPlanUpgradeNotice] = useState(false);
+  const [hasCoupon, setHasCoupon] = useState(false);
 
   // Obter plano atual (pode mudar dinamicamente)
   const plano = getPlanoById(currentPlanId) || PLANOS[0];
+  const discountedPrice = hasCoupon ? Math.round(plano.price * 90) / 100 : plano.price;
+
+  // Verificar cupom no localStorage
+  useEffect(() => {
+    const cupom = localStorage.getItem('melodia_cupom');
+    if (cupom === 'RARA10') {
+      setHasCoupon(true);
+    }
+  }, []);
 
   const [formData, setFormData] = useState<FormData>({
     relationship: preSelectedRelationship,
@@ -263,13 +273,15 @@ export default function SimpleBookingForm({
         planoPrecoCents: plano.priceCents,
         planoMelodias: plano.melodias,
         planoEntrega: plano.entrega,
+        // Cupom de desconto
+        cupom: localStorage.getItem('melodia_cupom') || '',
       };
 
       // Salvar dados no localStorage para a pagina de checkout
       localStorage.setItem('pendingOrder', JSON.stringify(orderData));
 
-      // Redirecionar para pagina de checkout PIX
-      router.push('/checkout/pix');
+      // Redirecionar para pagina de checkout unificado
+      router.push('/checkout');
     } catch (error: any) {
       setPaymentError(error.message || 'Erro ao processar. Tente novamente.');
       setLoading(false);
@@ -290,7 +302,7 @@ export default function SimpleBookingForm({
         <div className="flex items-center justify-between mb-3">
           <div className="text-white flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="bg-amber-500/20 text-amber-400 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-amber-500/30">
+              <span className="bg-gold-500/20 text-gold-400 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border border-gold-500/30">
                 Passo {step} de {totalSteps}
               </span>
             </div>
@@ -300,8 +312,20 @@ export default function SimpleBookingForm({
           <div className="text-right flex items-center gap-2 sm:gap-3 flex-shrink-0">
             {/* Preço visível */}
             <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 border border-green-500/30">
-              <span className="text-[10px] sm:text-xs text-green-300 font-medium block">Plano {plano.name}</span>
-              <span className="text-base sm:text-lg font-black text-white">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
+              {hasCoupon ? (
+                <>
+                  <span className="text-[10px] sm:text-xs text-green-300 font-bold block">RARA10 -10%</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] sm:text-xs text-white/40 line-through">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
+                    <span className="text-base sm:text-lg font-black text-green-300">R$ {discountedPrice.toFixed(2).replace('.', ',')}</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="text-[10px] sm:text-xs text-green-300 font-medium block">Plano {plano.name}</span>
+                  <span className="text-base sm:text-lg font-black text-white">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
+                </>
+              )}
             </div>
             {onClose && (
               <button onClick={onClose} className="text-white/60 hover:text-white p-1 hover:bg-white/10 rounded-lg">
@@ -311,7 +335,7 @@ export default function SimpleBookingForm({
           </div>
         </div>
         <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-gradient-to-r from-gold-400 to-gold-400 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
@@ -336,7 +360,7 @@ export default function SimpleBookingForm({
                   </span>
                   <ArrowRight size={12} className="text-blue-400" />
                   <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-full border border-blue-200">
-                    <RefreshCw size={12} className="text-amber-500" />
+                    <RefreshCw size={12} className="text-gold-500" />
                     Edite a vontade
                   </span>
                   <ArrowRight size={12} className="text-blue-400" />
@@ -349,7 +373,7 @@ export default function SimpleBookingForm({
 
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                  <Heart size={16} className="text-amber-500" />
+                  <Heart size={16} className="text-gold-500" />
                   Para quem e essa musica?
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
@@ -463,12 +487,12 @@ export default function SimpleBookingForm({
                     <div className="space-y-3">
                       {/* Aviso de upgrade de plano */}
                       {showPlanUpgradeNotice && (
-                        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-300 rounded-xl p-3 animate-pulse">
+                        <div className="bg-gradient-to-r from-gold-300/10 to-gold-300/10 border-2 border-gold-400/40 rounded-xl p-3 animate-pulse">
                           <div className="flex items-start gap-2">
-                            <Sparkles className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                            <Sparkles className="w-5 h-5 text-gold-500 flex-shrink-0 mt-0.5" />
                             <div>
-                              <p className="text-sm font-bold text-amber-800">Plano atualizado para Premium!</p>
-                              <p className="text-xs text-amber-700 mt-1">
+                              <p className="text-sm font-bold text-gold-700">Plano atualizado para Premium!</p>
+                              <p className="text-xs text-gold-700 mt-1">
                                 Como o sexo e surpresa, voce recebera 2 musicas completas (uma para menino e outra para menina). Seu plano foi automaticamente atualizado para Premium!
                               </p>
                             </div>
@@ -507,7 +531,7 @@ export default function SimpleBookingForm({
 
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                  <User size={16} className="text-amber-500" />
+                  <User size={16} className="text-gold-500" />
                   {isChaBebe ? 'Nome dos pais' : 'Nome da pessoa homenageada'}
                 </label>
                 <input
@@ -522,7 +546,7 @@ export default function SimpleBookingForm({
               {!isChaBebe && (
                 <div className="space-y-3">
                   <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                    <Gift size={16} className="text-amber-500" />
+                    <Gift size={16} className="text-gold-500" />
                     Qual a ocasiao especial?
                   </label>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
@@ -546,7 +570,7 @@ export default function SimpleBookingForm({
 
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                  <Music size={16} className="text-amber-500" />
+                  <Music size={16} className="text-gold-500" />
                   {plano.melodias > 1 ? 'Ritmo da 1ª musica' : 'Qual ritmo voce prefere?'}
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
@@ -569,15 +593,15 @@ export default function SimpleBookingForm({
 
               {/* Segundo estilo musical - apenas para Plano Premium */}
               {plano.melodias > 1 && (
-                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-3 border border-amber-200">
-                  <label className="flex items-center gap-2 text-xs font-bold text-amber-700 mb-2">
-                    <Sparkles size={14} className="text-amber-500" />
-                    Bonus Premium: Escolha o ritmo da 2ª musica
+                <div className="bg-gradient-to-r from-gold-300/10 to-gold-300/10 rounded-xl p-3 border border-gold-400/30">
+                  <label className="flex items-center gap-2 text-xs font-bold text-gold-700 mb-2">
+                    <Sparkles size={14} className="text-gold-500" />
+                    Bônus do seu Plano: Escolha o ritmo da 2ª musica
                   </label>
                   <select
                     value={formData.musicStyle2 || ''}
                     onChange={(e) => updateField('musicStyle2', e.target.value)}
-                    className="w-full px-3 py-3 rounded-lg border-2 border-amber-200 bg-white text-sm sm:text-base font-medium text-slate-700 focus:border-amber-400 focus:outline-none"
+                    className="w-full px-3 py-3 rounded-lg border-2 border-gold-400/30 bg-white text-sm sm:text-base font-medium text-slate-700 focus:border-gold-400 focus:outline-none"
                   >
                     <option value="">Mesmo ritmo da 1ª musica</option>
                     {MUSIC_STYLES.map((style) => (
@@ -591,7 +615,7 @@ export default function SimpleBookingForm({
 
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                  <Mic2 size={16} className="text-amber-500" />
+                  <Mic2 size={16} className="text-gold-500" />
                   Qual voz voce prefere?
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -623,12 +647,12 @@ export default function SimpleBookingForm({
                     onClick={() => updateField('voicePreference', 'sem_preferencia')}
                     className={`p-2 rounded-xl border-2 text-center active:scale-95 transition-all ${
                       formData.voicePreference === 'sem_preferencia'
-                        ? 'border-amber-500 bg-amber-50 shadow-md'
+                        ? 'border-gold-500 bg-gold-300/10 shadow-md'
                         : 'border-slate-200'
                     }`}>
                     <span className="text-xl block">🎵</span>
                     <span className={`font-bold text-xs block mt-1 ${
-                      formData.voicePreference === 'sem_preferencia' ? 'text-amber-600' : 'text-slate-600'
+                      formData.voicePreference === 'sem_preferencia' ? 'text-gold-600' : 'text-slate-600'
                     }`}>Tanto faz</span>
                   </button>
                 </div>
@@ -659,7 +683,7 @@ export default function SimpleBookingForm({
 
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                  <Heart size={16} className="text-amber-500 fill-amber-500" />
+                  <Heart size={16} className="text-gold-500 fill-gold-500" />
                   Conte a historia de {formData.honoreeName}
                 </label>
                 <p className="text-xs text-slate-500">Quanto mais detalhes, mais especial ficara a musica!</p>
@@ -672,8 +696,8 @@ export default function SimpleBookingForm({
                   placeholder="Conte qualidades, memorias especiais, momentos marcantes, apelidos carinhosos, lugares que frequentam juntos..."
                 />
                 <div className="flex justify-between items-start">
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 flex-1 mr-2">
-                    <p className="text-xs text-amber-700">
+                  <div className="bg-gold-300/10 border border-gold-400/30 rounded-lg p-2 flex-1 mr-2">
+                    <p className="text-xs text-gold-700">
                       <strong>Dicas:</strong> Como se conheceram, momentos inesqueciveis, caracteristicas que voce ama...
                     </p>
                   </div>
@@ -685,7 +709,7 @@ export default function SimpleBookingForm({
 
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                  <Users size={16} className="text-amber-500" />
+                  <Users size={16} className="text-gold-500" />
                   Familiares para mencionar <span className="text-slate-400 font-normal text-xs">(opcional)</span>
                 </label>
                 <input
@@ -744,7 +768,7 @@ export default function SimpleBookingForm({
                         <Music size={18} className="text-blue-600" />
                         <span className="font-bold text-slate-900 text-sm">Letra para {formData.honoreeName}</span>
                       </div>
-                      <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium">
+                      <span className="text-xs bg-gold-300/20 text-gold-700 px-2 py-1 rounded-full font-medium">
                         {MUSIC_STYLES.find(m => m.value === formData.musicStyle)?.label}
                       </span>
                     </div>
@@ -754,9 +778,9 @@ export default function SimpleBookingForm({
                   </div>
 
                   {/* Aviso de edição ilimitada */}
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
-                    <Sparkles size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-amber-700">
+                  <div className="bg-gold-300/10 border border-gold-400/30 rounded-lg p-3 flex items-start gap-2">
+                    <Sparkles size={16} className="text-gold-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-gold-700">
                       <strong>Edite quantas vezes quiser!</strong> Gere novas versoes ou edite manualmente ate ficar perfeita.
                     </p>
                   </div>
@@ -845,7 +869,7 @@ export default function SimpleBookingForm({
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                    <User size={16} className="text-amber-500" />
+                    <User size={16} className="text-gold-500" />
                     Seu nome
                   </label>
                   <input
@@ -860,7 +884,7 @@ export default function SimpleBookingForm({
                 <div className="grid grid-cols-1 gap-3">
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                      <Phone size={16} className="text-amber-500" />
+                      <Phone size={16} className="text-gold-500" />
                       WhatsApp
                     </label>
                     <input
@@ -873,7 +897,7 @@ export default function SimpleBookingForm({
                   </div>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                      <Mail size={16} className="text-amber-500" />
+                      <Mail size={16} className="text-gold-500" />
                       E-mail
                     </label>
                     <input
@@ -888,14 +912,14 @@ export default function SimpleBookingForm({
               </div>
 
               {/* Valor emocional */}
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200">
+              <div className="bg-gradient-to-br from-gold-300/10 to-gold-300/10 rounded-xl p-5 border border-gold-400/30">
                 <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <Heart size={18} className="text-amber-500 fill-amber-500" />
+                  <Heart size={18} className="text-gold-500 fill-gold-500" />
                   Voce esta prestes a criar algo unico
                 </h4>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-gold-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Music size={12} className="text-white" />
                     </div>
                     <p className="text-slate-700 text-sm">
@@ -903,7 +927,7 @@ export default function SimpleBookingForm({
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-gold-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Heart size={12} className="text-white" />
                     </div>
                     <p className="text-slate-700 text-sm">
@@ -911,7 +935,7 @@ export default function SimpleBookingForm({
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 rounded-full bg-gold-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Sparkles size={12} className="text-white" />
                     </div>
                     <p className="text-slate-700 text-sm">
@@ -958,7 +982,14 @@ export default function SimpleBookingForm({
                     ) : (
                       <>
                         <svg viewBox="0 0 512 512" className="w-6 h-6 fill-current"><path d="M112.57 391.19c20.056 0 38.928-7.808 53.12-22l76.693-76.692c5.385-5.404 14.765-5.384 20.15 0l76.989 76.989c14.191 14.172 33.045 21.98 53.12 21.98h15.098l-97.138 97.139c-30.326 30.344-79.505 30.344-109.85 0l-97.415-97.416h9.232zm280.068-271.294c-20.056 0-38.929 7.809-53.12 22l-76.97 76.99c-5.551 5.53-14.6 5.568-20.15-.02l-76.711-76.693c-14.192-14.191-33.046-21.999-53.12-21.999h-9.234l97.416-97.416c30.344-30.344 79.523-30.344 109.867 0l97.138 97.138h-15.116z"/></svg>
-                        Pagar com PIX - R$ {plano.price.toFixed(2).replace('.', ',')}
+                        Pagar com PIX - {hasCoupon ? (
+                          <span className="flex items-center gap-2">
+                            <span className="line-through opacity-60 text-sm">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
+                            <span>R$ {discountedPrice.toFixed(2).replace('.', ',')}</span>
+                          </span>
+                        ) : (
+                          <>R$ {plano.price.toFixed(2).replace('.', ',')}</>
+                        )}
                       </>
                     )}
                   </button>
@@ -985,7 +1016,7 @@ export default function SimpleBookingForm({
             <button type="button" onClick={nextStep} disabled={!canProceed() || generatingLyrics}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-bold text-sm transition-all ${
                 canProceed() && !generatingLyrics
-                  ? 'bg-gradient-to-r from-blue-800 to-blue-900 text-amber-400 hover:from-blue-700 hover:to-blue-800 shadow-lg'
+                  ? 'bg-gradient-to-r from-blue-800 to-blue-900 text-gold-400 hover:from-blue-700 hover:to-blue-800 shadow-lg'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}>
               {generatingLyrics ? (
@@ -1005,7 +1036,7 @@ export default function SimpleBookingForm({
           </div>
           <div className="flex items-center gap-1">
             <Clock size={12} className="text-blue-500" />
-            <span>Entrega 48h</span>
+            <span>Entrega rápida</span>
           </div>
           <div className="flex items-center gap-1">
             <Heart size={12} className="text-red-400" />

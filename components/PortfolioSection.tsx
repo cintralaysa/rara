@@ -18,12 +18,10 @@ export default function PortfolioSection() {
 
   const togglePlay = (item: PortfolioItem) => {
     const audio = audioRefs.current[item.id];
-
     if (playingId === item.id) {
       audio?.pause();
       setPlayingId(null);
     } else {
-      // Pausar qualquer outro áudio tocando
       Object.values(audioRefs.current).forEach(a => a?.pause());
       audio?.play();
       setPlayingId(item.id);
@@ -44,38 +42,36 @@ export default function PortfolioSection() {
   };
 
   return (
-    <section id="portfolio" className="py-16 sm:py-20 md:py-28 relative overflow-hidden bg-white">
+    <section id="portfolio" className="py-16 sm:py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-10 sm:mb-14 md:mb-20"
+          className="text-center mb-10 sm:mb-14"
         >
-          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-4 sm:mb-6 shadow-lg">
-            <Music className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
-            <span className="text-blue-800 text-xs sm:text-sm font-semibold">Nosso Portfólio</span>
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white rounded-full border-2 border-dark-900 shadow-offset-sm mb-6">
+            <Music className="w-4 h-4 text-wine-500" />
+            <span className="text-dark-900 text-xs sm:text-sm font-black uppercase tracking-widest">Nosso Portfólio</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 mb-4 sm:mb-6">
-            Músicas que já
-            <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent"> emocionaram</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-dark-900 mb-4 tracking-tight">
+            Músicas que já{' '}
+            <span className="text-wine-500">emocionaram</span>
           </h2>
-          <p className="text-slate-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4">
-            Ouça algumas das músicas que criamos para nossos clientes. Cada uma conta uma história única e especial.
+          <p className="text-dark-600 text-base sm:text-lg max-w-2xl mx-auto font-medium">
+            Ouça algumas das músicas que criamos. Cada uma conta uma história única.
           </p>
         </motion.div>
 
-        {/* Category filters */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-10 md:mb-14 px-2">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 sm:mb-12 px-2">
           {PORTFOLIO_CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 sm:px-5 md:px-7 py-2.5 sm:py-3 md:py-3.5 rounded-full font-bold text-sm sm:text-base transition-all duration-300 ${
+              className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-black text-sm transition-all duration-300 uppercase tracking-wide border-2 ${
                 activeCategory === cat.id
-                  ? 'bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 text-amber-400 shadow-xl'
-                  : 'bg-blue-50 text-slate-700 hover:bg-blue-100 border-2 border-blue-200 hover:border-blue-400'
+                  ? 'bg-dark-900 text-white border-dark-900 shadow-offset-sm'
+                  : 'bg-white text-dark-900 border-dark-900/20 hover:border-dark-900'
               }`}
             >
               {cat.label}
@@ -83,10 +79,9 @@ export default function PortfolioSection() {
           ))}
         </div>
 
-        {/* Portfolio grid - 2x2 layout */}
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-7 max-w-4xl mx-auto"
         >
           <AnimatePresence mode="popLayout">
             {filteredItems.map((item, index) => (
@@ -99,10 +94,8 @@ export default function PortfolioSection() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="group"
               >
-                <div className="bg-white backdrop-blur-xl border-2 border-blue-200 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-xl transition-all duration-300">
-                  {/* Cover */}
-                  <div className="relative aspect-square bg-gradient-to-br from-blue-100 to-blue-50 overflow-hidden">
-                    {/* Cover Image */}
+                <div className="bg-white border-2 border-dark-900 rounded-2xl overflow-hidden card-hover shadow-offset-sm">
+                  <div className="relative aspect-square overflow-hidden">
                     {item.coverImage && (
                       <Image
                         src={item.coverImage}
@@ -112,66 +105,53 @@ export default function PortfolioSection() {
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     )}
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all" />
 
-                    {/* Overlay gradient for better text visibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-
-                    {/* Animated waveform overlay when playing */}
                     {playingId === item.id && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                         <div className="flex items-end gap-1.5 h-20">
                           {[...Array(14)].map((_, i) => (
                             <motion.div
                               key={i}
-                              className="w-2 rounded-full bg-gradient-to-t from-amber-500 via-yellow-500 to-amber-600"
-                              animate={{
-                                height: [20, 50 + Math.random() * 30, 20],
-                              }}
-                              transition={{
-                                duration: 0.5,
-                                repeat: Infinity,
-                                delay: i * 0.04,
-                              }}
+                              className="w-2.5 rounded-full bg-wine-400"
+                              animate={{ height: [20, 50 + Math.random() * 30, 20] }}
+                              transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.04 }}
                             />
                           ))}
                         </div>
                       </div>
                     )}
 
-                    {/* Play button */}
                     <button
                       onClick={() => togglePlay(item)}
-                      className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-all duration-300"
+                      className="absolute inset-0 flex items-center justify-center"
                     >
-                      <div className={`w-18 h-18 rounded-full flex items-center justify-center transition-all duration-300 ${
+                      <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 border-2 border-dark-900 ${
                         playingId === item.id
-                          ? 'bg-gradient-to-br from-blue-800 via-blue-900 to-slate-900 scale-110 shadow-2xl'
-                          : 'bg-white/90 backdrop-blur-sm border-2 border-white/50 group-hover:bg-blue-800 group-hover:border-blue-800 group-hover:scale-110'
-                      } shadow-xl p-5`}>
+                          ? 'bg-dark-900 scale-110'
+                          : 'bg-white group-hover:bg-dark-900 group-hover:scale-110'
+                      } shadow-offset-sm`}>
                         {playingId === item.id ? (
-                          <Pause className="w-7 h-7 text-amber-400" />
+                          <Pause className="w-6 h-6 text-white" />
                         ) : (
-                          <Play className="w-7 h-7 text-blue-600 group-hover:text-amber-400 ml-1" />
+                          <Play className="w-6 h-6 text-dark-900 group-hover:text-white ml-0.5" />
                         )}
                       </div>
                     </button>
 
-                    {/* Progress bar */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/30">
+                    <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/20">
                       <motion.div
-                        className="h-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600"
+                        className="h-full bg-wine-500"
                         style={{ width: `${progress[item.id] || 0}%` }}
                       />
                     </div>
 
-                    {/* Category badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className="px-4 py-1.5 bg-white/90 backdrop-blur-xl rounded-full text-xs font-bold text-blue-800 border border-white/50 shadow-lg">
+                    <div className="absolute top-3 left-3">
+                      <span className="px-3 py-1.5 bg-white rounded-full text-[10px] font-black text-dark-900 uppercase tracking-wider border-2 border-dark-900 shadow-sm">
                         {item.categoryLabel}
                       </span>
                     </div>
 
-                    {/* Audio element (hidden) */}
                     <audio
                       ref={el => { if (el) audioRefs.current[item.id] = el; }}
                       src={item.audioUrl}
@@ -181,22 +161,17 @@ export default function PortfolioSection() {
                     />
                   </div>
 
-                  {/* Info */}
-                  <div className="p-4 sm:p-6">
-                    <h3 className="font-bold text-slate-800 text-base sm:text-lg mb-2 line-clamp-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-slate-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-1">
-                      {item.description}
-                    </p>
+                  <div className="p-4 sm:p-5">
+                    <h3 className="font-black text-dark-900 text-base mb-1.5 line-clamp-1">{item.title}</h3>
+                    <p className="text-dark-600 text-xs sm:text-sm mb-3 line-clamp-1 font-medium">{item.description}</p>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-slate-500 text-xs sm:text-sm">
-                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
+                      <div className="flex items-center gap-1.5 text-dark-600 text-xs font-semibold">
+                        <Clock className="w-3.5 h-3.5 text-dark-900" />
                         <span>{item.duration}</span>
                       </div>
                       {item.occasion && (
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-amber-600 text-xs sm:text-sm font-medium">
-                          <Heart className="w-3 h-3 sm:w-4 sm:h-4 fill-amber-500 text-amber-500" />
+                        <div className="flex items-center gap-1.5 text-wine-500 text-xs font-black">
+                          <Heart className="w-3.5 h-3.5 fill-wine-500 text-wine-500" />
                           <span>{item.occasion}</span>
                         </div>
                       )}
@@ -208,21 +183,20 @@ export default function PortfolioSection() {
           </AnimatePresence>
         </motion.div>
 
-        {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mt-10 sm:mt-14 md:mt-20"
+          className="text-center mt-10 sm:mt-14"
         >
-          <p className="text-slate-600 mb-6 sm:mb-8 text-base sm:text-lg">
+          <p className="text-dark-600 mb-6 text-base sm:text-lg font-bold">
             Quer ter uma música assim para você também?
           </p>
           <a
             href="#criar-musica"
-            className="inline-flex items-center gap-2 sm:gap-3 px-8 sm:px-10 md:px-12 py-4 sm:py-5 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 text-amber-400 text-base sm:text-lg font-bold rounded-full hover:from-blue-700 hover:via-blue-800 hover:to-slate-800 transition-all duration-300 shadow-xl shadow-blue-900/30 hover:shadow-2xl hover:-translate-y-1"
+            className="btn-bold px-8 sm:px-12 py-4 sm:py-5 bg-dark-900 text-white text-base sm:text-lg inline-flex"
           >
-            <Music className="w-5 h-5 sm:w-6 sm:h-6" />
+            <Music className="w-5 h-5" />
             Criar minha música
           </a>
         </motion.div>

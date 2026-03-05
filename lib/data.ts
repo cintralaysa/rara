@@ -19,12 +19,12 @@ export const SERVICES: Service[] = [
     slug: "musica-romantica",
     title: "Música Romântica",
     description: "Uma canção única que eterniza o amor de vocês. Perfeita para casamentos, aniversários de namoro, pedidos de casamento ou simplesmente para dizer 'eu te amo' de uma forma inesquecível.",
-    price: 59.90,
+    price: 39.90,
     image: "/images/romantica.jpg",
     features: [
       "Letra exclusiva personalizada",
       "Melodia única e profissional",
-      "Entrega em até 48 horas",
+      "Entrega em até 24 horas",
       "Revisões ilimitadas na letra",
       "Arquivo em alta qualidade (MP3)",
       "Edite a letra direto no site"
@@ -38,7 +38,7 @@ export const SERVICES: Service[] = [
     slug: "musica-homenagem",
     title: "Música de Homenagem",
     description: "Celebre a vida de alguém especial com uma música que conta sua história. Ideal para homenagear pais, avós, filhos ou amigos em momentos marcantes.",
-    price: 59.90,
+    price: 39.90,
     image: "/images/homenagem.jpg",
     features: [
       "Letra exclusiva personalizada",
@@ -56,7 +56,7 @@ export const SERVICES: Service[] = [
     slug: "musica-especial",
     title: "Música para Ocasião Especial",
     description: "Chá revelação, aniversário, dia das mães, dia dos pais, formatura... Qualquer momento especial merece uma música única e emocionante.",
-    price: 59.90,
+    price: 39.90,
     image: "/images/especial.jpg",
     features: [
       "Letra exclusiva personalizada",
@@ -88,7 +88,7 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "Noiva",
     content: "A música que fizeram para nosso casamento foi o momento mais emocionante da cerimônia. Todos choraram! É uma lembrança que vamos carregar para sempre.",
     rating: 5,
-    image: "/images/testimonials/mariana.jpg",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
     serviceType: "Música Romântica"
   },
   {
@@ -97,7 +97,7 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "Filho agradecido",
     content: "Encomendei uma música para os 70 anos da minha mãe. Quando ela ouviu, não conseguiu segurar as lágrimas. Foi o presente mais especial que já dei.",
     rating: 5,
-    image: "/images/testimonials/carlos.jpg",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
     serviceType: "Música de Homenagem"
   },
   {
@@ -106,26 +106,26 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "Esposa",
     content: "Meu marido me surpreendeu com uma música que conta nossa história de 15 anos. Cada verso me fez reviver nossos momentos. Simplesmente perfeito!",
     rating: 5,
-    image: "/images/testimonials/fernanda.jpg",
+    image: "https://randomuser.me/api/portraits/women/68.jpg",
     serviceType: "Música Romântica"
   },
   {
     id: "4",
     name: "Roberto Almeida",
-    role: "CEO",
-    content: "O jingle que criaram para nossa empresa superou todas as expectativas. Capturaram a essência da nossa marca de forma única e memorável.",
+    role: "Pai emocionado",
+    content: "Pedi uma música para a formatura da minha filha. Quando tocou no evento, não tinha um olho seco na sala. Valeu cada centavo e muito mais.",
     rating: 5,
-    image: "/images/testimonials/roberto.jpg",
-    serviceType: "Música Corporativa"
+    image: "https://randomuser.me/api/portraits/men/75.jpg",
+    serviceType: "Música de Homenagem"
   },
   {
     id: "5",
-    name: "Ana Paula",
+    name: "Ana Paula Santos",
     role: "Mãe",
-    content: "Fiz uma música para o aniversário de 1 ano do meu filho. Mesmo ele sendo pequeno, sei que quando crescer vai se emocionar ao ouvir. Um presente para a vida toda.",
+    content: "Fiz uma música para o chá revelação do meu bebê. A emoção de toda a família foi indescritível. Um momento que ficou gravado pra sempre no coração de todos.",
     rating: 5,
-    image: "/images/testimonials/ana.jpg",
-    serviceType: "Música de Homenagem"
+    image: "https://randomuser.me/api/portraits/women/26.jpg",
+    serviceType: "Música Chá Revelação"
   }
 ];
 
@@ -171,14 +171,14 @@ export const FAQS: FAQ[] = [
 
 export const COMPANY_INFO = {
   name: "Melodia Rara",
-  tagline: "Transformamos sua historia em musica",
-  description: "Criamos musicas personalizadas e unicas que eternizam seus momentos mais especiais. Cada composicao e uma obra de arte exclusiva, feita especialmente para voce.",
+  tagline: "Transformamos sua história em música",
+  description: "Criamos músicas personalizadas e únicas que eternizam seus momentos mais especiais. Cada composição é uma obra de arte exclusiva, feita especialmente para você.",
   email: "contato@melodiarara.com.br",
   whatsapp: "5588992422920",
   whatsappLink: "https://wa.me/5588992422920",
   instagram: "@melodiarara",
   youtube: "@melodiarara",
-  address: "Sao Paulo, SP - Brasil"
+  address: "São Paulo, SP - Brasil"
 };
 
 // Planos de preço
@@ -197,20 +197,20 @@ export interface PricePlan {
 export const PLANOS: PricePlan[] = [
   {
     id: "basico",
-    name: "Plano Essencial",
-    price: 49.90,
-    priceCents: 4990,
+    name: "Plano Básico",
+    price: 39.90,
+    priceCents: 3990,
     melodias: 1,
-    entrega: "48 horas",
+    entrega: "em até 48 horas",
     features: [
       "1 letra exclusiva personalizada",
-      "1 musica completa no ritmo escolhido",
-      "Edite a letra quantas vezes quiser",
-      "Entrega em ate 48 horas",
+      "1 melodia completa",
+      "Edite a letra no site",
+      "Entrega em até 48 horas",
       "Arquivo MP3 alta qualidade",
-      "Preco exclusivo do site"
+      "Receba no seu WhatsApp"
     ],
-    highlight: "Exclusivo Online",
+    highlight: "Exclusivo do Site",
     popular: false
   },
   {
@@ -218,17 +218,18 @@ export const PLANOS: PricePlan[] = [
     name: "Plano Premium",
     price: 79.90,
     priceCents: 7990,
-    melodias: 2,
+    melodias: 3,
     entrega: "no mesmo dia",
     features: [
       "1 letra exclusiva personalizada",
-      "2 MUSICAS COMPLETAS em ritmos diferentes",
-      "Edite a letra quantas vezes quiser",
-      "Entrega NO MESMO DIA",
-      "Arquivo MP3 alta qualidade",
-      "Prioridade maxima na producao"
+      "3 músicas com ritmos diferentes",
+      "Edite a letra no site",
+      "Entrega no mesmo dia ⚡",
+      "3 arquivos MP3 alta qualidade",
+      "Prioridade na produção",
+      "Receba no seu WhatsApp"
     ],
-    highlight: "Mais vendido",
+    highlight: "Mais Vendido",
     popular: true
   }
 ];
@@ -239,5 +240,5 @@ export const getPlanoById = (id: string): PricePlan | undefined => {
 };
 
 // Precos padrão (plano basico) - para compatibilidade
-export const PRECO_MUSICA = 4990; // em centavos para a API do OpenPix
-export const PRECO_MUSICA_DISPLAY = 49.90; // em reais para exibicao
+export const PRECO_MUSICA = 3990; // em centavos
+export const PRECO_MUSICA_DISPLAY = 39.90; // em reais para exibicao

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Music,
@@ -29,23 +29,67 @@ import {
   Wand2,
   Edit3,
   Crown,
-  Check
+  Check,
+  Shield,
+  Award,
+  Users,
+  TrendingUp
 } from 'lucide-react';
+import Image from 'next/image';
 import { TESTIMONIALS, FAQS, COMPANY_INFO, PLANOS } from '@/lib/data';
 import CheckoutModal from '@/components/CheckoutModal';
 import SimpleBookingForm from '@/components/SimpleBookingForm';
 import PortfolioSection from '@/components/PortfolioSection';
+import CouponPopup from '@/components/CouponPopup';
+import SocialProofNotification from '@/components/SocialProofNotification';
+import FloatingNotes from '@/components/FloatingNotes';
+
+// Logo SVG - Bold e com presença
+function LogoSVG({ className = "h-10" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 280 48" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="22" cy="24" r="20" fill="#F6A5C0" opacity="0.5"/>
+      <circle cx="22" cy="24" r="15" fill="#CC8DB3" opacity="0.3"/>
+      <path d="M28 12v18c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c1.1 0 2.1.3 3 .8V12l3-2v2z" fill="#250e2c"/>
+      <path d="M25 12l6-3v6l-6 3V12z" fill="#837AB6"/>
+      <text x="50" y="20" fontFamily="'Georgia', serif" fontWeight="900" fontSize="21" fill="#250e2c" letterSpacing="1">
+        Melodia
+      </text>
+      <text x="155" y="20" fontFamily="'Georgia', serif" fontWeight="900" fontSize="21" fill="#B86B9A" letterSpacing="1">
+        Rara
+      </text>
+      <text x="50" y="38" fontFamily="'Inter', sans-serif" fontWeight="800" fontSize="8" fill="#250e2c" letterSpacing="3.5">
+        MÚSICAS PERSONALIZADAS
+      </text>
+      <line x1="50" y1="26" x2="200" y2="26" stroke="#250e2c" strokeWidth="1.5" opacity="0.15"/>
+    </svg>
+  );
+}
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
   const [selectedPlan, setSelectedPlan] = useState<string>('basico');
+  const [isHeroPlaying, setIsHeroPlaying] = useState(false);
+  const [hasCoupon, setHasCoupon] = useState(false);
+  const heroAudioRef = useRef<HTMLAudioElement>(null);
 
   const openModalWithPlan = (planId: string) => {
     setSelectedPlan(planId);
     setIsModalOpen(true);
+  };
+
+  const toggleHeroAudio = () => {
+    if (heroAudioRef.current) {
+      if (isHeroPlaying) {
+        heroAudioRef.current.pause();
+      } else {
+        heroAudioRef.current.play();
+      }
+      setIsHeroPlaying(!isHeroPlaying);
+    }
   };
 
   useEffect(() => {
@@ -56,12 +100,25 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Auto-rotate testimonials
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
-    }, 5000);
-    return () => clearInterval(interval);
+    const audio = heroAudioRef.current;
+    if (audio) {
+      const handleEnded = () => setIsHeroPlaying(false);
+      audio.addEventListener('ended', handleEnded);
+      return () => audio.removeEventListener('ended', handleEnded);
+    }
+  }, []);
+
+  // Detectar cupom ativo (via evento, sem polling)
+  useEffect(() => {
+    const checkCoupon = () => {
+      const cupom = localStorage.getItem('melodia_cupom');
+      setHasCoupon(cupom === 'RARA10');
+    };
+    checkCoupon();
+    window.addEventListener('storage', checkCoupon);
+    return () => window.removeEventListener('storage', checkCoupon);
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -69,68 +126,49 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#f8fafc]">
-      {/* Subtle pattern background */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(30,58,138,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(30,58,138,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
+    <main className="min-h-screen overflow-hidden bg-soft-50 relative">
+      <FloatingNotes />
 
-      {/* Soft gradient accents */}
-      <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-blue-200/30 to-transparent rounded-full blur-[100px] pointer-events-none" />
-      <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-amber-200/20 to-transparent rounded-full blur-[100px] pointer-events-none" />
+      {/* Ambient blobs - hidden on mobile for GPU performance */}
+      <div className="hidden md:block">
+        <div className="fixed top-[-200px] right-[-200px] w-[600px] h-[600px] bg-soft-200/30 rounded-full blur-[140px] pointer-events-none" />
+        <div className="fixed bottom-[-200px] left-[-200px] w-[600px] h-[600px] bg-gold-200/25 rounded-full blur-[140px] pointer-events-none" />
+      </div>
 
-      {/* Header */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? 'bg-white/95 backdrop-blur-xl border-b border-blue-200 shadow-lg shadow-blue-100/50'
-            : 'bg-transparent'
-        }`}
-      >
+      {/* ===== HEADER ===== */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled
+          ? 'bg-white md:bg-white/95 md:backdrop-blur-xl border-b-2 border-dark-900 shadow-sm'
+          : 'bg-transparent'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center shadow-lg shadow-blue-900/30">
-                <Music className="w-6 h-6 text-amber-400" />
-              </div>
-              <span className="text-xl font-bold text-slate-800 tracking-tight">
-                Melodia Rara
-              </span>
-            </div>
+          <div className="flex items-center justify-between h-18 sm:h-20">
+            <LogoSVG className="h-10 sm:h-12 w-auto" />
 
-            {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <button
-                onClick={() => scrollToSection('como-funciona')}
-                className="text-slate-600 hover:text-amber-600 transition-colors font-medium"
-              >
-                Como Funciona
-              </button>
-              <button
-                onClick={() => scrollToSection('portfolio')}
-                className="text-slate-600 hover:text-amber-600 transition-colors font-medium"
-              >
-                Portfolio
-              </button>
-              <button
-                onClick={() => scrollToSection('depoimentos')}
-                className="text-slate-600 hover:text-amber-600 transition-colors font-medium"
-              >
-                Depoimentos
-              </button>
-              <button
-                onClick={() => scrollToSection('faq')}
-                className="text-slate-600 hover:text-amber-600 transition-colors font-medium"
-              >
-                FAQ
-              </button>
+              {[
+                { label: 'Planos', id: 'planos' },
+                { label: 'Portfólio', id: 'portfolio' },
+                { label: 'Como Funciona', id: 'como-funciona' },
+                { label: 'Depoimentos', id: 'depoimentos' },
+                { label: 'Dúvidas', id: 'faq' },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className="text-dark-900 hover:text-wine-500 transition-all duration-300 font-bold text-sm uppercase tracking-wide relative group"
+                >
+                  {item.label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-[3px] bg-dark-900 rounded-full transition-all duration-300 group-hover:w-full" />
+                </button>
+              ))}
             </nav>
 
-            {/* CTA */}
             <button
               onClick={() => setIsModalOpen(true)}
-              className="group px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 font-bold rounded-full hover:from-amber-400 hover:to-yellow-400 transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-500/50 hover:-translate-y-0.5 text-sm sm:text-base"
+              className="btn-bold px-5 sm:px-7 py-2.5 sm:py-3 bg-dark-900 text-white text-sm"
             >
-              <Zap className="w-4 h-4" />
+              <Sparkles className="w-4 h-4" />
               <span className="hidden sm:inline">Criar Música</span>
               <span className="sm:hidden">Criar</span>
             </button>
@@ -138,314 +176,374 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
+      {/* ===== HERO ===== */}
+      <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <span className="absolute top-[18%] left-[6%] text-wine-400 text-2xl md:text-4xl animate-float opacity-40 md:opacity-60">{'♪'}</span>
+          <span className="absolute top-[28%] right-[10%] text-gold-500 text-xl md:text-3xl animate-float opacity-35 md:opacity-50" style={{ animationDelay: '1s' }}>{'♫'}</span>
+          <span className="hidden md:block absolute bottom-[25%] left-[12%] text-wine-300 text-5xl animate-float opacity-45" style={{ animationDelay: '2s' }}>{'♬'}</span>
+          <span className="hidden md:block absolute top-[45%] right-[6%] text-gold-400 text-4xl animate-float opacity-45" style={{ animationDelay: '0.5s' }}>{'𝄞'}</span>
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Content */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.7 }}
             >
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-6 shadow-lg shadow-blue-200/30">
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shadow-lg shadow-amber-400/50" />
-                <span className="text-blue-800 text-sm font-semibold tracking-wide">100% Exclusiva e Personalizada</span>
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white rounded-full border-2 border-dark-900 shadow-offset-sm mb-6">
+                <div className="w-2.5 h-2.5 rounded-full bg-sage-400 animate-pulse" />
+                <span className="text-dark-900 text-xs sm:text-sm font-black uppercase tracking-wide">+5.502 músicas criadas</span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-800 leading-[1.1] mb-6 sm:mb-8">
-                Sua história vira{' '}
-                <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-                  música exclusiva
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-dark-900 leading-[1.05] mb-6 sm:mb-8 tracking-tight">
+                Sua Emoção{' '}
+                <br className="hidden sm:block" />
+                Merece Uma{' '}
+                <span className="relative inline-block">
+                  <span className="text-wine-500">Melodia</span>
+                  <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
+                    <path d="M2 8c50-8 100-8 196 0" stroke="#837AB6" strokeWidth="4" strokeLinecap="round" opacity="0.6"/>
+                  </svg>
                 </span>
               </h1>
 
-              <p className="text-base sm:text-xl md:text-2xl text-slate-600 mb-6 sm:mb-10 leading-relaxed font-light">
-                Conte sua história e nossa equipe transforma em uma canção única.
-                <span className="text-amber-600 font-semibold"> Receba sua melodia exclusiva</span> produzida profissionalmente.
+              <p className="text-base sm:text-lg md:text-xl text-dark-700 mb-3 sm:mb-4 leading-relaxed max-w-xl font-medium">
+                Criamos músicas exclusivas e personalizadas que eternizam os momentos mais especiais da sua vida. Cada nota, cada verso, feito pra você.
+              </p>
+              <p className="text-xs sm:text-sm text-dark-600 mb-8 sm:mb-10 flex items-center gap-1.5 font-semibold">
+                <MessageCircle className="w-3.5 h-3.5 text-green-500" />
+                Faça sua música em nosso site e receba direto no seu WhatsApp
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10 sm:mb-14">
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="group px-6 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 text-amber-400 text-base sm:text-lg font-bold rounded-full hover:from-blue-700 hover:via-blue-800 hover:to-slate-800 transition-all duration-300 shadow-xl shadow-blue-900/30 hover:shadow-2xl hover:shadow-blue-900/40 hover:-translate-y-1 flex items-center justify-center gap-2 sm:gap-3"
+                  className="btn-bold px-8 sm:px-10 py-4 sm:py-5 bg-dark-900 text-white text-base sm:text-lg"
                 >
-                  <Wand2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
                   Criar Minha Música
-                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
                 <button
                   onClick={() => scrollToSection('portfolio')}
-                  className="px-6 sm:px-10 py-4 sm:py-5 bg-white text-slate-700 text-base sm:text-lg font-semibold rounded-full border-2 border-blue-300 hover:bg-blue-50 hover:border-blue-400 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 shadow-lg"
+                  className="btn-bold px-8 sm:px-10 py-4 sm:py-5 bg-white text-dark-900 text-base sm:text-lg"
                 >
-                  <Play className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
+                  <Headphones className="w-5 h-5 sm:w-6 sm:h-6 text-wine-500" />
                   Ouvir Exemplos
                 </button>
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-6">
-                <div className="relative group">
-                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-xl sm:rounded-2xl px-3 sm:px-7 py-3 sm:py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
-                    <p className="text-xl sm:text-4xl font-black text-slate-800">+5.000</p>
-                    <p className="text-slate-600 text-[10px] sm:text-sm font-medium">Pessoas satisfeitas</p>
+              <div className="flex flex-wrap gap-4 sm:gap-5">
+                {[
+                  { icon: <Users className="w-4 h-4 text-dark-900" />, value: '+5.502', label: 'Músicas criadas' },
+                  { icon: <Star className="w-4 h-4 text-wine-400 fill-wine-400" />, value: '4.9', label: 'Avaliação' },
+                  { icon: <Clock className="w-4 h-4 text-gold-600" />, value: 'Rápida', label: 'Entrega' },
+                ].map((stat, i) => (
+                  <div key={i} className="flex items-center gap-3 px-4 py-3 bg-white rounded-2xl border-2 border-dark-900 shadow-offset-sm">
+                    <div className="w-9 h-9 rounded-xl bg-soft-200 flex items-center justify-center">
+                      {stat.icon}
+                    </div>
+                    <div>
+                      <p className="text-lg font-black text-dark-900 leading-none">{stat.value}</p>
+                      <p className="text-dark-600 text-[11px] font-semibold">{stat.label}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="relative group">
-                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-xl sm:rounded-2xl px-3 sm:px-7 py-3 sm:py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
-                    <p className="text-xl sm:text-4xl font-black bg-gradient-to-r from-amber-500 to-yellow-500 bg-clip-text text-transparent">100%</p>
-                    <p className="text-slate-600 text-[10px] sm:text-sm font-medium flex items-center gap-1">
-                      <Music className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
-                      Exclusiva
-                    </p>
-                  </div>
-                </div>
-                <div className="relative group">
-                  <div className="relative bg-white backdrop-blur-xl border-2 border-blue-200 rounded-xl sm:rounded-2xl px-3 sm:px-7 py-3 sm:py-5 shadow-lg shadow-blue-100/50 hover:shadow-xl hover:border-blue-300 transition-all">
-                    <p className="text-xl sm:text-4xl font-black text-slate-800 flex items-center gap-1 sm:gap-2">
-                      <Clock className="w-5 h-5 sm:w-8 sm:h-8 text-amber-500" />
-                    </p>
-                    <p className="text-slate-600 text-[10px] sm:text-sm font-medium">Entrega rápida</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </motion.div>
 
-            {/* Visual - escondido no mobile */}
+            {/* Visual card */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              initial={{ opacity: 0, scale: 0.9, rotate: 0 }}
+              animate={{ opacity: 1, scale: 1, rotate: -2 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
               className="relative hidden lg:block"
             >
-              <div className="relative aspect-square max-w-lg mx-auto">
-                {/* Outer glow ring */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-300/40 to-blue-400/40 animate-pulse blur-2xl" />
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-200/30 to-yellow-200/30 animate-pulse blur-3xl" style={{ animationDelay: '0.5s' }} />
+              <div className="relative max-w-md mx-auto">
+                <motion.div
+                  className="absolute -top-4 -right-4 z-20"
+                  animate={{ scale: [1, 1.08, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <div className="bg-dark-900 text-white text-sm font-black px-6 py-3 rounded-full border-2 border-dark-900 shadow-offset-sm uppercase tracking-wide">
+                    {hasCoupon ? (
+                      <>A partir de <span className="text-white/50 line-through text-xs">R$ 59,90</span> <span className="text-green-400 underline decoration-green-400 decoration-2 underline-offset-2">R$ 53,91</span></>
+                    ) : (
+                      <>A partir de <span className="text-wine-300 underline decoration-wine-400 decoration-2 underline-offset-2">R$ 59,90</span></>
+                    )}
+                  </div>
+                </motion.div>
 
-                {/* Main circle */}
-                <div className="absolute inset-4 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border-2 border-blue-300 backdrop-blur-xl shadow-xl" />
+                <div className="bg-white rounded-3xl p-6 relative overflow-hidden border-2 border-dark-900 shadow-offset">
+                  {/* Foto */}
+                  <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden mb-5 relative border-2 border-dark-900">
+                    <Image
+                      src="/images/cha-bebe-hero.png"
+                      alt="Música Personalizada para qualquer ocasião"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 400px"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <span className="px-4 py-2 bg-dark-900 text-white rounded-full text-xs font-black uppercase tracking-wide shadow-md">
+                        Chá de Bebê
+                      </span>
+                    </div>
+                  </div>
 
-                {/* Inner visualization */}
-                <div className="absolute inset-12 rounded-full bg-gradient-to-br from-blue-800 to-blue-900 border-2 border-blue-700 flex items-center justify-center overflow-hidden shadow-2xl">
-                  {/* Animated waveform */}
-                  <div className="flex items-end gap-1.5 h-28">
-                    {[...Array(14)].map((_, i) => (
+                  <audio ref={heroAudioRef} src="/audio/sample-cha-bebe.mp3" preload="none" />
+
+                  <h3 className="text-lg font-black text-dark-900 mb-1">Chá Revelação</h3>
+                  <p className="text-sm text-dark-600 mb-4 font-medium">De um amor verdadeiro nasceu a canção</p>
+
+                  {/* Waveform visual */}
+                  <div className="flex items-center justify-center gap-[2px] mb-4 h-8">
+                    {[...Array(32)].map((_, i) => (
                       <motion.div
                         key={i}
-                        className="w-2.5 rounded-full bg-amber-400 shadow-lg"
-                        animate={{
-                          height: [20, 60 + Math.random() * 50, 20],
+                        className="w-[3px] rounded-full"
+                        style={{
+                          background: i < 16 ? '#CC8DB3' : '#837AB6',
+                          height: isHeroPlaying ? undefined : `${6 + Math.sin(i * 0.5) * 12}px`
                         }}
-                        transition={{
-                          duration: 0.7,
-                          repeat: Infinity,
-                          delay: i * 0.07,
-                        }}
+                        animate={isHeroPlaying ? { height: [4, 14 + Math.random() * 20, 4] } : {}}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.03 }}
                       />
                     ))}
                   </div>
+
+                  <button
+                    onClick={toggleHeroAudio}
+                    className="btn-bold w-full py-3.5 bg-dark-900 text-white text-sm"
+                  >
+                    {isHeroPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-white" />}
+                    {isHeroPlaying ? 'Pausar' : 'Ouvir Música'}
+                  </button>
+
+                  {/* Destaque: qualquer ocasião */}
+                  <div className="mt-4 pt-4 border-t-2 border-dark-900/10">
+                    <p className="text-center text-xs text-dark-900 font-black mb-2.5 uppercase tracking-wider">Para qualquer ocasião:</p>
+                    <div className="flex flex-wrap justify-center gap-1.5">
+                      {['Casamento', 'Aniversário', 'Chá de Bebê', 'Dia das Mães', 'Formatura', 'Homenagem'].map((tag) => (
+                        <span key={tag} className="px-3 py-1.5 bg-soft-100 text-dark-900 text-[10px] font-black rounded-full border-2 border-dark-900/20 uppercase tracking-wide">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
-                {/* Floating cards */}
+                {/* Floating badge decorativo */}
                 <motion.div
-                  className="absolute -top-4 right-4 bg-white backdrop-blur-xl rounded-2xl border-2 border-blue-200 p-4 flex items-center gap-3 shadow-xl"
-                  animate={{ y: [0, -12, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
+                  className="absolute -bottom-4 -left-6 z-20"
+                  animate={{ rotate: [-5, 5, -5] }}
+                  transition={{ duration: 4, repeat: Infinity }}
                 >
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center shadow-lg shadow-blue-900/30">
-                    <Clock className="w-7 h-7 text-amber-400" />
+                  <div className="bg-dark-900 text-wine-300 text-xs font-black px-4 py-2 rounded-full border-2 border-dark-900 shadow-offset-sm flex items-center gap-1.5">
+                    <Star className="w-3.5 h-3.5 fill-wine-300 text-wine-300" />
+                    4.9 ★ Avaliação
                   </div>
-                  <div>
-                    <p className="font-bold text-slate-800 text-base">Entrega Rápida</p>
-                    <p className="text-sm text-slate-600">Escolha seu plano</p>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  className="absolute -bottom-4 left-4 bg-white backdrop-blur-xl rounded-2xl border-2 border-blue-200 p-5 shadow-xl"
-                  animate={{ y: [0, 12, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                >
-                  <div className="flex items-center gap-1 mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 text-amber-500 fill-amber-500" />
-                    ))}
-                  </div>
-                  <p className="text-base text-slate-800 font-medium">&quot;Ficou incrível!&quot;</p>
-                </motion.div>
-
-                {/* 100% Personalizada tag */}
-                <motion.div
-                  className="absolute top-1/2 -right-8 bg-gradient-to-br from-amber-500 via-yellow-500 to-amber-600 rounded-2xl p-5 shadow-2xl"
-                  animate={{ x: [0, 8, 0], scale: [1, 1.02, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <p className="text-blue-900 font-black text-2xl">100%</p>
-                  <p className="text-blue-900/80 text-sm font-medium">Personalizada</p>
                 </motion.div>
               </div>
             </motion.div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2"
+          animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <ChevronDown className="w-8 h-8 text-blue-400" />
+          <ChevronDown className="w-6 h-6 text-dark-900" />
         </motion.div>
       </section>
 
-      {/* Planos Section - Premium Design */}
-      <section id="planos" className="py-20 sm:py-28 relative overflow-hidden">
-        {/* Background com gradiente premium */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+      {/* ===== TRUST BAR ===== */}
+      <section className="py-6 border-y-2 border-dark-900 bg-dark-900">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14">
+            {[
+              { icon: <Shield className="w-5 h-5" />, text: 'Pagamento 100% Seguro' },
+              { icon: <Award className="w-5 h-5" />, text: 'Garantia de Satisfação' },
+              { icon: <CheckCircle className="w-5 h-5" />, text: 'Música 100% Exclusiva' },
+              { icon: <Zap className="w-5 h-5" />, text: 'Entrega Rápida' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-2.5">
+                <span className="text-wine-300">{item.icon}</span>
+                <span className="text-xs sm:text-sm text-white font-bold uppercase tracking-wide">{item.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        {/* Efeito de luz ambiente */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]" />
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header */}
+      {/* ===== PLANOS ===== */}
+      <section id="planos" className="py-10 sm:py-16 md:py-24 relative">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-12 sm:mb-16"
           >
-            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 rounded-full border border-amber-500/30 mb-6 backdrop-blur-sm">
-              <Crown className="w-4 sm:w-5 h-4 sm:h-5 text-amber-400" />
-              <span className="text-amber-400 text-xs sm:text-sm font-bold tracking-wide">PLANOS EXCLUSIVOS</span>
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white rounded-full border-2 border-dark-900 shadow-offset-sm mb-6">
+              <Crown className="w-4 h-4 text-wine-500" />
+              <span className="text-dark-900 text-xs sm:text-sm font-black uppercase tracking-widest">Planos Exclusivos</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 sm:mb-6">
-              Sua Historia em{' '}
-              <span className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Melodia</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-dark-900 mb-4 tracking-tight">
+              Escolha Seu{' '}
+              <span className="text-wine-500">Plano</span>
             </h2>
-            <p className="text-blue-200/80 text-base sm:text-lg max-w-2xl mx-auto mb-6 sm:mb-8">
-              Uma musica exclusiva e emocionante, criada especialmente para eternizar seu momento mais especial.
+            <p className="text-dark-600 text-base sm:text-lg max-w-2xl mx-auto font-medium">
+              Uma música exclusiva e emocionante, feita especialmente para o seu momento.
             </p>
-
-            {/* Badge Oferta Exclusiva */}
-            <div className="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-full border border-red-500/30 backdrop-blur-sm">
-              <span className="relative flex h-2.5 sm:h-3 w-2.5 sm:w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 sm:h-3 w-2.5 sm:w-3 bg-red-500"></span>
-              </span>
-              <span className="text-red-300 font-bold text-xs sm:text-sm">Precos exclusivos apenas pelo site</span>
-            </div>
           </motion.div>
 
-          {/* Planos Grid - Design Premium */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
-            {PLANOS.map((plano, index) => (
-              <motion.div
-                key={plano.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative group ${plano.popular ? 'md:-mt-4 md:mb-4' : ''}`}
-              >
-                {/* Glow effect para o plano popular */}
-                {plano.popular && (
-                  <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500 rounded-[28px] blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
-                )}
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-10 max-w-3xl mx-auto">
+            {PLANOS.map((plano, index) => {
+              const isPremium = plano.id === 'premium';
+              const isBasico = plano.id === 'basico';
+              return (
+                <motion.div
+                  key={plano.id}
+                  initial={{ opacity: 0, y: 30, rotate: 0 }}
+                  whileInView={{ opacity: 1, y: 0, rotate: isPremium ? -1 : 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15 }}
+                  className={`relative group`}
+                >
+                  <div className={`relative bg-white rounded-3xl p-6 sm:p-8 transition-all duration-500 border-2 border-dark-900 card-hover ${
+                    isPremium
+                      ? 'shadow-offset bg-soft-50'
+                      : 'shadow-offset-sm'
+                  }`}>
+                    {/* Badge Mais Vendido no Premium */}
+                    {isPremium && plano.highlight && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                        <span className="bg-wine-500 text-white text-[10px] sm:text-xs font-black px-6 py-2 rounded-full flex items-center gap-1.5 whitespace-nowrap border-2 border-dark-900 shadow-offset-sm uppercase tracking-wider">
+                          <TrendingUp className="w-3.5 h-3.5" />
+                          {plano.highlight}
+                        </span>
+                      </div>
+                    )}
 
-                <div className={`relative bg-gradient-to-br ${
-                  plano.popular
-                    ? 'from-slate-800/90 via-slate-900/95 to-slate-800/90 border-amber-500/50'
-                    : 'from-white/10 to-white/5 border-white/20'
-                } backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl border-2 transition-all duration-500 hover:shadow-amber-500/10 hover:-translate-y-1`}>
+                    <div className="text-center pt-4 mb-6">
+                      <h3 className="text-xl font-black text-dark-900 mb-2 uppercase tracking-wide">{plano.name}</h3>
 
-                  {/* Badge Popular */}
-                  {plano.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <span className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-900 text-xs sm:text-sm font-black px-4 sm:px-6 py-2 rounded-full shadow-lg shadow-amber-500/40 flex items-center gap-2 whitespace-nowrap">
-                        <Crown className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                        {plano.highlight}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Plano Header */}
-                  <div className="text-center mb-6 sm:mb-8 pt-2">
-                    <h3 className={`text-xl sm:text-2xl font-bold mb-3 ${plano.popular ? 'text-white' : 'text-white/90'}`}>{plano.name}</h3>
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className={`text-lg sm:text-xl ${plano.popular ? 'text-amber-400' : 'text-blue-300'}`}>R$</span>
-                      <span className={`text-4xl sm:text-5xl font-black ${plano.popular ? 'text-white' : 'text-white/90'}`}>
-                        {Math.floor(plano.price)}
-                      </span>
-                      <span className={`text-xl sm:text-2xl font-bold ${plano.popular ? 'text-white/70' : 'text-white/60'}`}>,{String(plano.price).split('.')[1] || '00'}</span>
-                    </div>
-                    <p className={`text-xs sm:text-sm mt-2 ${plano.popular ? 'text-amber-400/80' : 'text-blue-300/80'}`}>Entrega em {plano.entrega}</p>
-                  </div>
-
-                  {/* Divisor */}
-                  <div className={`h-px mb-6 sm:mb-8 ${plano.popular ? 'bg-gradient-to-r from-transparent via-amber-500/50 to-transparent' : 'bg-gradient-to-r from-transparent via-white/20 to-transparent'}`} />
-
-                  {/* Features */}
-                  <ul className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-                    {plano.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                          plano.popular
-                            ? 'bg-gradient-to-br from-amber-500 to-yellow-500 shadow-lg shadow-amber-500/30'
-                            : 'bg-gradient-to-br from-blue-500 to-blue-600'
-                        }`}>
-                          <Check className="w-3 h-3 text-white" />
+                      {/* Badge de melodias para Premium */}
+                      {isPremium && (
+                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-dark-900 rounded-full mb-3">
+                          <Music className="w-3 h-3 text-wine-300" />
+                          <span className="text-[10px] sm:text-xs font-black text-white uppercase tracking-wider">{plano.melodias} Músicas Completas</span>
                         </div>
-                        <span className={`text-sm ${plano.popular ? 'text-white/90' : 'text-white/70'}`}>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                      )}
+                      {isBasico && <div className="mb-3" />}
 
-                  {/* CTA Button */}
-                  <button
-                    onClick={() => openModalWithPlan(plano.id)}
-                    className={`w-full py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                      plano.popular
-                        ? 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-900 hover:from-amber-400 hover:via-yellow-300 hover:to-amber-400 shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-500/50'
-                        : 'bg-gradient-to-r from-white/10 to-white/5 text-white border border-white/20 hover:bg-white/20 hover:border-white/30'
-                    }`}
-                  >
-                    <Wand2 className="w-5 h-5" />
-                    Criar Minha Musica
-                  </button>
+                      {hasCoupon && (
+                        <div className="text-sm text-dark-400 font-bold line-through mb-1">
+                          R$ {plano.price.toFixed(2).replace('.', ',')}
+                        </div>
+                      )}
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-sm text-dark-600 font-bold">R$</span>
+                        <span className={`text-5xl sm:text-6xl font-black ${hasCoupon ? 'text-green-600' : 'text-dark-900'}`}>
+                          {Math.floor(hasCoupon ? Math.round(plano.price * 90) / 100 : plano.price)}
+                        </span>
+                        <span className={`text-xl font-black ${hasCoupon ? 'text-green-600' : 'text-dark-600'}`}>,{String((hasCoupon ? (Math.round(plano.price * 90) / 100).toFixed(2) : plano.price.toFixed(2))).split('.')[1] || '00'}</span>
+                      </div>
+                      {hasCoupon && (
+                        <span className="inline-block mt-1 text-[10px] font-black text-green-600 bg-green-100 px-3 py-0.5 rounded-full border border-green-300 uppercase tracking-wider">
+                          RARA10 -10%
+                        </span>
+                      )}
+                      <div className="mt-2 flex items-center justify-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-wine-500" />
+                        <span className="text-sm text-dark-700 font-bold">
+                          Entrega <span className="font-black text-dark-900 uppercase">{plano.entrega}</span>
+                        </span>
+                      </div>
+                    </div>
 
-                  {/* Garantia */}
-                  <p className={`text-center text-[10px] sm:text-xs mt-4 ${plano.popular ? 'text-amber-400/60' : 'text-white/40'}`}>
-                    Satisfacao garantida ou seu dinheiro de volta
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+                    {/* Badge Exclusivo do Site no Básico */}
+                    {isBasico && (
+                      <div className="flex justify-center mb-4">
+                        <span className="bg-[#6B5E9E] text-white text-[10px] sm:text-xs font-black px-5 py-1.5 rounded-full border-2 border-dark-900 uppercase tracking-wider">
+                          Exclusivo Site
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="h-[3px] bg-dark-900/10 mb-6 rounded" />
+
+                    <ul className="space-y-3.5 mb-6">
+                      {plano.features.map((feature, i) => {
+                        const isBold = feature.includes('2 músicas') || feature.includes('Entrega no mesmo dia') || feature.includes('Prioridade');
+                        return (
+                          <li key={i} className="flex items-start gap-3">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 border-2 ${
+                              isPremium
+                                ? 'bg-dark-900 border-dark-900 text-white'
+                                : 'bg-wine-500 border-wine-500 text-white'
+                            }`}>
+                              <Check className="w-3 h-3" strokeWidth={3} />
+                            </div>
+                            <span className={`text-sm text-dark-800 ${isBold ? 'font-black' : 'font-semibold'}`}>{feature}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+
+                    <button
+                      onClick={() => openModalWithPlan(plano.id)}
+                      className={`btn-bold w-full py-4 text-sm sm:text-base ${
+                        isPremium
+                          ? 'bg-dark-900 text-white'
+                          : 'bg-wine-500 text-white'
+                      }`}
+                    >
+                      <Music className="w-4 h-4" />
+                      {isPremium ? `Criar Minhas ${plano.melodias} Músicas` : 'Criar Minha Música'}
+                    </button>
+
+                    <div className="flex items-center justify-center gap-1.5 mt-4">
+                      <Shield className="w-3.5 h-3.5 text-sage-500" />
+                      <p className="text-[10px] sm:text-xs text-dark-600 font-semibold">
+                        Satisfação garantida ou seu dinheiro de volta
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Como Funciona Section */}
-      <section id="como-funciona" className="py-20 sm:py-28 relative bg-gradient-to-br from-blue-50 to-slate-100">
+      {/* ===== Divider ===== */}
+      <div className="hidden md:block section-divider mx-8 sm:mx-16 rounded" />
+
+      {/* ===== COMO FUNCIONA ===== */}
+      <section id="como-funciona" className="py-10 sm:py-16 md:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12 sm:mb-20"
+            className="text-center mb-12 sm:mb-16"
           >
-            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-6 shadow-lg shadow-blue-200/30">
-              <Zap className="w-4 sm:w-5 h-4 sm:h-5 text-amber-500" />
-              <span className="text-blue-800 text-xs sm:text-sm font-semibold">Processo Simples</span>
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white rounded-full border-2 border-dark-900 shadow-offset-sm mb-6">
+              <Zap className="w-4 h-4 text-wine-500" />
+              <span className="text-dark-900 text-xs sm:text-sm font-black uppercase tracking-widest">Processo Simples</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 mb-4 sm:mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-dark-900 mb-4 tracking-tight">
               Como{' '}
-              <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">funciona</span>
+              <span className="text-wine-500">Funciona</span>
             </h2>
-            <p className="text-slate-600 text-base sm:text-xl max-w-2xl mx-auto">
-              Em apenas 3 passos simples, voce cria uma musica exclusiva e emocionante
+            <p className="text-dark-600 text-base sm:text-lg max-w-2xl mx-auto font-medium">
+              Em apenas 3 passos, crie uma música exclusiva e emocionante
             </p>
           </motion.div>
 
@@ -453,21 +551,27 @@ export default function Home() {
             {[
               {
                 step: '01',
-                icon: <MessageCircle className="w-7 sm:w-8 h-7 sm:h-8" />,
-                title: 'Conte sua historia',
-                description: 'Preencha um formulario com detalhes sobre a pessoa especial, memorias marcantes e o momento que deseja eternizar.'
+                icon: <MessageCircle className="w-7 h-7" />,
+                title: 'Conte sua história',
+                description: 'Preencha um formulário com detalhes sobre a pessoa especial e o momento que deseja eternizar.',
+                iconBg: 'bg-soft-200 text-wine-500',
+                rotate: 'rotate-[-2deg]',
               },
               {
                 step: '02',
-                icon: <Edit3 className="w-7 sm:w-8 h-7 sm:h-8" />,
-                title: 'Criamos a letra',
-                description: 'Nossa equipe de compositores cria uma letra personalizada e exclusiva baseada na sua historia.'
+                icon: <Edit3 className="w-7 h-7" />,
+                title: 'Aprove a letra',
+                description: 'Nossa equipe cria uma letra personalizada. Você aprova ou edita quantas vezes quiser.',
+                iconBg: 'bg-gold-100 text-gold-700',
+                rotate: 'rotate-[1deg]',
               },
               {
                 step: '03',
-                icon: <Headphones className="w-7 sm:w-8 h-7 sm:h-8" />,
-                title: 'Receba sua musica',
-                description: 'Voce recebe sua musica exclusiva com letra personalizada, produzida profissionalmente em alta qualidade. Prazo varia conforme o plano escolhido.'
+                icon: <Headphones className="w-7 h-7" />,
+                title: 'Receba sua música',
+                description: 'Receba sua música exclusiva produzida profissionalmente em alta qualidade direto no seu WhatsApp.',
+                iconBg: 'bg-soft-200 text-dark-900',
+                rotate: 'rotate-[-1deg]',
               }
             ].map((item, index) => (
               <motion.div
@@ -476,176 +580,182 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.15 }}
-                className="relative group"
+                className={`relative group ${item.rotate}`}
               >
-                {/* Connector line */}
-                {index < 2 && (
-                  <div className="hidden md:block absolute top-20 left-full w-full h-0.5 bg-gradient-to-r from-blue-400 via-blue-300 to-transparent z-0" />
-                )}
-
-                <div className="relative bg-gradient-to-br from-blue-50 to-slate-50 backdrop-blur-xl border-2 border-blue-200 rounded-3xl p-6 sm:p-8 hover:border-blue-400 hover:shadow-xl transition-all duration-500">
-                  {/* Step number */}
-                  <div className="absolute -top-4 sm:-top-5 -right-4 sm:-right-5 w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-gradient-to-br from-amber-500 via-yellow-500 to-amber-600 flex items-center justify-center text-blue-900 font-black text-lg sm:text-xl shadow-xl">
+                <div className="relative bg-white rounded-3xl p-6 sm:p-8 border-2 border-dark-900 card-hover shadow-offset">
+                  <div className="absolute -top-4 -right-4 w-12 h-12 rounded-full bg-dark-900 flex items-center justify-center text-white font-black text-sm border-2 border-dark-900 shadow-md">
                     {item.step}
                   </div>
+                  <div className={`w-16 h-16 rounded-2xl ${item.iconBg} flex items-center justify-center mb-5 border-2 border-dark-900/10`}>
+                    {item.icon}
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-black text-dark-900 mb-3 uppercase tracking-wide">{item.title}</h3>
+                  <p className="text-dark-600 leading-relaxed text-sm sm:text-base font-medium">{item.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
 
-                  <div className="relative">
-                    <div className="w-16 sm:w-18 h-16 sm:h-18 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center text-amber-600 mb-5 sm:mb-6 border border-blue-300 shadow-lg p-3 sm:p-4">
-                      {item.icon}
-                    </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mt-12 sm:mt-16"
+          >
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="btn-bold px-8 sm:px-12 py-4 sm:py-5 bg-dark-900 text-white text-base sm:text-lg"
+            >
+              Começar Agora
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </motion.div>
+        </div>
+      </section>
 
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-3 sm:mb-4">
-                      {item.title}
-                    </h3>
-                    <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                      {item.description}
-                    </p>
+      {/* ===== PORTFOLIO ===== */}
+      <PortfolioSection />
+
+      {/* ===== DEPOIMENTOS ===== */}
+      <section id="depoimentos" className="py-10 sm:py-16 md:py-24 relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10 sm:mb-14"
+          >
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white rounded-full border-2 border-dark-900 shadow-offset-sm mb-6">
+              <Heart className="w-4 h-4 text-wine-500 fill-wine-500" />
+              <span className="text-dark-900 text-xs sm:text-sm font-black uppercase tracking-widest">Depoimentos Reais</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-dark-900 mb-4 tracking-tight">
+              Histórias de Quem{' '}
+              <span className="text-wine-500">Se Emocionou</span>
+            </h2>
+            <p className="text-dark-600 text-base sm:text-lg max-w-2xl mx-auto font-medium">
+              Veja o que nossos clientes dizem sobre suas músicas personalizadas
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-5 sm:gap-6">
+            {TESTIMONIALS.slice(0, 3).map((testimonial, index) => (
+              <motion.div
+                key={testimonial.id}
+                initial={{ opacity: 0, y: 30, rotate: 0 }}
+                whileInView={{ opacity: 1, y: 0, rotate: index === 1 ? -1 : index === 2 ? 1 : 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 transition-all border-2 border-dark-900 shadow-offset card-hover"
+              >
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-wine-500 fill-wine-500" />
+                  ))}
+                </div>
+                <p className="text-dark-700 text-sm sm:text-base leading-relaxed mb-5 italic font-medium">
+                  &ldquo;{testimonial.content}&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  {testimonial.image && (
+                    <Image
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      width={44}
+                      height={44}
+                      className="rounded-full object-cover border-2 border-dark-900"
+                    />
+                  )}
+                  <div>
+                    <p className="font-black text-dark-900 text-sm">{testimonial.name}</p>
+                    <p className="text-dark-600 text-xs font-semibold">{testimonial.role} · {testimonial.serviceType}</p>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mt-12 sm:mt-20"
-          >
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="group px-8 sm:px-12 py-4 sm:py-5 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-900 text-amber-400 text-base sm:text-lg font-bold rounded-full hover:from-blue-700 hover:via-blue-800 hover:to-slate-800 transition-all duration-300 shadow-xl shadow-blue-900/30 hover:shadow-2xl hover:shadow-blue-900/40 hover:-translate-y-1 inline-flex items-center gap-2 sm:gap-3"
-            >
-              Comecar Agora
-              <ArrowRight className="w-5 sm:w-6 h-5 sm:h-6 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Portfolio Section */}
-      <div className="bg-white">
-        <PortfolioSection />
-      </div>
-
-      {/* Depoimentos Section */}
-      <section id="depoimentos" className="py-16 sm:py-20 md:py-28 relative bg-gradient-to-br from-blue-50 to-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10 sm:mb-14 md:mb-20"
-          >
-            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-4 sm:mb-6 shadow-lg">
-              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-500" />
-              <span className="text-blue-800 text-xs sm:text-sm font-semibold">Depoimentos Reais</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 mb-4 sm:mb-6">
-              Histórias de quem já{' '}
-              <span className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent">se emocionou</span>
-            </h2>
-            <p className="text-slate-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4">
-              Veja o que nossos clientes dizem sobre suas músicas personalizadas
-            </p>
-          </motion.div>
-
-          {/* Testimonials carousel */}
-          <div className="relative max-w-4xl mx-auto">
-            <AnimatePresence mode="wait">
+          <div className="grid md:grid-cols-2 gap-5 sm:gap-6 mt-5 sm:mt-6 max-w-3xl mx-auto">
+            {TESTIMONIALS.slice(3, 5).map((testimonial, index) => (
               <motion.div
-                key={currentTestimonial}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white backdrop-blur-xl border-2 border-blue-200 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 text-center shadow-2xl"
+                key={testimonial.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: (index + 3) * 0.1 }}
+                className={`bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 transition-all border-2 border-dark-900 shadow-offset card-hover ${index === 0 ? 'rotate-[1deg]' : 'rotate-[-1deg]'}`}
               >
-                <Quote className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-amber-500/60 mx-auto mb-4 sm:mb-6 md:mb-8" />
-
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-slate-700 mb-6 sm:mb-8 md:mb-10 leading-relaxed italic font-light">
-                  &quot;{TESTIMONIALS[currentTestimonial].content}&quot;
-                </p>
-
-                <div className="flex items-center justify-center gap-1 sm:gap-1.5 mb-4 sm:mb-6">
-                  {[...Array(TESTIMONIALS[currentTestimonial].rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500 fill-amber-500" />
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-wine-500 fill-wine-500" />
                   ))}
                 </div>
-
-                <div>
-                  <p className="font-bold text-slate-800 text-lg sm:text-xl">
-                    {TESTIMONIALS[currentTestimonial].name}
-                  </p>
-                  <p className="text-slate-500 text-sm sm:text-base">
-                    {TESTIMONIALS[currentTestimonial].role} - {TESTIMONIALS[currentTestimonial].serviceType}
-                  </p>
+                <p className="text-dark-700 text-sm sm:text-base leading-relaxed mb-5 italic font-medium">
+                  &ldquo;{testimonial.content}&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  {testimonial.image && (
+                    <Image
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      width={44}
+                      height={44}
+                      className="rounded-full object-cover border-2 border-dark-900"
+                    />
+                  )}
+                  <div>
+                    <p className="font-black text-dark-900 text-sm">{testimonial.name}</p>
+                    <p className="text-dark-600 text-xs font-semibold">{testimonial.role} · {testimonial.serviceType}</p>
+                  </div>
                 </div>
               </motion.div>
-            </AnimatePresence>
-
-            {/* Indicators */}
-            <div className="flex justify-center gap-2 sm:gap-3 mt-6 sm:mt-8 md:mt-10">
-              {TESTIMONIALS.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${
-                    index === currentTestimonial
-                      ? 'bg-gradient-to-r from-blue-700 to-blue-900 w-8 sm:w-10 shadow-lg'
-                      : 'bg-blue-200 hover:bg-blue-400 w-2.5 sm:w-3'
-                  }`}
-                />
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section id="faq" className="py-16 sm:py-20 md:py-24 relative bg-white">
+      {/* ===== Divider ===== */}
+      <div className="hidden md:block section-divider mx-8 sm:mx-16 rounded" />
+
+      {/* ===== FAQ ===== */}
+      <section id="faq" className="py-10 sm:py-16 md:py-24 relative">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-10 sm:mb-12 md:mb-16"
+            className="text-center mb-10 sm:mb-14"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full border border-blue-300 mb-4 sm:mb-6">
-              <MessageCircle className="w-4 h-4 text-amber-500" />
-              <span className="text-blue-800 text-xs sm:text-sm font-medium">Dúvidas Frequentes</span>
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white rounded-full border-2 border-dark-900 shadow-offset-sm mb-6">
+              <MessageCircle className="w-4 h-4 text-gold-600" />
+              <span className="text-dark-900 text-xs sm:text-sm font-black uppercase tracking-widest">Tire suas dúvidas</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-4 sm:mb-6">
-              Perguntas{' '}
-              <span className="bg-gradient-to-r from-amber-500 to-yellow-500 bg-clip-text text-transparent">frequentes</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-dark-900 mb-4 tracking-tight">
+              Dúvidas{' '}
+              <span className="text-wine-500">Frequentes</span>
             </h2>
           </motion.div>
 
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3">
             {FAQS.map((faq, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className={`bg-gradient-to-br from-blue-50 to-slate-50 backdrop-blur-sm border-2 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 ${
-                  openFaq === index ? 'border-blue-400 shadow-lg' : 'border-blue-200'
+                transition={{ delay: index * 0.04 }}
+                className={`bg-white rounded-2xl overflow-hidden transition-all duration-300 border-2 ${
+                  openFaq === index ? 'border-dark-900 shadow-offset' : 'border-dark-900/20 hover:border-dark-900'
                 }`}
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full flex items-center justify-between p-4 sm:p-6 text-left"
+                  className="w-full flex items-center justify-between p-5 sm:p-6 text-left"
                 >
-                  <span className="font-semibold text-slate-800 pr-4 text-sm sm:text-base">
-                    {faq.question}
-                  </span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-blue-600 transition-transform duration-300 flex-shrink-0 ${
-                      openFaq === index ? 'rotate-180' : ''
-                    }`}
-                  />
+                  <span className="font-bold text-dark-900 pr-4 text-sm sm:text-base">{faq.question}</span>
+                  <ChevronDown className={`w-5 h-5 text-dark-900 transition-transform duration-300 flex-shrink-0 ${
+                    openFaq === index ? 'rotate-180' : ''
+                  }`} />
                 </button>
                 <AnimatePresence>
                   {openFaq === index && (
@@ -656,9 +766,7 @@ export default function Home() {
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <p className="px-4 sm:px-6 pb-4 sm:pb-6 text-slate-600 leading-relaxed text-sm sm:text-base">
-                        {faq.answer}
-                      </p>
+                      <p className="px-5 sm:px-6 pb-5 sm:pb-6 text-dark-600 leading-relaxed text-sm sm:text-base font-medium">{faq.answer}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -668,11 +776,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section id="criar-musica" className="py-16 sm:py-24 md:py-32 relative overflow-hidden bg-gradient-to-br from-blue-800 via-blue-900 to-slate-900">
-        {/* Background effects */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] md:w-[1000px] h-[600px] sm:h-[800px] md:h-[1000px] bg-amber-500/10 rounded-full blur-[120px]" />
+      {/* ===== CTA FINAL ===== */}
+      <section id="criar-musica" className="py-10 sm:py-16 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-dark-900" />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <span className="absolute top-[15%] left-[10%] text-wine-400/30 text-2xl md:text-4xl md:text-wine-400/40 animate-float">{'♪'}</span>
+          <span className="absolute top-[25%] right-[15%] text-gold-500/20 text-xl md:text-5xl md:text-gold-500/30 animate-float" style={{ animationDelay: '1s' }}>{'♫'}</span>
+          <span className="hidden md:block absolute bottom-[20%] left-[20%] text-wine-300/30 text-4xl animate-float" style={{ animationDelay: '2s' }}>{'♬'}</span>
+          <span className="hidden md:block absolute bottom-[30%] right-[10%] text-gold-400/30 text-4xl animate-float" style={{ animationDelay: '0.5s' }}>{'𝄞'}</span>
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -681,161 +792,126 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-amber-500/20 rounded-full border border-amber-500/30 mb-6 sm:mb-8">
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-              <span className="text-amber-400 text-xs sm:text-sm font-bold">Comece Agora</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 sm:mb-8">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
               Pronto para criar uma música{' '}
-              <span className="text-amber-400">inesquecível?</span>
+              <span className="text-wine-300">inesquecível?</span>
             </h2>
-
-            <p className="text-blue-100/90 text-base sm:text-lg md:text-xl mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto px-4">
-              Em apenas alguns minutos você dá o primeiro passo para eternizar seu momento especial
-              com uma música única e exclusiva.
+            <p className="text-wine-200/70 text-base sm:text-lg mb-10 max-w-2xl mx-auto font-medium">
+              Eternize seu momento especial com uma música única, criada com amor e profissionalismo.
             </p>
 
-            <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-row sm:items-center sm:justify-center sm:gap-6 mb-8 sm:mb-14">
-              <div className="bg-white backdrop-blur-xl rounded-xl sm:rounded-2xl px-3 sm:px-10 py-4 sm:py-8 text-center shadow-2xl">
-                <Heart className="w-6 h-6 sm:w-10 sm:h-10 text-amber-500 mx-auto mb-1 sm:mb-2 fill-amber-500" />
-                <p className="text-sm sm:text-2xl font-black text-slate-800">Emocione</p>
-                <p className="text-slate-600 font-medium text-[10px] sm:text-base">quem voce ama</p>
+            <div className="flex flex-wrap justify-center gap-6 mb-10">
+              <div className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-wine-400 fill-wine-400" />
+                <span className="text-sm font-bold text-white">Emocione quem você ama</span>
               </div>
-              <div className="bg-white backdrop-blur-xl rounded-xl sm:rounded-2xl px-3 sm:px-10 py-4 sm:py-8 text-center shadow-2xl">
-                <Music className="w-6 h-6 sm:w-10 sm:h-10 text-amber-500 mx-auto mb-1 sm:mb-2" />
-                <p className="text-sm sm:text-2xl font-black text-slate-800">Inedita</p>
-                <p className="text-slate-600 font-medium text-[10px] sm:text-base">so pra voce</p>
+              <div className="flex items-center gap-2">
+                <Music className="w-5 h-5 text-gold-400" />
+                <span className="text-sm font-bold text-white">Inédita e exclusiva</span>
               </div>
-              <div className="bg-white backdrop-blur-xl rounded-xl sm:rounded-2xl px-3 sm:px-10 py-4 sm:py-8 text-center shadow-2xl">
-                <Sparkles className="w-6 h-6 sm:w-10 sm:h-10 text-amber-500 mx-auto mb-1 sm:mb-2" />
-                <p className="text-sm sm:text-2xl font-black text-slate-800">Eterna</p>
-                <p className="text-slate-600 font-medium text-[10px] sm:text-base">lembranca</p>
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-wine-300" />
+                <span className="text-sm font-bold text-white">Lembrança eterna</span>
               </div>
             </div>
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="group px-8 sm:px-14 py-4 sm:py-6 bg-gradient-to-r from-amber-500 to-yellow-500 text-blue-900 text-base sm:text-xl font-black rounded-full hover:from-amber-400 hover:to-yellow-400 transition-all duration-300 shadow-2xl hover:-translate-y-2 inline-flex items-center gap-2 sm:gap-4"
+              className="group inline-flex items-center gap-3 px-10 sm:px-14 py-4 sm:py-5 bg-white text-dark-900 text-base sm:text-xl font-black rounded-full border-2 border-white hover:bg-wine-500 hover:text-white hover:border-wine-500 transition-all duration-300 shadow-[6px_6px_0px_0px_rgba(131,122,182,0.5)]"
             >
-              <Wand2 className="w-5 h-5 sm:w-7 sm:h-7" />
-              <span className="hidden sm:inline">Criar Minha Música Agora</span>
-              <span className="sm:hidden">Criar Música</span>
-              <ArrowRight className="w-5 h-5 sm:w-7 sm:h-7 group-hover:translate-x-2 transition-transform" />
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+              Criar Minha Música Agora
+              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
             </button>
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 sm:py-16 md:py-20 bg-slate-900 border-t border-slate-800">
+      {/* ===== FOOTER ===== */}
+      <footer className="py-12 sm:py-16 bg-dark-900 border-t-4 border-wine-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-8 sm:mb-12">
-            {/* Brand */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-8">
             <div className="sm:col-span-2">
-              <div className="flex items-center gap-3 mb-4 sm:mb-6">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-800 to-blue-900 flex items-center justify-center shadow-lg">
-                  <Music className="w-5 h-5 sm:w-7 sm:h-7 text-amber-400" />
-                </div>
-                <span className="text-xl sm:text-2xl font-bold text-white">Melodia Rara</span>
+              <div className="flex items-center mb-5">
+                <LogoSVG className="h-10 w-auto [&_text]:fill-white [&_circle]:fill-white/10" />
               </div>
-              <p className="text-slate-400 mb-6 sm:mb-8 max-w-sm text-sm sm:text-base md:text-lg">
-                {COMPANY_INFO.description}
-              </p>
-              <div className="flex items-center gap-3 sm:gap-4">
-                <a
-                  href={`https://instagram.com/${COMPANY_INFO.instagram.replace('@', '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-gradient-to-r hover:from-amber-500 hover:to-yellow-500 hover:text-blue-900 hover:border-transparent transition-all duration-300"
-                >
-                  <Instagram className="w-5 h-5 sm:w-6 sm:h-6" />
+              <p className="text-white/70 mb-6 max-w-sm text-sm font-medium">{COMPANY_INFO.description}</p>
+              <div className="flex items-center gap-3">
+                <a href={`https://instagram.com/${COMPANY_INFO.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-wine-500 hover:text-white transition-all border border-white/10 hover:border-wine-500">
+                  <Instagram className="w-5 h-5" />
                 </a>
-                <a
-                  href={`https://youtube.com/${COMPANY_INFO.youtube}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-gradient-to-r hover:from-amber-500 hover:to-yellow-500 hover:text-blue-900 hover:border-transparent transition-all duration-300"
-                >
-                  <Youtube className="w-5 h-5 sm:w-6 sm:h-6" />
+                <a href={`https://youtube.com/${COMPANY_INFO.youtube}`} target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-wine-500 hover:text-white transition-all border border-white/10 hover:border-wine-500">
+                  <Youtube className="w-5 h-5" />
                 </a>
               </div>
             </div>
 
-            {/* Links */}
-            <div>
-              <h4 className="font-bold text-white mb-4 sm:mb-6 text-base sm:text-lg">Navegação</h4>
-              <ul className="space-y-3 sm:space-y-4">
-                <li>
-                  <button
-                    onClick={() => scrollToSection('como-funciona')}
-                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium text-sm sm:text-base"
-                  >
-                    Como Funciona
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => scrollToSection('portfolio')}
-                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium text-sm sm:text-base"
-                  >
-                    Portfolio
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => scrollToSection('depoimentos')}
-                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium text-sm sm:text-base"
-                  >
-                    Depoimentos
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => scrollToSection('faq')}
-                    className="text-slate-400 hover:text-amber-400 transition-colors font-medium text-sm sm:text-base"
-                  >
-                    FAQ
-                  </button>
-                </li>
+            <div className="hidden md:block">
+              <h4 className="font-black text-white mb-5 text-sm uppercase tracking-wider">Navegação</h4>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Como Funciona', id: 'como-funciona' },
+                  { label: 'Portfólio', id: 'portfolio' },
+                  { label: 'Depoimentos', id: 'depoimentos' },
+                  { label: 'Dúvidas', id: 'faq' },
+                ].map((item) => (
+                  <li key={item.id}>
+                    <button onClick={() => scrollToSection(item.id)} className="text-white/70 hover:text-wine-300 transition-colors text-sm font-semibold">
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Contact */}
             <div>
-              <h4 className="font-bold text-white mb-4 sm:mb-6 text-base sm:text-lg">Contato</h4>
-              <ul className="space-y-3 sm:space-y-4">
-                <li className="flex items-center gap-2 sm:gap-3 text-slate-400 text-sm sm:text-base">
-                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-                  {COMPANY_INFO.email}
+              <h4 className="font-black text-white mb-5 text-sm uppercase tracking-wider">Contato</h4>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-2 text-white/70 text-sm font-semibold">
+                  <Mail className="w-4 h-4 text-wine-400" />
+                  <a href={`mailto:${COMPANY_INFO.email}`} className="hover:text-wine-300 transition-colors">
+                    {COMPANY_INFO.email}
+                  </a>
                 </li>
-                <li className="flex items-center gap-2 sm:gap-3 text-slate-400 text-sm sm:text-base">
-                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-                  WhatsApp
+                <li className="flex items-center gap-2 text-white/70 text-sm font-semibold">
+                  <Phone className="w-4 h-4 text-wine-400" />
+                  <a href={`https://wa.me/${COMPANY_INFO.whatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:text-wine-300 transition-colors">
+                    WhatsApp
+                  </a>
+                </li>
+                <li className="flex items-center gap-2 text-white/70 text-sm font-semibold">
+                  <Instagram className="w-4 h-4 text-wine-400" />
+                  <a href={`https://instagram.com/${COMPANY_INFO.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-wine-300 transition-colors">
+                    {COMPANY_INFO.instagram}
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-slate-800 pt-6 sm:pt-8 md:pt-10 text-center">
-            <p className="text-slate-500 text-sm sm:text-base">
+          <div className="border-t border-white/10 pt-6 text-center">
+            <p className="text-white/50 text-sm font-semibold">
               &copy; {new Date().getFullYear()} {COMPANY_INFO.name}. Todos os direitos reservados.
             </p>
           </div>
         </div>
       </footer>
 
-      {/* WhatsApp Float */}
+      {/* WhatsApp */}
       <a
         href={`https://wa.me/${COMPANY_INFO.whatsapp}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.5)] hover:shadow-[0_0_50px_rgba(34,197,94,0.7)] hover:scale-110 transition-all duration-300 z-50"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30 hover:shadow-xl hover:scale-110 transition-all duration-300 z-50 border-2 border-dark-900"
       >
-        <MessageCircle className="w-8 h-8 text-white" />
+        <MessageCircle className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
       </a>
 
-      {/* Checkout Modal */}
+      <CouponPopup />
+      <SocialProofNotification />
+
       <CheckoutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <SimpleBookingForm onClose={() => setIsModalOpen(false)} selectedPlanId={selectedPlan} />
       </CheckoutModal>

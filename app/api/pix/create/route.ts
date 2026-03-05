@@ -11,10 +11,14 @@ import {
 const OPENPIX_APP_ID = process.env.OPENPIX_APP_ID;
 
 // Precos dos planos em centavos
-const PRECOS_PLANOS: { [key: string]: { cents: number; display: string; melodias: number; entrega: string } } = {
-  basico: { cents: 4990, display: 'R$ 49,90', melodias: 1, entrega: '48 horas' },
-  premium: { cents: 7990, display: 'R$ 79,90', melodias: 2, entrega: 'no mesmo dia' },
+const PRECOS_PLANOS: { [key: string]: { cents: number; display: string; melodias: number; entrega: string; nome: string } } = {
+  basico: { cents: 5990, display: 'R$ 59,90', melodias: 1, entrega: 'em até 48 horas', nome: 'Plano Básico' },
+  premium: { cents: 7990, display: 'R$ 79,90', melodias: 2, entrega: 'no mesmo dia', nome: 'Plano Premium' },
 };
+
+// Cupom de desconto valido
+const CUPOM_VALIDO = 'RARA10';
+const CUPOM_DESCONTO = 0.10; // 10%
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,12 +65,17 @@ export async function POST(request: NextRequest) {
     const planoId = body.planoId || 'basico';
     const plano = PRECOS_PLANOS[planoId] || PRECOS_PLANOS.basico;
 
+    // Verificar cupom de desconto
+    const cupom = sanitizeString(body.cupom || '', 20).toUpperCase();
+    const cupomValido = cupom === CUPOM_VALIDO;
+    const valorFinal = cupomValido ? Math.round(plano.cents * (1 - CUPOM_DESCONTO)) : plano.cents;
+
     // Sanitizar e preparar dados do pedido
     const orderData = {
       orderId,
-      amount: plano.cents,
+      amount: valorFinal,
       planoId,
-      planoNome: planoId === 'premium' ? 'Plano Premium' : 'Plano Essencial',
+      planoNome: plano.nome,
       planoMelodias: plano.melodias,
       planoEntrega: plano.entrega,
       customerName: sanitizeString(body.userName, 100),
@@ -107,8 +116,8 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         correlationID,
-        value: plano.cents,
-        comment: `${orderData.planoNome} - Musica para ${orderData.honoreeName || 'presente'} (${plano.melodias} melodia${plano.melodias > 1 ? 's' : ''})`,
+        value: valorFinal,
+        comment: `${orderData.planoNome}${cupomValido ? ' (cupom 10%)' : ''} - Musica para ${orderData.honoreeName || 'presente'} (${plano.melodias} melodia${plano.melodias > 1 ? 's' : ''})`,
         customer: {
           name: orderData.customerName,
           email: orderData.customerEmail,
@@ -145,10 +154,15 @@ export async function POST(request: NextRequest) {
 
     // NAO enviar emails aqui - so apos confirmacao do pagamento via webhook
 
+    const valorFormatado = cupomValido
+      ? `R$ ${(valorFinal / 100).toFixed(2).replace('.', ',')}`
+      : plano.display;
+
     return NextResponse.json({
       success: true,
       orderId,
       correlationID,
+      cupomAplicado: cupomValido,
       plano: {
         id: planoId,
         nome: orderData.planoNome,
@@ -160,8 +174,8 @@ export async function POST(request: NextRequest) {
         qrCodeBase64: pixData.charge?.qrCodeImage || pixData.qrCodeImage,
         pixCopiaECola: pixData.charge?.brCode || pixData.brCode,
         expiresAt: pixData.charge?.expiresAt || pixData.expiresAt,
-        value: plano.cents,
-        valueFormatted: plano.display,
+        value: valorFinal,
+        valueFormatted: valorFormatado,
       },
     });
   } catch (error) {
