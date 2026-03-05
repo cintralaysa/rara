@@ -6,7 +6,6 @@ import {
   checkRateLimit,
   getClientIP,
   validateMusicFormData,
-  isValidBrazilianPhone
 } from '@/lib/security';
 
 const MP_ACCESS_TOKEN = (process.env.MERCADOPAGO_ACCESS_TOKEN || '').trim();
@@ -14,13 +13,9 @@ const NOTIFICATION_URL = 'https://www.melodiarara.com/api/mercadopago/webhook';
 
 // Precos dos planos em centavos
 const PRECOS_PLANOS: Record<string, { cents: number; display: string; melodias: number; entrega: string; nome: string }> = {
-  basico: { cents: 3990, display: 'R$ 39,90', melodias: 1, entrega: 'em até 48 horas', nome: 'Plano Básico' },
-  premium: { cents: 7990, display: 'R$ 79,90', melodias: 3, entrega: 'no mesmo dia', nome: 'Plano Premium' },
+  basico: { cents: 4990, display: 'R$ 49,90', melodias: 1, entrega: 'em 5 minutos', nome: 'Plano Básico' },
+  premium: { cents: 7990, display: 'R$ 79,90', melodias: 2, entrega: 'em 5 minutos', nome: 'Plano Premium' },
 };
-
-// Cupom de desconto
-const CUPOM_VALIDO = 'RARA10';
-const CUPOM_DESCONTO = 0.10; // 10%
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,10 +41,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!isValidBrazilianPhone(body.whatsapp || '')) {
-      return NextResponse.json({ error: 'WhatsApp invalido' }, { status: 400 });
-    }
-
     if (!MP_ACCESS_TOKEN) {
       console.error('MERCADOPAGO_ACCESS_TOKEN nao configurado');
       return NextResponse.json(
@@ -65,10 +56,7 @@ export async function POST(request: NextRequest) {
     const planoId = body.planoId || 'basico';
     const plano = PRECOS_PLANOS[planoId] || PRECOS_PLANOS.basico;
 
-    // Verificar cupom de desconto
-    const cupom = sanitizeString(body.cupom || '', 20).toUpperCase();
-    const cupomValido = cupom === CUPOM_VALIDO;
-    const valorFinal = cupomValido ? Math.round(plano.cents * (1 - CUPOM_DESCONTO)) : plano.cents;
+    const valorFinal = plano.cents;
 
     // Sanitizar dados do pedido
     const orderData = {
@@ -81,7 +69,7 @@ export async function POST(request: NextRequest) {
       paymentMethod: 'pix',
       customerName: sanitizeString(body.userName, 100),
       customerEmail: sanitizeString(body.email, 100),
-      customerWhatsapp: sanitizeString(body.whatsapp, 50),
+      customerWhatsapp: '',
       honoreeName: sanitizeString(body.honoreeName, 100),
       relationship: sanitizeString(body.relationship, 50),
       relationshipLabel: sanitizeString(body.relationshipLabel, 100),
@@ -115,7 +103,7 @@ export async function POST(request: NextRequest) {
     const mpResult = await payment.create({
       body: {
         transaction_amount: valorEmReais,
-        description: `${plano.nome}${cupomValido ? ' (cupom 10%)' : ''} - Musica para ${orderData.honoreeName || 'presente'} (${plano.melodias} melodia${plano.melodias > 1 ? 's' : ''})`,
+        description: `${plano.nome} - Musica para ${orderData.honoreeName || 'presente'} (${plano.melodias} melodia${plano.melodias > 1 ? 's' : ''})`,
         payment_method_id: 'pix',
         payer: {
           email: orderData.customerEmail || 'cliente@melodiarara.com',
@@ -152,7 +140,6 @@ export async function POST(request: NextRequest) {
       success: true,
       orderId,
       paymentId: String(paymentId),
-      cupomAplicado: cupomValido,
       plano: {
         id: planoId,
         nome: plano.nome,

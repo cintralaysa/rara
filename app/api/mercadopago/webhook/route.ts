@@ -158,8 +158,6 @@ export async function GET() {
 async function sendCompleteOrderEmail(orderData: OrderData) {
   const lyricsHtml = orderData.generatedLyrics ? orderData.generatedLyrics.replace(/\n/g, '<br>') : '';
   const isChaRevelacao = orderData.relationship === 'cha-revelacao' || orderData.occasion === 'cha-revelacao';
-  const whatsappClean = (orderData.customerWhatsapp || '').replace(/\D/g, '');
-  const whatsappLink = whatsappClean ? `https://wa.me/55${whatsappClean}` : '#';
   const valueFormatted = (orderData.amount / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const paymentLabel = orderData.paymentMethod === 'card' ? 'Cartao' : 'PIX';
 
@@ -180,7 +178,6 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
         .section-title { font-weight: bold; color: #059669; margin-bottom: 15px; font-size: 16px; }
         .info-row { margin: 8px 0; }
         .lyrics-box { background: #fef3c7; padding: 20px; border-radius: 8px; font-style: italic; line-height: 1.8; border: 1px solid #fcd34d; white-space: pre-wrap; }
-        .whatsapp-btn { display: inline-block; background: #25D366; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; }
         .success-box { background: #d1fae5; border: 2px solid #10b981; padding: 20px; border-radius: 10px; text-align: center; margin: 20px 0; }
         .baby-box { background: linear-gradient(135deg, #fce7f3, #dbeafe); padding: 15px; border-radius: 8px; margin: 10px 0; }
       </style>
@@ -207,8 +204,6 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
             <div class="section-title">Dados do Cliente</div>
             <p class="info-row"><strong>Nome:</strong> ${orderData.customerName || 'N/A'}</p>
             <p class="info-row"><strong>Email:</strong> ${orderData.customerEmail || 'N/A'}</p>
-            <p class="info-row"><strong>WhatsApp:</strong> ${orderData.customerWhatsapp || 'N/A'}</p>
-            ${whatsappClean ? `<p style="margin-top: 15px;"><a href="${whatsappLink}" class="whatsapp-btn">Abrir WhatsApp do Cliente</a></p>` : ''}
           </div>
 
           <div class="section">
@@ -257,7 +252,7 @@ async function sendCompleteOrderEmail(orderData: OrderData) {
           <div class="section" style="background: #fef3c7; border-left-color: #f59e0b;">
             <div class="section-title" style="color: #d97706;">Proximo Passo</div>
             ${orderData.planoNome ? `<p><strong>Plano:</strong> ${orderData.planoNome}</p>` : ''}
-            <p><strong>Prazo de entrega:</strong> ${orderData.planoEntrega || '48 horas'}</p>
+            <p><strong>Prazo de entrega:</strong> ${orderData.planoEntrega || '5 minutos'}</p>
             <p><strong>Musicas completas:</strong> ${orderData.planoMelodias || 1}</p>
             <p>A musica sera gerada automaticamente e entregue por email.</p>
           </div>
@@ -394,7 +389,7 @@ async function sendCustomerPaymentConfirmedEmail(orderData: OrderData) {
           ` : ''}
 
           <div class="highlight-box">
-            <strong>Prazo de entrega:</strong> Sua${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} musica${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} personalizada${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} ${orderData.planoMelodias && orderData.planoMelodias > 1 ? 'serao entregues' : 'sera entregue'} em ate <strong>${orderData.planoEntrega || '48 horas'}</strong>.
+            <strong>Prazo de entrega:</strong> Sua${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} musica${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} personalizada${orderData.planoMelodias && orderData.planoMelodias > 1 ? 's' : ''} ${orderData.planoMelodias && orderData.planoMelodias > 1 ? 'serao entregues' : 'sera entregue'} em ate <strong>${orderData.planoEntrega || '5 minutos'}</strong>.
             ${orderData.planoMelodias && orderData.planoMelodias > 1 ? `<br><br>Voce recebera <strong>${orderData.planoMelodias} musicas completas</strong> em ritmos diferentes!` : ''}
           </div>
 

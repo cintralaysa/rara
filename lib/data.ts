@@ -19,12 +19,12 @@ export const SERVICES: Service[] = [
     slug: "musica-romantica",
     title: "Música Romântica",
     description: "Uma canção única que eterniza o amor de vocês. Perfeita para casamentos, aniversários de namoro, pedidos de casamento ou simplesmente para dizer 'eu te amo' de uma forma inesquecível.",
-    price: 39.90,
+    price: 49.90,
     image: "/images/romantica.jpg",
     features: [
       "Letra exclusiva personalizada",
       "Melodia única e profissional",
-      "Entrega em até 24 horas",
+      "Entrega em 5 minutos",
       "Revisões ilimitadas na letra",
       "Arquivo em alta qualidade (MP3)",
       "Edite a letra direto no site"
@@ -38,12 +38,12 @@ export const SERVICES: Service[] = [
     slug: "musica-homenagem",
     title: "Música de Homenagem",
     description: "Celebre a vida de alguém especial com uma música que conta sua história. Ideal para homenagear pais, avós, filhos ou amigos em momentos marcantes.",
-    price: 39.90,
+    price: 49.90,
     image: "/images/homenagem.jpg",
     features: [
       "Letra exclusiva personalizada",
       "Melodia única e profissional",
-      "Entrega em até 48 horas",
+      "Entrega em 5 minutos",
       "Revisões ilimitadas na letra",
       "Arquivo em alta qualidade (MP3)",
       "Edite a letra direto no site"
@@ -56,12 +56,12 @@ export const SERVICES: Service[] = [
     slug: "musica-especial",
     title: "Música para Ocasião Especial",
     description: "Chá revelação, aniversário, dia das mães, dia dos pais, formatura... Qualquer momento especial merece uma música única e emocionante.",
-    price: 39.90,
+    price: 49.90,
     image: "/images/especial.jpg",
     features: [
       "Letra exclusiva personalizada",
       "Melodia única e profissional",
-      "Entrega em até 48 horas",
+      "Entrega em 5 minutos",
       "Revisões ilimitadas na letra",
       "Arquivo em alta qualidade (MP3)",
       "Edite a letra direto no site"
@@ -141,7 +141,7 @@ export const FAQS: FAQ[] = [
   },
   {
     question: "Quanto tempo leva para receber a música?",
-    answer: "Sua música fica pronta em até 48 horas! Após o pagamento, você gera a letra no site, aprova ou edita, e nossa equipe produz sua melodia exclusiva profissionalmente."
+    answer: "Sua música fica pronta em apenas 5 minutos! Após o pagamento, você gera a letra no site, aprova ou edita, e recebe direto no site sua melodia exclusiva profissionalmente produzida."
   },
   {
     question: "Posso pedir alterações na letra?",
@@ -174,8 +174,6 @@ export const COMPANY_INFO = {
   tagline: "Transformamos sua história em música",
   description: "Criamos músicas personalizadas e únicas que eternizam seus momentos mais especiais. Cada composição é uma obra de arte exclusiva, feita especialmente para você.",
   email: "contato@melodiarara.com.br",
-  whatsapp: "5588992422920",
-  whatsappLink: "https://wa.me/5588992422920",
   instagram: "@melodiarara",
   youtube: "@melodiarara",
   address: "São Paulo, SP - Brasil"
@@ -198,17 +196,17 @@ export const PLANOS: PricePlan[] = [
   {
     id: "basico",
     name: "Plano Básico",
-    price: 39.90,
-    priceCents: 3990,
+    price: 49.90,
+    priceCents: 4990,
     melodias: 1,
-    entrega: "em até 48 horas",
+    entrega: "em 5 minutos",
     features: [
       "1 letra exclusiva personalizada",
       "1 melodia completa",
       "Edite a letra no site",
-      "Entrega em até 48 horas",
+      "Entrega em 5 minutos",
       "Arquivo MP3 alta qualidade",
-      "Receba no seu WhatsApp"
+      "Acesso direto no site"
     ],
     highlight: "Exclusivo do Site",
     popular: false
@@ -218,16 +216,16 @@ export const PLANOS: PricePlan[] = [
     name: "Plano Premium",
     price: 79.90,
     priceCents: 7990,
-    melodias: 3,
-    entrega: "no mesmo dia",
+    melodias: 2,
+    entrega: "em 5 minutos",
     features: [
       "1 letra exclusiva personalizada",
-      "3 músicas com ritmos diferentes",
+      "2 músicas com ritmos diferentes",
       "Edite a letra no site",
-      "Entrega no mesmo dia ⚡",
-      "3 arquivos MP3 alta qualidade",
+      "Entrega em 5 minutos ⚡",
+      "2 arquivos MP3 alta qualidade",
       "Prioridade na produção",
-      "Receba no seu WhatsApp"
+      "Acesso direto no site"
     ],
     highlight: "Mais Vendido",
     popular: true
@@ -240,5 +238,5 @@ export const getPlanoById = (id: string): PricePlan | undefined => {
 };
 
 // Precos padrão (plano basico) - para compatibilidade
-export const PRECO_MUSICA = 3990; // em centavos
-export const PRECO_MUSICA_DISPLAY = 39.90; // em reais para exibicao
+export const PRECO_MUSICA = 4990; // em centavos
+export const PRECO_MUSICA_DISPLAY = 49.90; // em reais para exibicao

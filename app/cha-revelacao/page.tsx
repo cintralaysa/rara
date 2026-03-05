@@ -69,7 +69,7 @@ const FAQS_CHA = [
   },
   {
     question: "Em quanto tempo recebo a música?",
-    answer: "Depende do plano escolhido. No Plano Básico a entrega é em até 5 dias úteis, e no Plano Premium em até 48 horas. Entregamos via WhatsApp!"
+    answer: "A entrega é em apenas 5 minutos! Sua música é gerada automaticamente e fica disponível direto no site para ouvir e baixar."
   },
   {
     question: "Posso pedir alterações na letra?",
@@ -207,7 +207,7 @@ export default function ChaRevelacaoPage() {
                   <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
                     <Clock className="w-5 h-5 text-purple-500" />
                   </div>
-                  <span className="text-sm font-medium">Entrega em até 48h</span>
+                  <span className="text-sm font-medium">Entrega em 5 minutos</span>
                 </div>
               </div>
             </motion.div>
@@ -521,15 +521,7 @@ export default function ChaRevelacaoPage() {
         </a>
       </footer>
 
-      {/* WhatsApp Float */}
-      <a
-        href={`https://wa.me/${COMPANY_INFO.whatsapp}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all z-50"
-      >
-        <MessageCircle className="w-7 h-7 text-white" />
-      </a>
+      {/* CTA removido */}
 
       {/* Modal */}
       <CheckoutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

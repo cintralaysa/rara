@@ -25,8 +25,8 @@ function SucessoContent() {
     id: 'basico',
     nome: 'Plano Basico',
     melodias: 1,
-    entrega: 'em ate 48 horas',
-    preco: 39.90,
+    entrega: 'em 5 minutos',
+    preco: 49.90,
   });
 
   useEffect(() => {
@@ -59,7 +59,7 @@ function SucessoContent() {
     // Limpar dados de checkout
     localStorage.removeItem('checkoutData');
     localStorage.removeItem('planoInfo');
-    localStorage.removeItem('cupomAplicado');
+    // cleanup
     localStorage.removeItem('pendingOrder');
   }, []);
 

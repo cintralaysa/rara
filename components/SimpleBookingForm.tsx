@@ -17,7 +17,6 @@ import {
   Edit3,
   X,
   User,
-  Phone,
   Mail,
   Users,
   Mic2,
@@ -84,7 +83,6 @@ interface FormData {
   storyAndMessage: string;
   familyNames: string;
   userName: string;
-  whatsapp: string;
   email: string;
   knowsBabySex: string;
   babySex: string;
@@ -115,20 +113,13 @@ export default function SimpleBookingForm({
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [currentPlanId, setCurrentPlanId] = useState(selectedPlanId);
   const [showPlanUpgradeNotice, setShowPlanUpgradeNotice] = useState(false);
-  const [hasCoupon, setHasCoupon] = useState(false);
 
   // Obter plano atual (pode mudar dinamicamente)
   const plano = getPlanoById(currentPlanId) || PLANOS[0];
-  const discountedPrice = hasCoupon ? Math.round(plano.price * 90) / 100 : plano.price;
 
-  // Verificar cupom no localStorage
+  // Meta Pixel ViewContent
   useEffect(() => {
-    const cupom = localStorage.getItem('melodia_cupom');
-    if (cupom === 'RARA10') {
-      setHasCoupon(true);
-    }
-    // Meta Pixel ViewContent
-    trackViewContent('formulario_musica', getPlanoById(currentPlanId)?.price || 39.90);
+    trackViewContent('formulario_musica', getPlanoById(currentPlanId)?.price || 49.90);
   }, []);
 
   const [formData, setFormData] = useState<FormData>({
@@ -141,7 +132,6 @@ export default function SimpleBookingForm({
     storyAndMessage: '',
     familyNames: '',
     userName: '',
-    whatsapp: '',
     email: '',
     knowsBabySex: '',
     babySex: '',
@@ -178,7 +168,7 @@ export default function SimpleBookingForm({
         return formData.lyricsApproved && formData.generatedLyrics.trim().length > 0;
       case 4:
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return formData.userName.trim().length >= 2 && formData.whatsapp.trim().length >= 10 && emailRegex.test(formData.email.trim());
+        return formData.userName.trim().length >= 2 && emailRegex.test(formData.email.trim());
       default:
         return false;
     }
@@ -232,9 +222,9 @@ export default function SimpleBookingForm({
       }
       const nextStepNum = step + 1;
       // Meta Pixel events por step
-      if (step === 1) trackAddToCart(currentPlanId, getPlanoById(currentPlanId)?.price || 39.90);
+      if (step === 1) trackAddToCart(currentPlanId, getPlanoById(currentPlanId)?.price || 49.90);
       if (step === 2) trackLead(currentPlanId);
-      if (step === 3) trackInitiateCheckout(getPlanoById(currentPlanId)?.price || 39.90, currentPlanId);
+      if (step === 3) trackInitiateCheckout(getPlanoById(currentPlanId)?.price || 49.90, currentPlanId);
       setStep(nextStepNum);
     }
   };
@@ -254,7 +244,6 @@ export default function SimpleBookingForm({
       const orderData = {
         userName: formData.userName,
         email: formData.email,
-        whatsapp: formData.whatsapp,
         honoreeName: formData.honoreeName,
         relationship: formData.relationship,
         relationshipLabel: RELATIONSHIPS.find(r => r.value === formData.relationship)?.label,
@@ -281,8 +270,6 @@ export default function SimpleBookingForm({
         planoPrecoCents: plano.priceCents,
         planoMelodias: plano.melodias,
         planoEntrega: plano.entrega,
-        // Cupom de desconto
-        cupom: localStorage.getItem('melodia_cupom') || '',
       };
 
       // Salvar dados no localStorage para a pagina de checkout
@@ -300,7 +287,7 @@ export default function SimpleBookingForm({
     { title: 'Informacoes da Musica', desc: 'Para quem e a musica?' },
     { title: 'Sua Historia', desc: 'Conte sobre essa pessoa especial' },
     { title: 'Sua Letra', desc: 'Veja e aprove a letra criada' },
-    { title: 'Seus Dados', desc: 'Para recebermos o pagamento' },
+    { title: 'Seus Dados', desc: 'Finalize e receba direto no site' },
   ];
 
   return (
@@ -320,20 +307,8 @@ export default function SimpleBookingForm({
           <div className="text-right flex items-center gap-2 sm:gap-3 flex-shrink-0">
             {/* Preço visível */}
             <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 border border-green-500/30">
-              {hasCoupon ? (
-                <>
-                  <span className="text-[10px] sm:text-xs text-green-300 font-bold block">RARA10 -10%</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] sm:text-xs text-white/40 line-through">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
-                    <span className="text-base sm:text-lg font-black text-green-300">R$ {discountedPrice.toFixed(2).replace('.', ',')}</span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <span className="text-[10px] sm:text-xs text-green-300 font-medium block">Plano {plano.name}</span>
-                  <span className="text-base sm:text-lg font-black text-white">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
-                </>
-              )}
+              <span className="text-[10px] sm:text-xs text-green-300 font-medium block">Plano {plano.name}</span>
+              <span className="text-base sm:text-lg font-black text-white">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
             </div>
             {onClose && (
               <button onClick={onClose} className="text-white/60 hover:text-white p-1 hover:bg-white/10 rounded-lg">
@@ -373,8 +348,8 @@ export default function SimpleBookingForm({
                   </span>
                   <ArrowRight size={12} className="text-blue-400" />
                   <span className="flex items-center gap-1 bg-white px-2 py-1 rounded-full border border-blue-200">
-                    <Phone size={12} className="text-green-500" />
-                    Receba no WhatsApp
+                    <Music size={12} className="text-green-500" />
+                    Entrega direto no site
                   </span>
                 </div>
               </div>
@@ -859,16 +834,16 @@ export default function SimpleBookingForm({
               exit={{ opacity: 0, x: -20 }}
               className="space-y-5"
             >
-              {/* Destaque: Entrega no WhatsApp */}
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-300">
+              {/* Destaque: Entrega direto no site */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-300">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center flex-shrink-0">
-                    <Phone size={24} className="text-white" />
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+                    <Music size={24} className="text-white" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-green-800 text-sm">Receba sua musica no WhatsApp!</h4>
-                    <p className="text-xs text-green-700">
-                      Entrega em ate <strong>{plano.entrega}</strong> direto no seu celular
+                    <h4 className="font-bold text-blue-800 text-sm">Receba sua musica direto no site!</h4>
+                    <p className="text-xs text-blue-700">
+                      Entrega em ate <strong>5 minutos</strong> direto na sua conta
                     </p>
                   </div>
                 </div>
@@ -889,33 +864,18 @@ export default function SimpleBookingForm({
                   />
                 </div>
 
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                      <Phone size={16} className="text-gold-500" />
-                      WhatsApp
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.whatsapp}
-                      onChange={(e) => updateField('whatsapp', e.target.value)}
-                      placeholder="(00) 00000-0000"
-                      className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 text-base"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                      <Mail size={16} className="text-gold-500" />
-                      E-mail
-                    </label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => updateField('email', e.target.value)}
-                      placeholder="seu@email.com"
-                      className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 text-base"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
+                    <Mail size={16} className="text-gold-500" />
+                    E-mail
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => updateField('email', e.target.value)}
+                    placeholder="seu@email.com"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 text-base"
+                  />
                 </div>
               </div>
 
@@ -971,7 +931,7 @@ export default function SimpleBookingForm({
                     </div>
                     <div className="flex items-center gap-3 text-sm text-green-700 mt-1">
                       <Check size={16} className="text-green-500" />
-                      <span>Receba sua musica em ate {plano.entrega}</span>
+                      <span>Receba sua musica em ate 5 minutos</span>
                     </div>
                   </div>
 
@@ -990,14 +950,7 @@ export default function SimpleBookingForm({
                     ) : (
                       <>
                         <svg viewBox="0 0 512 512" className="w-6 h-6 fill-current"><path d="M112.57 391.19c20.056 0 38.928-7.808 53.12-22l76.693-76.692c5.385-5.404 14.765-5.384 20.15 0l76.989 76.989c14.191 14.172 33.045 21.98 53.12 21.98h15.098l-97.138 97.139c-30.326 30.344-79.505 30.344-109.85 0l-97.415-97.416h9.232zm280.068-271.294c-20.056 0-38.929 7.809-53.12 22l-76.97 76.99c-5.551 5.53-14.6 5.568-20.15-.02l-76.711-76.693c-14.192-14.191-33.046-21.999-53.12-21.999h-9.234l97.416-97.416c30.344-30.344 79.523-30.344 109.867 0l97.138 97.138h-15.116z"/></svg>
-                        Pagar com PIX - {hasCoupon ? (
-                          <span className="flex items-center gap-2">
-                            <span className="line-through opacity-60 text-sm">R$ {plano.price.toFixed(2).replace('.', ',')}</span>
-                            <span>R$ {discountedPrice.toFixed(2).replace('.', ',')}</span>
-                          </span>
-                        ) : (
-                          <>R$ {plano.price.toFixed(2).replace('.', ',')}</>
-                        )}
+                        Pagar com PIX - R$ {plano.price.toFixed(2).replace('.', ',')}
                       </>
                     )}
                   </button>

@@ -130,7 +130,7 @@ Coloque o nome da secao em colchetes: [Verso 1], [Refrao], etc.`
       // Verificar tipo de erro
       if (response.status === 401) {
         return NextResponse.json(
-          { error: 'Erro de autenticacao com a API. Entre em contato pelo WhatsApp.' },
+          { error: 'Erro de autenticacao com a API. Entre em contato por email.' },
           { status: 500 }
         );
       }

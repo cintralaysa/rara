@@ -63,7 +63,7 @@ const FAQS_15 = [
   },
   {
     question: "Em quanto tempo recebo a música?",
-    answer: "No Plano Básico a entrega é em até 5 dias úteis, e no Plano Premium em até 48 horas. Recomendamos encomendar com antecedência para ter tempo de ensaiar!"
+    answer: "A entrega é em apenas 5 minutos! Sua música é gerada automaticamente e fica disponível direto no site para ouvir e baixar. Recomendamos encomendar com antecedência para ter tempo de ensaiar!"
   },
   {
     question: "Posso usar a música em vídeos e redes sociais?",
@@ -210,7 +210,7 @@ export default function QuinzeAnosPage() {
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 flex items-center justify-center">
                     <Zap className="w-5 h-5 text-blue-400" />
                   </div>
-                  <span className="text-sm font-medium">Entrega em 48h</span>
+                  <span className="text-sm font-medium">Entrega em 5 minutos</span>
                 </div>
               </div>
             </motion.div>
@@ -579,15 +579,7 @@ export default function QuinzeAnosPage() {
         </a>
       </footer>
 
-      {/* WhatsApp Float */}
-      <a
-        href={`https://wa.me/${COMPANY_INFO.whatsapp}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all z-50"
-      >
-        <MessageCircle className="w-7 h-7 text-white" />
-      </a>
+      {/* CTA removido */}
 
       {/* Modal */}
       <CheckoutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

@@ -12,12 +12,9 @@ const MP_ACCESS_TOKEN = (process.env.MERCADOPAGO_ACCESS_TOKEN || '').trim();
 const NOTIFICATION_URL = 'https://www.melodiarara.com/api/mercadopago/webhook';
 
 const PRECOS_PLANOS: Record<string, { cents: number; melodias: number; entrega: string; nome: string }> = {
-  basico: { cents: 3990, melodias: 1, entrega: 'em ate 48 horas', nome: 'Plano Basico' },
-  premium: { cents: 7990, melodias: 3, entrega: 'no mesmo dia', nome: 'Plano Premium' },
+  basico: { cents: 4990, melodias: 1, entrega: 'em 5 minutos', nome: 'Plano Basico' },
+  premium: { cents: 7990, melodias: 2, entrega: 'em 5 minutos', nome: 'Plano Premium' },
 };
-
-const CUPOM_VALIDO = 'RARA10';
-const CUPOM_DESCONTO = 0.10;
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,9 +47,7 @@ export async function POST(request: NextRequest) {
     const planoId = rawOrderData.planoId || 'basico';
     const plano = PRECOS_PLANOS[planoId] || PRECOS_PLANOS.basico;
 
-    const cupom = sanitizeString(rawOrderData.cupom || '', 20).toUpperCase();
-    const cupomValido = cupom === CUPOM_VALIDO;
-    const valorFinal = cupomValido ? Math.round(plano.cents * (1 - CUPOM_DESCONTO)) : plano.cents;
+    const valorFinal = plano.cents;
     const valorEmReais = valorFinal / 100;
 
     // Salvar pedido no Redis ANTES de processar pagamento
@@ -66,7 +61,7 @@ export async function POST(request: NextRequest) {
       paymentMethod: 'card',
       customerName: sanitizeString(rawOrderData.userName, 100),
       customerEmail: sanitizeString(rawOrderData.email, 100),
-      customerWhatsapp: sanitizeString(rawOrderData.whatsapp, 50),
+      customerWhatsapp: '',
       honoreeName: sanitizeString(rawOrderData.honoreeName, 100),
       relationship: sanitizeString(rawOrderData.relationship, 50),
       relationshipLabel: sanitizeString(rawOrderData.relationshipLabel, 100),
@@ -96,7 +91,7 @@ export async function POST(request: NextRequest) {
       body: {
         transaction_amount: valorEmReais,
         token: cardData.token,
-        description: `${plano.nome}${cupomValido ? ' (cupom 10%)' : ''} - Musica para ${orderToSave.honoreeName || 'presente'}`,
+        description: `${plano.nome} - Musica para ${orderToSave.honoreeName || 'presente'}`,
         installments: cardData.installments || 1,
         payment_method_id: cardData.payment_method_id,
         issuer_id: cardData.issuer_id,

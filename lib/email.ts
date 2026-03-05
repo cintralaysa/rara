@@ -10,7 +10,6 @@ interface Order {
   createdAt: number;
   customerName: string;
   customerEmail: string;
-  customerWhatsapp: string;
   honoreeName: string;
   relationshipLabel: string;
   occasionLabel: string;
@@ -92,7 +91,6 @@ export async function sendOrderNotification(order: Order): Promise<boolean> {
             <div class="section-title">Cliente</div>
             <p><strong>Nome:</strong> ${order.customerName}</p>
             <p><strong>E-mail:</strong> ${order.customerEmail}</p>
-            <p><strong>WhatsApp:</strong> ${order.customerWhatsapp}</p>
           </div>
 
           <div class="section">
@@ -193,7 +191,7 @@ export async function sendCustomerConfirmation(order: Order): Promise<boolean> {
             </div>
             <div class="highlight-box">
               <h3>Prazo de Entrega</h3>
-              <p><strong>Ate ${order.planoEntrega || '48 horas'}</strong></p>
+              <p><strong>Ate ${order.planoEntrega || '5 minutos'}</strong></p>
             </div>
           </div>
           <div class="footer">

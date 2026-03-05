@@ -64,8 +64,8 @@ function SuccessContent() {
               <span className="text-white font-bold">3</span>
             </div>
             <div>
-              <p className="font-medium text-[#1a1a1a]">Entrega em ate 48 horas</p>
-              <p className="text-sm text-gray-500">Voce recebera suas musicas pelo WhatsApp e email</p>
+              <p className="font-medium text-[#1a1a1a]">Entrega em 5 minutos</p>
+              <p className="text-sm text-gray-500">Suas musicas ficam disponiveis direto no site e por email</p>
             </div>
           </div>
         </div>
@@ -73,7 +73,7 @@ function SuccessContent() {
         {/* Delivery time */}
         <div className="bg-gray-50 rounded-xl p-4 mb-6 border-2 border-[#1a1a1a]">
           <p className="text-[#1a1a1a] font-semibold">
-            ⏰ Prazo de entrega: ate 48 horas
+            ⏰ Entrega em 5 minutos direto no site
           </p>
         </div>
 

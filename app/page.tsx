@@ -14,7 +14,6 @@ import {
   Instagram,
   Youtube,
   Mail,
-  Phone,
   Clock,
   CheckCircle,
   Sparkles,
@@ -25,7 +24,6 @@ import {
   ArrowRight,
   Quote,
   Send,
-  Zap,
   Wand2,
   Edit3,
   Crown,
@@ -40,7 +38,6 @@ import { TESTIMONIALS, FAQS, COMPANY_INFO, PLANOS } from '@/lib/data';
 import CheckoutModal from '@/components/CheckoutModal';
 import SimpleBookingForm from '@/components/SimpleBookingForm';
 import PortfolioSection from '@/components/PortfolioSection';
-import CouponPopup from '@/components/CouponPopup';
 import SocialProofNotification from '@/components/SocialProofNotification';
 import FloatingNotes from '@/components/FloatingNotes';
 
@@ -73,7 +70,7 @@ export default function Home() {
 
   const [selectedPlan, setSelectedPlan] = useState<string>('basico');
   const [isHeroPlaying, setIsHeroPlaying] = useState(false);
-  const [hasCoupon, setHasCoupon] = useState(false);
+
   const heroAudioRef = useRef<HTMLAudioElement>(null);
 
   const openModalWithPlan = (planId: string) => {
@@ -110,16 +107,6 @@ export default function Home() {
     }
   }, []);
 
-  // Detectar cupom ativo (via evento, sem polling)
-  useEffect(() => {
-    const checkCoupon = () => {
-      const cupom = localStorage.getItem('melodia_cupom');
-      setHasCoupon(cupom === 'RARA10');
-    };
-    checkCoupon();
-    window.addEventListener('storage', checkCoupon);
-    return () => window.removeEventListener('storage', checkCoupon);
-  }, []);
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -198,23 +185,20 @@ export default function Home() {
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-dark-900 leading-[1.05] mb-6 sm:mb-8 tracking-tight">
-                Sua Emoção{' '}
-                <br className="hidden sm:block" />
-                Merece Uma{' '}
+                Fazemos sua emoção virar{' '}
                 <span className="relative inline-block">
-                  <span className="text-wine-500">Melodia</span>
+                  <span className="text-wine-500">melodia</span>
                   <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
                     <path d="M2 8c50-8 100-8 196 0" stroke="#837AB6" strokeWidth="4" strokeLinecap="round" opacity="0.6"/>
                   </svg>
                 </span>
+                {' '}em apenas{' '}
+                <br className="hidden sm:block" />
+                <span className="text-wine-500">5 minutos</span>
               </h1>
 
-              <p className="text-base sm:text-lg md:text-xl text-dark-700 mb-3 sm:mb-4 leading-relaxed max-w-xl font-medium">
-                Criamos músicas exclusivas e personalizadas que eternizam os momentos mais especiais da sua vida. Cada nota, cada verso, feito pra você.
-              </p>
-              <p className="text-xs sm:text-sm text-dark-600 mb-8 sm:mb-10 flex items-center gap-1.5 font-semibold">
-                <MessageCircle className="w-3.5 h-3.5 text-green-500" />
-                Faça sua música em nosso site e receba direto no seu WhatsApp
+              <p className="text-base sm:text-lg md:text-xl text-dark-700 mb-8 sm:mb-10 leading-relaxed max-w-xl font-medium">
+                Sua emoção merece uma melodia única.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10 sm:mb-14">
@@ -269,11 +253,7 @@ export default function Home() {
                   transition={{ duration: 2, repeat: Infinity }}
                 >
                   <div className="bg-dark-900 text-white text-sm font-black px-6 py-3 rounded-full border-2 border-dark-900 shadow-offset-sm uppercase tracking-wide">
-                    {hasCoupon ? (
-                      <>A partir de <span className="text-white/50 line-through text-xs">R$ 59,90</span> <span className="text-green-400 underline decoration-green-400 decoration-2 underline-offset-2">R$ 53,91</span></>
-                    ) : (
-                      <>A partir de <span className="text-wine-300 underline decoration-wine-400 decoration-2 underline-offset-2">R$ 59,90</span></>
-                    )}
+                    A partir de <span className="text-wine-300 underline decoration-wine-400 decoration-2 underline-offset-2">R$ 59,90</span>
                   </div>
                 </motion.div>
 
@@ -369,7 +349,7 @@ export default function Home() {
               { icon: <Shield className="w-5 h-5" />, text: 'Pagamento 100% Seguro' },
               { icon: <Award className="w-5 h-5" />, text: 'Garantia de Satisfação' },
               { icon: <CheckCircle className="w-5 h-5" />, text: 'Música 100% Exclusiva' },
-              { icon: <Zap className="w-5 h-5" />, text: 'Entrega Rápida' },
+              { icon: <Clock className="w-5 h-5" />, text: 'Entrega em 5 Minutos' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2.5">
                 <span className="text-wine-300">{item.icon}</span>
@@ -442,23 +422,13 @@ export default function Home() {
                       )}
                       {isBasico && <div className="mb-3" />}
 
-                      {hasCoupon && (
-                        <div className="text-sm text-dark-400 font-bold line-through mb-1">
-                          R$ {plano.price.toFixed(2).replace('.', ',')}
-                        </div>
-                      )}
                       <div className="flex items-baseline justify-center gap-1">
                         <span className="text-sm text-dark-600 font-bold">R$</span>
-                        <span className={`text-5xl sm:text-6xl font-black ${hasCoupon ? 'text-green-600' : 'text-dark-900'}`}>
-                          {Math.floor(hasCoupon ? Math.round(plano.price * 90) / 100 : plano.price)}
+                        <span className="text-5xl sm:text-6xl font-black text-dark-900">
+                          {Math.floor(plano.price)}
                         </span>
-                        <span className={`text-xl font-black ${hasCoupon ? 'text-green-600' : 'text-dark-600'}`}>,{String((hasCoupon ? (Math.round(plano.price * 90) / 100).toFixed(2) : plano.price.toFixed(2))).split('.')[1] || '00'}</span>
+                        <span className="text-xl font-black text-dark-600">,{plano.price.toFixed(2).split('.')[1] || '00'}</span>
                       </div>
-                      {hasCoupon && (
-                        <span className="inline-block mt-1 text-[10px] font-black text-green-600 bg-green-100 px-3 py-0.5 rounded-full border border-green-300 uppercase tracking-wider">
-                          RARA10 -10%
-                        </span>
-                      )}
                       <div className="mt-2 flex items-center justify-center gap-1.5">
                         <Clock className="w-3.5 h-3.5 text-wine-500" />
                         <span className="text-sm text-dark-700 font-bold">
@@ -480,7 +450,7 @@ export default function Home() {
 
                     <ul className="space-y-3.5 mb-6">
                       {plano.features.map((feature, i) => {
-                        const isBold = feature.includes('2 músicas') || feature.includes('Entrega no mesmo dia') || feature.includes('Prioridade');
+                        const isBold = feature.includes('2 músicas') || feature.includes('Entrega em 5 minutos') || feature.includes('Prioridade');
                         return (
                           <li key={i} className="flex items-start gap-3">
                             <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 border-2 ${
@@ -535,7 +505,7 @@ export default function Home() {
             className="text-center mb-12 sm:mb-16"
           >
             <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white rounded-full border-2 border-dark-900 shadow-offset-sm mb-6">
-              <Zap className="w-4 h-4 text-wine-500" />
+              <Sparkles className="w-4 h-4 text-wine-500" />
               <span className="text-dark-900 text-xs sm:text-sm font-black uppercase tracking-widest">Processo Simples</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-dark-900 mb-4 tracking-tight">
@@ -569,7 +539,7 @@ export default function Home() {
                 step: '03',
                 icon: <Headphones className="w-7 h-7" />,
                 title: 'Receba sua música',
-                description: 'Receba sua música exclusiva produzida profissionalmente em alta qualidade direto no seu WhatsApp.',
+                description: 'Receba sua música exclusiva produzida profissionalmente em alta qualidade direto no site.',
                 iconBg: 'bg-soft-200 text-dark-900',
                 rotate: 'rotate-[-1deg]',
               }
@@ -876,12 +846,6 @@ export default function Home() {
                   </a>
                 </li>
                 <li className="flex items-center gap-2 text-white/70 text-sm font-semibold">
-                  <Phone className="w-4 h-4 text-wine-400" />
-                  <a href={`https://wa.me/${COMPANY_INFO.whatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:text-wine-300 transition-colors">
-                    WhatsApp
-                  </a>
-                </li>
-                <li className="flex items-center gap-2 text-white/70 text-sm font-semibold">
                   <Instagram className="w-4 h-4 text-wine-400" />
                   <a href={`https://instagram.com/${COMPANY_INFO.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-wine-300 transition-colors">
                     {COMPANY_INFO.instagram}
@@ -899,17 +863,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* WhatsApp */}
-      <a
-        href={`https://wa.me/${COMPANY_INFO.whatsapp}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30 hover:shadow-xl hover:scale-110 transition-all duration-300 z-50 border-2 border-dark-900"
-      >
-        <MessageCircle className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-      </a>
-
-      <CouponPopup />
       <SocialProofNotification />
 
       <CheckoutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

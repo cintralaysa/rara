@@ -40,7 +40,6 @@ interface CheckoutData {
 interface PendingOrder {
   userName: string;
   email: string;
-  whatsapp: string;
   honoreeName: string;
   relationship: string;
   relationshipLabel: string;
@@ -64,7 +63,6 @@ interface PendingOrder {
   planoPrecoCents?: number;
   planoMelodias?: number;
   planoEntrega?: string;
-  cupom?: string;
 }
 
 interface PlanoInfo {
@@ -99,14 +97,12 @@ export default function CheckoutPage() {
   const [cardError, setCardError] = useState<string | null>(null);
 
   // Shared
-  const [cupomAplicado, setCupomAplicado] = useState(false);
-  const [precoOriginal, setPrecoOriginal] = useState(0);
   const [planoInfo, setPlanoInfo] = useState<PlanoInfo>({
     id: 'basico',
     nome: 'Plano Basico',
     melodias: 1,
-    entrega: 'em ate 48 horas',
-    preco: 39.90,
+    entrega: 'em 5 minutos',
+    preco: 49.90,
   });
 
   // Load pending order from localStorage
@@ -126,8 +122,8 @@ export default function CheckoutPage() {
         id: order.planoId,
         nome: order.planoNome || 'Plano Basico',
         melodias: order.planoMelodias || 1,
-        entrega: order.planoEntrega || 'em ate 48 horas',
-        preco: order.planoPreco || 39.90,
+        entrega: order.planoEntrega || 'em 5 minutos',
+        preco: order.planoPreco || 49.90,
       });
     }
 
@@ -154,24 +150,19 @@ export default function CheckoutPage() {
           return;
         }
 
-        if (data.cupomAplicado) {
-          setCupomAplicado(true);
-          setPrecoOriginal(pendingOrder.planoPreco || (pendingOrder.planoPrecoCents || 3990) / 100);
-        }
-
         const planoFromApi: PlanoInfo = {
           id: data.plano?.id || pendingOrder.planoId || 'basico',
           nome: data.plano?.nome || pendingOrder.planoNome || 'Plano Basico',
           melodias: data.plano?.melodias || pendingOrder.planoMelodias || 1,
-          entrega: data.plano?.entrega || pendingOrder.planoEntrega || 'em ate 48 horas',
-          preco: (data.pixData?.value || pendingOrder.planoPrecoCents || 3990) / 100,
+          entrega: data.plano?.entrega || pendingOrder.planoEntrega || 'em 5 minutos',
+          preco: (data.pixData?.value || pendingOrder.planoPrecoCents || 4990) / 100,
         };
         setPlanoInfo(planoFromApi);
 
         const checkout: CheckoutData = {
           name: pendingOrder.userName,
           email: pendingOrder.email,
-          phone: pendingOrder.whatsapp,
+          phone: '',
           honoreeName: pendingOrder.honoreeName,
           paymentId: data.paymentId,
           orderId: data.orderId,
@@ -183,13 +174,6 @@ export default function CheckoutPage() {
         // Save for success page
         localStorage.setItem('checkoutData', JSON.stringify(checkout));
         localStorage.setItem('planoInfo', JSON.stringify(planoFromApi));
-        if (data.cupomAplicado) {
-          localStorage.setItem('cupomAplicado', JSON.stringify({
-            aplicado: true,
-            precoOriginal: pendingOrder.planoPreco || (pendingOrder.planoPrecoCents || 3990) / 100,
-          }));
-        }
-
         setPixData(checkout);
         setStatus('pending');
       } catch {
@@ -246,11 +230,8 @@ export default function CheckoutPage() {
 
       // Calculate amount
       const planoId = pendingOrder.planoId || 'basico';
-      const baseCents = planoId === 'premium' ? 7990 : 3990;
-      const cupom = (pendingOrder.cupom || '').toUpperCase();
-      const hasCupom = cupom === 'RARA10';
-      const finalCents = hasCupom ? Math.round(baseCents * 0.9) : baseCents;
-      const amount = finalCents / 100;
+      const baseCents = planoId === 'premium' ? 7990 : 4990;
+      const amount = baseCents / 100;
 
       brickControllerRef.current = await bricksBuilder.create(
         'cardPayment',
@@ -638,24 +619,14 @@ export default function CheckoutPage() {
               {planoInfo.melodias} melodia{planoInfo.melodias > 1 ? 's' : ''}
             </span>
           </div>
-          {cupomAplicado && (
-            <div className="flex items-center justify-between mb-2 px-1">
-              <span className="text-xs font-black text-green-600 bg-green-100 px-2.5 py-1 rounded-full border border-green-300 uppercase tracking-wider">
-                RARA10 -10%
-              </span>
-              <span className="text-sm text-dark-400 line-through">
-                R$ {precoOriginal.toFixed(2).replace('.', ',')}
-              </span>
-            </div>
-          )}
           <div className="flex items-center justify-between pt-3 border-t-2 border-dark-900">
             <span className="text-dark-600 font-bold">Valor a pagar:</span>
             <div className="flex items-baseline gap-1">
-              <span className={`text-lg font-bold ${cupomAplicado ? 'text-green-600' : 'text-dark-600'}`}>R$</span>
-              <span className={`text-3xl font-black ${cupomAplicado ? 'text-green-600' : 'text-wine-500'}`}>
+              <span className="text-lg font-bold text-dark-600">R$</span>
+              <span className="text-3xl font-black text-wine-500">
                 {Math.floor(planoInfo.preco)}
               </span>
-              <span className={`text-xl font-black ${cupomAplicado ? 'text-green-600' : 'text-wine-500'}`}>
+              <span className="text-xl font-black text-wine-500">
                 ,{String(Math.round((planoInfo.preco % 1) * 100)).padStart(2, '0')}
               </span>
             </div>

@@ -156,10 +156,6 @@ export function validateMusicFormData(data: Record<string, unknown>): { valid: b
     errors.push('Seu nome e obrigatorio');
   }
 
-  if (!isValidBrazilianPhone(data.whatsapp as string || '')) {
-    errors.push('WhatsApp invalido');
-  }
-
   if (!isValidEmail(data.email as string || '')) {
     errors.push('Email invalido');
   }
