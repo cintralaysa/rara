@@ -16,6 +16,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import Link from 'next/link';
+import { trackAddPaymentInfo } from '@/components/MetaPixel';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
@@ -386,6 +387,7 @@ export default function CheckoutPage() {
   const switchMethod = (method: PaymentMethod) => {
     setPaymentMethod(method);
     setCardError(null);
+    trackAddPaymentInfo(method);
   };
 
   // Loading

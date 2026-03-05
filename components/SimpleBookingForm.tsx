@@ -26,6 +26,7 @@ import {
   Baby
 } from 'lucide-react';
 import { PLANOS, getPlanoById, COMPANY_INFO } from '@/lib/data';
+import { trackViewContent, trackAddToCart, trackLead, trackInitiateCheckout } from '@/components/MetaPixel';
 
 // Opcoes de relacionamento - Cha de Bebe primeiro!
 const RELATIONSHIPS = [
@@ -126,6 +127,8 @@ export default function SimpleBookingForm({
     if (cupom === 'RARA10') {
       setHasCoupon(true);
     }
+    // Meta Pixel ViewContent
+    trackViewContent('formulario_musica', getPlanoById(currentPlanId)?.price || 39.90);
   }, []);
 
   const [formData, setFormData] = useState<FormData>({
@@ -227,7 +230,12 @@ export default function SimpleBookingForm({
       if (step === 2 && !formData.generatedLyrics) {
         await generateLyrics();
       }
-      setStep(step + 1);
+      const nextStepNum = step + 1;
+      // Meta Pixel events por step
+      if (step === 1) trackAddToCart(currentPlanId, getPlanoById(currentPlanId)?.price || 39.90);
+      if (step === 2) trackLead(currentPlanId);
+      if (step === 3) trackInitiateCheckout(getPlanoById(currentPlanId)?.price || 39.90, currentPlanId);
+      setStep(nextStepNum);
     }
   };
 

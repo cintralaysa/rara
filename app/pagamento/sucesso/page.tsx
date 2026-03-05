@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CheckCircle, Music, Clock, ArrowLeft, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { trackPurchase } from '@/components/MetaPixel';
 
 interface PlanoInfo {
   id: string;
@@ -44,6 +45,14 @@ function SucessoContent() {
     if (planoData) {
       try {
         setPlanoInfo(JSON.parse(planoData));
+      } catch { /* ignore */ }
+    }
+
+    // Meta Pixel Purchase event
+    if (planoData) {
+      try {
+        const plano = JSON.parse(planoData);
+        trackPurchase(orderId || '', plano.preco || 39.90, plano.id || 'basico');
       } catch { /* ignore */ }
     }
 

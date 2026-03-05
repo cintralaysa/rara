@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 import { Resend } from 'resend';
-import { getOrder, updateOrder, OrderData } from '@/lib/orderStore';
+import { getOrder, updateOrder, getOrderByUpsellId, OrderData } from '@/lib/orderStore';
+import { scheduleGeneration } from '@/lib/qstash';
 
 const MP_ACCESS_TOKEN = (process.env.MERCADOPAGO_ACCESS_TOKEN || '').trim();
 const resend = process.env.RESEND_API_KEY ? new Resend((process.env.RESEND_API_KEY || '').trim()) : null;
@@ -74,12 +75,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'external_reference ausente' }, { status: 400 });
     }
 
-    // Detectar upsell pelo prefixo
+    // Detectar upsell pelo prefixo UPSELL-{orderId}-{timestamp}
     const isUpsell = orderId.startsWith('UPSELL-');
     if (isUpsell) {
-      // TODO: Fase 6 - processar upsell
-      console.log('[WEBHOOK-MP] Upsell detectado - sera implementado na Fase 6');
-      return NextResponse.json({ success: true, message: 'Upsell registrado' });
+      console.log('[WEBHOOK-MP] Processando upsell:', orderId);
+      const originalOrder = await getOrderByUpsellId(orderId);
+      if (originalOrder) {
+        // Adicionar +1 credito e iniciar geracao
+        await updateOrder(originalOrder.orderId, {
+          upsellPurchased: true,
+          creditsTotal: (originalOrder.creditsTotal || 0) + 1,
+          status: 'paid', // resetar para paid para permitir nova geracao
+          musicStatus: 'generating',
+        });
+        await scheduleGeneration(originalOrder.orderId, 5);
+        console.log(`[WEBHOOK-MP] Upsell processado: +1 credito para ${originalOrder.orderId}`);
+      }
+      return NextResponse.json({ success: true, message: 'Upsell processado' });
     }
 
     // Buscar pedido no Redis
@@ -106,15 +118,16 @@ export async function POST(request: NextRequest) {
       await sendCustomerPaymentConfirmedEmail(orderData);
     }
 
-    // Marcar como processado (idempotencia)
+    // Marcar como pago e processado (idempotencia)
     await updateOrder(orderId, {
+      status: 'paid',
       emailSentAt: Date.now(),
       paymentId: String(paymentId),
       paymentMethod: paymentData.payment_method_id || 'pix',
     });
 
-    // TODO: Fase 4 - agendar geracao de musica via QStash
-    // await scheduleGeneration(orderId, 5);
+    // Agendar geracao automatica de musica via QStash (5s delay)
+    await scheduleGeneration(orderId, 5);
 
     return NextResponse.json({
       success: true,
