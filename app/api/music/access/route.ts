@@ -18,13 +18,13 @@ export async function POST(request: NextRequest) {
 
     // Se o usuario digitou so os 4 caracteres, adicionar prefixo
     if (/^[A-Z0-9]{4}$/.test(normalizedCode)) {
-      normalizedCode = `CANTOS-${normalizedCode}`;
+      normalizedCode = `RARA-${normalizedCode}`;
     }
 
     // Validar formato
-    if (!/^CANTOS-[A-Z0-9]{4}$/.test(normalizedCode)) {
+    if (!/^RARA-[A-Z0-9]{4}$/.test(normalizedCode)) {
       return NextResponse.json(
-        { error: 'Formato invalido. Use o codigo recebido por email (ex: CANTOS-AB12)' },
+        { error: 'Formato invalido. Use o codigo recebido por email (ex: RARA-AB12)' },
         { status: 400 }
       );
     }

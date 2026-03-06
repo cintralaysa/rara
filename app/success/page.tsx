@@ -65,7 +65,7 @@ function SuccessContent() {
             </div>
             <div>
               <p className="font-medium text-[#1a1a1a]">Acesse no site</p>
-              <p className="text-sm text-gray-500">Use seu codigo (ex: CANTOS-AB12) para ouvir e baixar direto no site</p>
+              <p className="text-sm text-gray-500">Use seu codigo (ex: RARA-AB12) para ouvir e baixar direto no site</p>
             </div>
           </div>
         </div>

@@ -428,9 +428,9 @@ export default function Home() {
                 value={accessCode}
                 onChange={(e) => { setAccessCode(e.target.value.toUpperCase()); setAccessError(''); }}
                 onKeyDown={(e) => e.key === 'Enter' && handleAccessCode()}
-                placeholder="CANTOS-XXXX"
+                placeholder="RARA-XXXX"
                 className="flex-1 px-4 py-3 border-2 border-dark-900 rounded-xl font-mono font-bold text-dark-900 text-center text-lg tracking-widest placeholder:text-dark-300 placeholder:tracking-wider focus:outline-none focus:ring-2 focus:ring-wine-500 focus:border-wine-500"
-                maxLength={11}
+                maxLength={9}
               />
               <button
                 onClick={handleAccessCode}

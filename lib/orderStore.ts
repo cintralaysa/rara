@@ -67,7 +67,7 @@ export interface OrderData {
   paymentId?: string;
   emailSentAt?: number;
   // Musica - geracao automatica
-  accessCode?: string; // CANTOS-XXXX
+  accessCode?: string; // RARA-XXXX
   creditsTotal?: number;
   creditsUsed?: number;
   songs?: SongData[];
@@ -178,7 +178,7 @@ export async function removeOrder(orderId: string): Promise<boolean> {
   }
 }
 
-// === Access Codes (CANTOS-XXXX) ===
+// === Access Codes (RARA-XXXX) ===
 
 export function generateAccessCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sem I/O/0/1 para evitar confusao
@@ -186,7 +186,7 @@ export function generateAccessCode(): string {
   for (let i = 0; i < 4; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return `CANTOS-${code}`;
+  return `RARA-${code}`;
 }
 
 export async function saveAccessCode(code: string, orderId: string): Promise<boolean> {

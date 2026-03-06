@@ -145,7 +145,7 @@ export const FAQS: FAQ[] = [
   },
   {
     question: "Como acesso minhas músicas depois?",
-    answer: "Após a compra, você recebe um código de acesso por email (ex: CANTOS-AB12). Basta acessar nosso site e digitar o código na seção 'Já comprou?' para ouvir e baixar suas músicas a qualquer momento."
+    answer: "Após a compra, você recebe um código de acesso por email (ex: RARA-AB12). Basta acessar nosso site e digitar o código na seção 'Já comprou?' para ouvir e baixar suas músicas a qualquer momento."
   },
   {
     question: "Posso pedir alterações na letra?",
