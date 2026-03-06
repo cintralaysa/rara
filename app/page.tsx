@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Music,
@@ -33,8 +32,6 @@ import {
   Award,
   Users,
   TrendingUp,
-  KeyRound,
-  Loader2
 } from 'lucide-react';
 import Image from 'next/image';
 import { TESTIMONIALS, FAQS, COMPANY_INFO, PLANOS } from '@/lib/data';
@@ -67,39 +64,9 @@ function LogoSVG({ className = "h-10" }: { className?: string }) {
 }
 
 export default function Home() {
-  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [accessCode, setAccessCode] = useState('');
-  const [accessLoading, setAccessLoading] = useState(false);
-  const [accessError, setAccessError] = useState('');
-
-  const handleAccessCode = async () => {
-    if (!accessCode.trim()) {
-      setAccessError('Digite seu codigo de acesso');
-      return;
-    }
-    setAccessLoading(true);
-    setAccessError('');
-    try {
-      const res = await fetch('/api/music/access', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: accessCode.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setAccessError(data.error || 'Codigo nao encontrado');
-        setAccessLoading(false);
-        return;
-      }
-      router.push(`/musica/${data.orderId}`);
-    } catch {
-      setAccessError('Erro de conexao. Tente novamente.');
-      setAccessLoading(false);
-    }
-  };
 
   const [selectedPlan, setSelectedPlan] = useState<string>('basico');
   const [isHeroPlaying, setIsHeroPlaying] = useState(false);
@@ -186,13 +153,12 @@ export default function Home() {
 
             <div className="flex items-center gap-2 sm:gap-3">
               <a
-                href="https://instagram.com/melodiarara"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center text-white hover:scale-110 transition-transform"
-                aria-label="Instagram @melodiarara"
+                href="/minhas-musicas"
+                className="btn-bold px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-dark-900 text-sm border-2 border-dark-900"
               >
-                <Instagram className="w-5 h-5" />
+                <Music className="w-4 h-4" />
+                <span className="hidden sm:inline">Minhas Músicas</span>
+                <span className="sm:hidden">Músicas</span>
               </a>
               <button
                 onClick={() => setIsModalOpen(true)}
@@ -241,8 +207,11 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg md:text-xl text-dark-700 mb-8 sm:mb-10 leading-relaxed max-w-xl font-medium">
-                Sua emoção merece uma melodia única.
+              <p className="text-base sm:text-lg md:text-xl text-dark-700 mb-4 leading-relaxed max-w-xl font-medium">
+                Sua emoção merece uma melodia única. Nossa IA cria letra e música automaticamente, direto no site.
+              </p>
+              <p className="text-lg sm:text-xl md:text-2xl font-black text-dark-900 mb-8 sm:mb-10">
+                A partir de <span className="text-wine-500">R$49,90</span>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10 sm:mb-14">
@@ -401,49 +370,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ===== ACESSE SUAS MÚSICAS ===== */}
-      <section className="py-8 sm:py-12">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-white rounded-2xl border-2 border-dark-900 shadow-offset p-6 sm:p-8"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-wine-500 flex items-center justify-center border-2 border-dark-900">
-                <KeyRound className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-black text-dark-900 uppercase tracking-wide">Já comprou?</h3>
-                <p className="text-sm text-dark-600 font-medium">Acesse suas músicas com o código recebido por email</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={accessCode}
-                onChange={(e) => { setAccessCode(e.target.value.toUpperCase()); setAccessError(''); }}
-                onKeyDown={(e) => e.key === 'Enter' && handleAccessCode()}
-                placeholder="RARA-XXXX"
-                className="flex-1 px-4 py-3 border-2 border-dark-900 rounded-xl font-mono font-bold text-dark-900 text-center text-lg tracking-widest placeholder:text-dark-300 placeholder:tracking-wider focus:outline-none focus:ring-2 focus:ring-wine-500 focus:border-wine-500"
-                maxLength={9}
-              />
-              <button
-                onClick={handleAccessCode}
-                disabled={accessLoading}
-                className="btn-bold px-6 py-3 bg-dark-900 text-white text-sm whitespace-nowrap"
-              >
-                {accessLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Music className="w-4 h-4" />Acessar</>}
-              </button>
-            </div>
-            {accessError && (
-              <p className="text-red-500 text-sm font-bold mt-2">{accessError}</p>
-            )}
-          </motion.div>
         </div>
       </section>
 
