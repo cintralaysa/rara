@@ -137,44 +137,49 @@ export interface FAQ {
 export const FAQS: FAQ[] = [
   {
     question: "Como funciona o processo de criação da música?",
-    answer: "Após o pagamento, você preenche um formulário detalhado contando a história que quer eternizar. Nossa equipe de compositores cria a letra personalizada, você aprova ou solicita ajustes, e então produzimos a música completa com instrumentação profissional."
+    answer: "É tudo automático! Após o pagamento, você preenche os detalhes sobre a pessoa homenageada, a IA gera a letra personalizada, você aprova ou edita, e em 5 minutos suas melodias ficam prontas para ouvir e baixar."
   },
   {
     question: "Quanto tempo leva para receber a música?",
-    answer: "Sua música fica pronta em apenas 5 minutos! Após o pagamento, você gera a letra no site, aprova ou edita, e recebe direto no site sua melodia exclusiva profissionalmente produzida."
+    answer: "Apenas 5 minutos! Após o pagamento, a letra é gerada automaticamente, você aprova ou edita, e suas melodias são criadas na hora. Você recebe por email e pode acessar direto no site com seu código exclusivo."
+  },
+  {
+    question: "Como acesso minhas músicas depois?",
+    answer: "Após a compra, você recebe um código de acesso por email (ex: CANTOS-AB12). Basta acessar nosso site e digitar o código na seção 'Já comprou?' para ouvir e baixar suas músicas a qualquer momento."
   },
   {
     question: "Posso pedir alterações na letra?",
-    answer: "Sim! Oferecemos revisões ilimitadas na letra até você estar 100% satisfeito. Queremos que a música fique exatamente como você imaginou."
+    answer: "Sim! Você pode editar a letra gerada pela IA quantas vezes quiser antes de gerar as melodias. Queremos que a música fique exatamente como você imaginou."
   },
   {
     question: "O que está incluso no serviço?",
-    answer: "Você recebe uma música completa com letra exclusiva personalizada e melodia profissional, tudo em alta qualidade (MP3). É 100% sua, feita especialmente para o seu momento especial."
+    answer: "No Plano Básico: 1 letra exclusiva + 2 melodias com ritmos diferentes. No Plano Premium: 2 letras exclusivas + 4 melodias. Tudo em MP3 alta qualidade, 100% seu."
   },
   {
     question: "A música é realmente exclusiva?",
-    answer: "Absolutamente! Cada música é criada do zero, especialmente para você. A composição, letra e produção são 100% originais e exclusivas. Você é o único dono dessa obra."
+    answer: "Absolutamente! Cada música é criada do zero com IA, especialmente para você. A composição, letra e produção são 100% originais e exclusivas. Você é o único dono dessa obra."
   },
   {
     question: "Posso escolher o estilo musical?",
-    answer: "Sim! Você pode indicar suas preferências de estilo (pop, MPB, sertanejo, rock, etc.) e até enviar referências de músicas que gosta. Nossa equipe adapta a produção ao seu gosto."
+    answer: "Sim! Você escolhe entre diversos estilos: pop, MPB, sertanejo, rock, romântico, e muito mais. Cada melodia é gerada com um ritmo diferente para você escolher a que mais combina."
   },
   {
     question: "Como é feito o pagamento?",
-    answer: "O pagamento é feito via PIX, de forma rápida e segura. Assim que confirmamos o pagamento, iniciamos imediatamente o processo de criação."
+    answer: "Aceitamos PIX e cartão de crédito, de forma rápida e segura. Assim que o pagamento é confirmado, você já pode começar a criar sua música."
   },
   {
     question: "E se eu não gostar do resultado final?",
-    answer: "Trabalhamos com aprovação em etapas justamente para garantir sua satisfação. Primeiro você aprova a letra, depois a melodia. Se mesmo assim não ficar satisfeito, devolvemos seu dinheiro."
+    answer: "Você pode editar a letra antes de gerar as melodias. Se mesmo assim não ficar satisfeito, devolvemos seu dinheiro. Sua satisfação é nossa prioridade."
   }
 ];
 
 export const COMPANY_INFO = {
   name: "Melodia Rara",
-  tagline: "Transformamos sua história em música",
-  description: "Criamos músicas personalizadas e únicas que eternizam seus momentos mais especiais. Cada composição é uma obra de arte exclusiva, feita especialmente para você.",
+  tagline: "Sua emoção vira melodia em 5 minutos",
+  description: "Criador de músicas personalizadas com IA. Conte sua história, aprove a letra e receba suas melodias exclusivas em apenas 5 minutos direto no site e por email.",
   email: "contato@melodiarara.com.br",
   instagram: "@melodiarara",
+  instagramUrl: "https://instagram.com/melodiarara",
   youtube: "@melodiarara",
   address: "São Paulo, SP - Brasil"
 };

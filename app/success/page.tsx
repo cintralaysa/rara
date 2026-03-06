@@ -24,7 +24,7 @@ function SuccessContent() {
 
         {/* Description */}
         <p className="text-gray-600 mb-6">
-          Obrigado pela sua compra! Sua musica personalizada esta sendo criada com todo carinho.
+          Obrigado pela sua compra! Suas melodias estao sendo geradas automaticamente.
         </p>
 
         {/* Order ID */}
@@ -44,8 +44,8 @@ function SuccessContent() {
               <span className="text-white font-bold">1</span>
             </div>
             <div>
-              <p className="font-medium text-[#1a1a1a]">Producao da sua musica</p>
-              <p className="text-sm text-gray-500">Nossa equipe ja comecou a criar sua melodia exclusiva</p>
+              <p className="font-medium text-[#1a1a1a]">Geracao automatica</p>
+              <p className="text-sm text-gray-500">Nossa IA esta criando suas melodias exclusivas agora mesmo</p>
             </div>
           </div>
 
@@ -54,8 +54,8 @@ function SuccessContent() {
               <span className="text-white font-bold">2</span>
             </div>
             <div>
-              <p className="font-medium text-[#1a1a1a]">Voce recebe 2 versoes</p>
-              <p className="text-sm text-gray-500">Enviaremos 2 melodias diferentes para voce escolher</p>
+              <p className="font-medium text-[#1a1a1a]">Receba por email</p>
+              <p className="text-sm text-gray-500">Voce recebera um email com o link e seu codigo de acesso</p>
             </div>
           </div>
 
@@ -64,8 +64,8 @@ function SuccessContent() {
               <span className="text-white font-bold">3</span>
             </div>
             <div>
-              <p className="font-medium text-[#1a1a1a]">Entrega em 5 minutos</p>
-              <p className="text-sm text-gray-500">Suas musicas ficam disponiveis direto no site e por email</p>
+              <p className="font-medium text-[#1a1a1a]">Acesse no site</p>
+              <p className="text-sm text-gray-500">Use seu codigo (ex: CANTOS-AB12) para ouvir e baixar direto no site</p>
             </div>
           </div>
         </div>
@@ -73,7 +73,7 @@ function SuccessContent() {
         {/* Delivery time */}
         <div className="bg-gray-50 rounded-xl p-4 mb-6 border-2 border-[#1a1a1a]">
           <p className="text-[#1a1a1a] font-semibold">
-            ⏰ Entrega em 5 minutos direto no site
+            ⏰ Pronto em 5 minutos! Verifique seu email.
           </p>
         </div>
 
